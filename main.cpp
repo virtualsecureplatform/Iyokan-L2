@@ -6,7 +6,7 @@
 #include "NetList.hpp"
 
 int main() {
-    NetList netList;
+    NetList netList("test.json");
     netList.ConvertJson();
     netList.Set(0, 1);
     netList.Set(1, 0);

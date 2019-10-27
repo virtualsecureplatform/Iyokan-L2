@@ -21,8 +21,11 @@
 
 class NetList {
 public:
+    NetList(const char * json){
+        JsonFile = std::string(json);
+    }
     int ConvertJson() {
-        std::ifstream ifs("test.json", std::ios::in);
+        std::ifstream ifs(JsonFile, std::ios::in);
         if (ifs.fail()) {
             std::cerr << "failed to read test.json" << std::endl;
             return 1;
@@ -67,19 +70,20 @@ public:
         for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
             picojson::object port = e.get<picojson::object>();
             std::string type = port.at("type").get<std::string>();
+            std::string name = port.at("name").get<std::string>();
             int id = static_cast< int >(port.at("id").get<double>());
             picojson::array &bits = port.at("bits").get<picojson::array>();
             if (type == "input") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddOutput(Logics[logic]);
-                    std::cout << "Logic: " << id << " has to be set value" << std::endl;
+                    std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
                 }
             } else if (type == "output") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddInput(Logics[logic]);
-                    std::cout << "Logic: " << id << " has output value" << std::endl;
+                    std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
                 }
             }
         }
@@ -132,6 +136,7 @@ public:
 private:
     std::unordered_map<int, Logic *> Logics;
     std::queue<Logic *> ReadyQueue;
+    std::string JsonFile;
 };
 
 #endif //IYOKAN_L2_NETLIST_HPP
