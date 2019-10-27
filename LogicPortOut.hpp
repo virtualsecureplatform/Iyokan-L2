@@ -41,6 +41,10 @@ public:
             input.push_back(logic);
         }
     }
+
+    void AddOutput(Logic *logic) {
+
+    }
 };
 
 #endif //IYOKAN_L2_LOGICPORTOUT_HPP

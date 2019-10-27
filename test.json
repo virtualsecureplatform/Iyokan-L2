@@ -1,0 +1,44 @@
+{
+  "cells": [
+    {
+      "input": {
+        "A": 0,
+        "B": 1
+      },
+      "output": {
+        "Y": [
+          2
+        ]
+      },
+      "id": 3,
+      "type": "AND"
+    }
+  ],
+  "ports": [
+    {
+      "bits": [
+        3
+      ],
+      "name": "io_in1",
+      "id": 0,
+      "type": "input"
+    },
+    {
+      "bits": [
+        3
+      ],
+      "name": "io_in2",
+      "id": 1,
+      "type": "input"
+    },
+    {
+      "bits": [
+        3
+      ],
+      "name": "io_out",
+      "id": 2,
+      "type": "output"
+    }
+  ]
+}
+

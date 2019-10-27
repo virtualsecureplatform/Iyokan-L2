@@ -32,6 +32,10 @@ public:
         executable = true;
     }
 
+    void AddInput(Logic *logic) {
+
+    }
+
     void AddOutput(Logic *logic) {
         output.push_back(logic);
     }

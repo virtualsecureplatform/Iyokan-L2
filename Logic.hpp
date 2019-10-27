@@ -25,6 +25,10 @@ public:
 
     virtual bool NoticeInputReady() = 0;
 
+    virtual void AddInput(Logic *logic) = 0;
+
+    virtual void AddOutput(Logic *logic) = 0;
+
     void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
         if (!executed) {
             throw std::runtime_error("this logic is not executed");
