@@ -32,8 +32,8 @@ public:
         return res;
     }
 
-    void AddInput(Logic *logic){
-        if(input.size() == 0){
+    void AddInput(Logic *logic) {
+        if (input.size() == 0) {
             input.push_back(logic);
         }
     }

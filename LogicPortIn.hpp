@@ -29,7 +29,7 @@ public:
         executable = true;
     }
 
-    void AddOutput(Logic * logic){
+    void AddOutput(Logic *logic) {
         output.push_back(logic);
     }
 };

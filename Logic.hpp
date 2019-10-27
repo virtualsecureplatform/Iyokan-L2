@@ -26,7 +26,7 @@ public:
     void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
         if (executed) {
             for (Logic *logic : output) {
-                if(logic->NoticeInputReady()){
+                if (logic->NoticeInputReady()) {
                     ReadyQueue->push(logic);
                 }
             }
