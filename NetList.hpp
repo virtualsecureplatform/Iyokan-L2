@@ -17,13 +17,18 @@
 #include "LogicPortIn.hpp"
 #include "LogicPortOut.hpp"
 #include "LogicCellAND.hpp"
+#include "LogicCellNAND.hpp"
+#include "LogicCellXOR.hpp"
+#include "LogicCellXNOR.hpp"
+
 #include "picojson/picojson.h"
 
 class NetList {
 public:
-    NetList(const char * json){
+    NetList(const char *json) {
         JsonFile = std::string(json);
     }
+
     int ConvertJson() {
         std::ifstream ifs(JsonFile, std::ios::in);
         if (ifs.fail()) {
@@ -65,6 +70,12 @@ public:
             if (type == "AND") {
                 //std::cout << "INSERT AND" << std::endl;
                 Logics[id] = new LogicCellAND(id);
+            } else if (type == "NAND") {
+                Logics[id] = new LogicCellNAND(id);
+            } else if (type == "XOR") {
+                Logics[id] = new LogicCellXOR(id);
+            } else if (type == "XNOR") {
+                Logics[id] = new LogicCellXNOR(id);
             }
         }
         for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
@@ -77,14 +88,14 @@ public:
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddOutput(Logics[logic]);
-                    std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
                 }
+                std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
             } else if (type == "output") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddInput(Logics[logic]);
-                    std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
                 }
+                std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
             }
         }
         for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
@@ -93,7 +104,7 @@ public:
             int id = static_cast< int >(cell.at("id").get<double>());
             picojson::object input = cell.at("input").get<picojson::object>();
             picojson::object output = cell.at("output").get<picojson::object>();
-            if (type == "AND") {
+            if (type == "AND" || type == "NAND" || type == "XOR" || type == "XNOR") {
                 int A = static_cast< int >(input.at("A").get<double>());
                 int B = static_cast< int >(input.at("B").get<double>());
                 picojson::array &Y = output.at("Y").get<picojson::array>();

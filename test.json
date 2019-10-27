@@ -3,42 +3,292 @@
     {
       "input": {
         "A": 0,
-        "B": 1
+        "B": 4
       },
       "output": {
         "Y": [
-          2
+          15,
+          16
         ]
       },
-      "id": 3,
+      "id": 12,
       "type": "AND"
+    },
+    {
+      "input": {
+        "A": 1,
+        "B": 5
+      },
+      "output": {
+        "Y": [
+          17
+        ]
+      },
+      "id": 13,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 1,
+        "B": 5
+      },
+      "output": {
+        "Y": [
+          15,
+          16
+        ]
+      },
+      "id": 14,
+      "type": "XOR"
+    },
+    {
+      "input": {
+        "A": 12,
+        "B": 14
+      },
+      "output": {
+        "Y": [
+          17
+        ]
+      },
+      "id": 15,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 12,
+        "B": 14
+      },
+      "output": {
+        "Y": [
+          9
+        ]
+      },
+      "id": 16,
+      "type": "XOR"
+    },
+    {
+      "input": {
+        "A": 13,
+        "B": 15
+      },
+      "output": {
+        "Y": [
+          20,
+          21
+        ]
+      },
+      "id": 17,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 2,
+        "B": 6
+      },
+      "output": {
+        "Y": [
+          22
+        ]
+      },
+      "id": 18,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 2,
+        "B": 6
+      },
+      "output": {
+        "Y": [
+          20,
+          21
+        ]
+      },
+      "id": 19,
+      "type": "XOR"
+    },
+    {
+      "input": {
+        "A": 17,
+        "B": 19
+      },
+      "output": {
+        "Y": [
+          22
+        ]
+      },
+      "id": 20,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 17,
+        "B": 19
+      },
+      "output": {
+        "Y": [
+          10
+        ]
+      },
+      "id": 21,
+      "type": "XOR"
+    },
+    {
+      "input": {
+        "A": 18,
+        "B": 20
+      },
+      "output": {
+        "Y": [
+          24
+        ]
+      },
+      "id": 22,
+      "type": "NAND"
+    },
+    {
+      "input": {
+        "A": 3,
+        "B": 7
+      },
+      "output": {
+        "Y": [
+          24
+        ]
+      },
+      "id": 23,
+      "type": "XNOR"
+    },
+    {
+      "input": {
+        "A": 22,
+        "B": 23
+      },
+      "output": {
+        "Y": [
+          11
+        ]
+      },
+      "id": 24,
+      "type": "XNOR"
+    },
+    {
+      "input": {
+        "A": 0,
+        "B": 4
+      },
+      "output": {
+        "Y": [
+          8
+        ]
+      },
+      "id": 25,
+      "type": "XOR"
     }
   ],
   "ports": [
     {
       "bits": [
-        3
+        12,
+        25
       ],
-      "name": "io_in1",
+      "name": "io_in1[0]",
       "id": 0,
       "type": "input"
     },
     {
       "bits": [
-        3
+        13,
+        14
       ],
-      "name": "io_in2",
+      "name": "io_in1[1]",
       "id": 1,
       "type": "input"
     },
     {
       "bits": [
-        3
+        18,
+        19
       ],
-      "name": "io_out",
+      "name": "io_in1[2]",
       "id": 2,
+      "type": "input"
+    },
+    {
+      "bits": [
+        23
+      ],
+      "name": "io_in1[3]",
+      "id": 3,
+      "type": "input"
+    },
+    {
+      "bits": [
+        12,
+        25
+      ],
+      "name": "io_in2[0]",
+      "id": 4,
+      "type": "input"
+    },
+    {
+      "bits": [
+        13,
+        14
+      ],
+      "name": "io_in2[1]",
+      "id": 5,
+      "type": "input"
+    },
+    {
+      "bits": [
+        18,
+        19
+      ],
+      "name": "io_in2[2]",
+      "id": 6,
+      "type": "input"
+    },
+    {
+      "bits": [
+        23
+      ],
+      "name": "io_in2[3]",
+      "id": 7,
+      "type": "input"
+    },
+    {
+      "bits": [
+        25
+      ],
+      "name": "io_out[0]",
+      "id": 8,
+      "type": "output"
+    },
+    {
+      "bits": [
+        16
+      ],
+      "name": "io_out[1]",
+      "id": 9,
+      "type": "output"
+    },
+    {
+      "bits": [
+        21
+      ],
+      "name": "io_out[2]",
+      "id": 10,
+      "type": "output"
+    },
+    {
+      "bits": [
+        24
+      ],
+      "name": "io_out[3]",
+      "id": 11,
       "type": "output"
     }
   ]
 }
-

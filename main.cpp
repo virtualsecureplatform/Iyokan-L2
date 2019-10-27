@@ -10,8 +10,14 @@ int main() {
     netList.ConvertJson();
     netList.Set(0, 1);
     netList.Set(1, 0);
+    netList.Set(2, 1);
+    netList.Set(3, 0);
+    netList.Set(4, 1);
+    netList.Set(5, 1);
+    netList.Set(6, 0);
+    netList.Set(7, 0);
     netList.PrepareExecution();
     netList.Execute();
 
-    std::cout << "Result:" << netList.Get(2) << std::endl;
+    std::cout << "Result:" << netList.Get(11) << netList.Get(10) << netList.Get(9) << netList.Get(8) << std::endl;
 }
