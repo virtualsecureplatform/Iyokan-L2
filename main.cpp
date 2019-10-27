@@ -3,25 +3,36 @@
 #include <vector>
 #include <typeinfo>
 #include "Logic.hpp"
-#include "LogicPort.hpp"
+#include "LogicPortIn.hpp"
+#include "LogicPortOut.hpp"
+#include "LogicCellAND.hpp"
 
 int main() {
-    LogicPort logic0(0), logic1(1), logic2(2), logic3(3);
+    LogicPortIn portIn1(0);
+    LogicPortIn portIn2(1);
+
+    LogicCellAND cellAND(2);
+
+    LogicPortOut portOut(3);
+
     std::vector < Logic * > Logics;
+    Logics.push_back(&portIn1);
+    Logics.push_back(&portIn2);
+    Logics.push_back(&cellAND);
+    Logics.push_back(&portOut);
+
+    portIn1.AddOutput(&cellAND);
+    portIn2.AddOutput(&cellAND);
+
+    cellAND.AddInput(&portIn1);
+    cellAND.AddInput(&portIn2);
+    cellAND.AddOutput(&portOut);
+
+    portOut.AddInput(&cellAND);
+
+    portIn1.Set(1);
+    portIn2.Set(0);
     std::queue < Logic * > ReadyQueue;
-
-    Logics.push_back(&logic0);
-    Logics.push_back(&logic1);
-    Logics.push_back(&logic2);
-    Logics.push_back(&logic3);
-
-    logic0.output.push_back(&logic2);
-    logic1.output.push_back(&logic2);
-    logic2.input.push_back(&logic0);
-    logic2.input.push_back(&logic1);
-    logic2.output.push_back(&logic3);
-    logic3.input.push_back(&logic2);
-
     for (Logic *logic : Logics) {
         logic->PrepareExecution();
         if (logic->executable) {
@@ -33,4 +44,5 @@ int main() {
         ReadyQueue.pop();
         //std::cout << "ReadQueueSize: " << ReadyQueue.size() << std::endl;
     }
+    std::cout << "PortOutValue:" << portOut.Get() << std::endl;
 }
