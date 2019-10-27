@@ -11,6 +11,12 @@ class LogicPortOut : public Logic {
 public:
     LogicPortOut(int id) : Logic(id) {}
 
+    void PrepareExecution() {
+        if(input.size() == 0){
+            throw std::runtime_error("Input is not assigned");
+        }
+    }
+
     void Execute(std::queue<Logic *> *ReadyQueue) {
         res = input.front()->res;
         executed = true;
@@ -23,16 +29,14 @@ public:
         return executable;
     }
 
-    void PrepareExecution() {
-        executable = false;
-        executed = false;
-    }
-
     int Get() {
         return res;
     }
 
     void AddInput(Logic *logic) {
+        if(input.size() > 0){
+            throw std::runtime_error("Input is already assigned");
+        }
         if (input.size() == 0) {
             input.push_back(logic);
         }

@@ -12,6 +12,12 @@ public:
     LogicCellAND(int id) : Logic(id) {}
 
     void PrepareExecution() {
+        if(input.size() != 2){
+            throw std::runtime_error("Input is not assigned");
+        }
+        if(output.size() == 0){
+            throw std::runtime_error("Output is not assigned");
+        }
         InputCount = input.size();
         ReadyInputCount = 0;
     }
@@ -25,10 +31,16 @@ public:
 
     bool NoticeInputReady() {
         ReadyInputCount++;
+        if(ReadyInputCount > InputCount){
+            throw std::runtime_error("ReadyInputCount is invalid");
+        }
         return InputCount == ReadyInputCount;
     }
 
     void AddInput(Logic *logic) {
+        if(input.size() > 2){
+            throw std::runtime_error("Input is already assigned");
+        }
         input.push_back(logic);
     }
 

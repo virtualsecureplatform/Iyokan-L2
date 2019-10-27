@@ -4,6 +4,8 @@
 #include <vector>
 #include <queue>
 #include <iostream>
+#include <exception>
+#include <stdexcept>
 
 class Logic {
 public:
@@ -17,18 +19,19 @@ public:
         executed = false;
     }
 
+    virtual void PrepareExecution() = 0;
+
     virtual void Execute(std::queue<Logic *> *ReadyQueue) = 0;
 
     virtual bool NoticeInputReady() = 0;
 
-    virtual void PrepareExecution() = 0;
-
     void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
-        if (executed) {
-            for (Logic *logic : output) {
-                if (logic->NoticeInputReady()) {
-                    ReadyQueue->push(logic);
-                }
+        if(!executed){
+            throw std::runtime_error("this logic is not executed");
+        }
+        for (Logic *logic : output) {
+            if (logic->NoticeInputReady()) {
+                ReadyQueue->push(logic);
             }
         }
     }
