@@ -12,7 +12,7 @@ public:
     LogicPortOut(int id) : Logic(id) {}
 
     void PrepareExecution() {
-        if(input.size() == 0){
+        if (input.size() == 0) {
             throw std::runtime_error("Input is not assigned");
         }
     }
@@ -34,7 +34,7 @@ public:
     }
 
     void AddInput(Logic *logic) {
-        if(input.size() > 0){
+        if (input.size() > 0) {
             throw std::runtime_error("Input is already assigned");
         }
         if (input.size() == 0) {

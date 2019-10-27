@@ -12,7 +12,7 @@ public:
     LogicPortIn(int id) : Logic(id) {}
 
     void PrepareExecution() {
-        if(output.size() == 0){
+        if (output.size() == 0) {
             throw std::runtime_error("Output is not assigned");
         }
     }

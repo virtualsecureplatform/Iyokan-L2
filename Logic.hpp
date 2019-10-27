@@ -26,7 +26,7 @@ public:
     virtual bool NoticeInputReady() = 0;
 
     void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
-        if(!executed){
+        if (!executed) {
             throw std::runtime_error("this logic is not executed");
         }
         for (Logic *logic : output) {

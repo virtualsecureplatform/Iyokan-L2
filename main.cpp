@@ -31,7 +31,7 @@ int main() {
     portOut.AddInput(&cellAND);
 
     portIn1.Set(1);
-    portIn2.Set(0);
+    portIn2.Set(1);
     std::queue < Logic * > ReadyQueue;
     for (Logic *logic : Logics) {
         logic->PrepareExecution();
