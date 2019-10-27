@@ -9,12 +9,8 @@ class Logic {
 public:
     int id;
     bool executable;
-    bool executed;
-    int res;
     std::vector<Logic *> input{};
     std::vector<Logic *> output{};
-    int InputCount;
-    int ReadyInputCount;
 
     Logic(int _id) {
         id = _id;
@@ -34,9 +30,10 @@ public:
         executed = false;
     }
 
-    void Execute(std::queue<Logic *> *ReadyQueue) {
-        if (!executed) {
-            std::cout << "Executed:Logic" << id << std::endl;
+    virtual void Execute(std::queue<Logic *> *ReadyQueue) = 0;
+
+    void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
+        if (executed) {
             for (Logic *logic : output) {
                 logic->ReadyInputCount++;
                 //std::cout <<"Logic"<< logic->id <<" ReadyInputCount:" << logic->ReadyInputCount << std::endl;
@@ -46,11 +43,14 @@ public:
                     ReadyQueue->push(logic);
                 }
             }
-            executed = true;
         }
     }
 
-private:
+protected:
+    bool executed;
+    int InputCount;
+    int ReadyInputCount;
+    int res;
 };
 
 #endif
