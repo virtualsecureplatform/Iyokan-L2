@@ -23,7 +23,7 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        res = (input.at(0)->res || (~input.at(1)->res))&0x1;
+        res = (input.at(0)->res || (~input.at(1)->res)) & 0x1;
         executed = true;
         std::cout << "Executed:LogicCellORNOT:" << id << std::endl;
         DependencyUpdate(ReadyQueue);

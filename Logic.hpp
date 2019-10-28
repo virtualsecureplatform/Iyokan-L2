@@ -41,8 +41,9 @@ public:
             }
         }
     }
-    void SetExecutable(){
-       executable = true;
+
+    void SetExecutable() {
+        executable = true;
     }
 
     bool executed;

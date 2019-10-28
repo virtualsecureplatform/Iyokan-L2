@@ -9,7 +9,7 @@ int main() {
     NetList netList("../test.json");
     netList.ConvertJson();
     netList.Set(0, 0);
-    netList.Set(73, 1);
+    netList.Set(73, 0);
     netList.Set(74, 1);
     netList.Set(130, 1);
     netList.Set(131, 0);
@@ -18,18 +18,4 @@ int main() {
     netList.PrepareExecution();
     netList.Tick();
     std::cout << "Result:" << netList.Get(159) << netList.Get(158) << std::endl;
-    /*
-    netList.Tick();
-    netList.Execute();
-    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
-    netList.Tick();
-    netList.Execute();
-    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
-    netList.Tick();
-    netList.Execute();
-    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
-    netList.Tick();
-    netList.Execute();
-    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
-    */
 }

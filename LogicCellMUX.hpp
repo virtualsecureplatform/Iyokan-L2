@@ -23,11 +23,11 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        if(input.at(2)->res == 0){
+        if (input.at(2)->res == 0) {
             res = input.at(0)->res;
-        }else if(input.at(2)->res == 1){
+        } else if (input.at(2)->res == 1) {
             res = input.at(1)->res;
-        }else{
+        } else {
             throw std::runtime_error("invalid select signal");
         }
         executed = true;
