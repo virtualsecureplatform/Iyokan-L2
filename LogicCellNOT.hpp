@@ -2,17 +2,17 @@
 // Created by naoki on 19/10/27.
 //
 
-#ifndef IYOKAN_L2_LOGICCELLAND_HPP
-#define IYOKAN_L2_LOGICCELLAND_HPP
+#ifndef IYOKAN_L2_LOGICCELLNOT_HPP
+#define IYOKAN_L2_LOGICCELLNOT_HPP
 
 #include "Logic.hpp"
 
-class LogicCellAND : public Logic {
+class LogicCellNOT : public Logic {
 public:
-    LogicCellAND(int id) : Logic(id) {}
+    LogicCellNOT(int id) : Logic(id) {}
 
     void PrepareExecution() {
-        if (input.size() != 2) {
+        if (input.size() != 1) {
             throw std::runtime_error("Input is not assigned");
         }
         if (output.size() == 0) {
@@ -23,9 +23,9 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        res = input.at(0)->res & input.at(1)->res;
+        res = (~input.at(0)->res)&0x1;
         executed = true;
-        std::cout << "Executed:LogicCellAND:" << id << std::endl;
+        std::cout << "Executed:LogicCellNOT:" << id << std::endl;
         DependencyUpdate(ReadyQueue);
     }
 
@@ -38,7 +38,7 @@ public:
     }
 
     void AddInput(Logic *logic) {
-        if (input.size() > 1) {
+        if (input.size() > 0) {
             throw std::runtime_error("Input is already assigned");
         }
         input.push_back(logic);
@@ -57,4 +57,4 @@ public:
 
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif //IYOKAN_L2_LOGICCELLNOT_HPP

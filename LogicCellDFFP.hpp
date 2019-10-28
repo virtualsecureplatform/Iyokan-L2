@@ -18,6 +18,7 @@ public:
         if (output.size() == 0) {
             throw std::runtime_error("Output is not assigned");
         }
+        executable = true;
         InputCount = input.size();
         ReadyInputCount = 0;
     }
@@ -25,7 +26,6 @@ public:
     void Execute(std::queue<Logic *> *ReadyQueue) {
         executed = true;
         std::cout << "Executed:LogicCellDFFP:" << id << std::endl;
-        //DependencyUpdate(ReadyQueue);
         DependencyUpdate(ReadyQueue);
     }
 

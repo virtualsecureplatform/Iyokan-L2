@@ -2,17 +2,17 @@
 // Created by naoki on 19/10/27.
 //
 
-#ifndef IYOKAN_L2_LOGICCELLAND_HPP
-#define IYOKAN_L2_LOGICCELLAND_HPP
+#ifndef IYOKAN_L2_LOGICCELLMUX_HPP
+#define IYOKAN_L2_LOGICCELLMUX_HPP
 
 #include "Logic.hpp"
 
-class LogicCellAND : public Logic {
+class LogicCellMUX : public Logic {
 public:
-    LogicCellAND(int id) : Logic(id) {}
+    LogicCellMUX(int id) : Logic(id) {}
 
     void PrepareExecution() {
-        if (input.size() != 2) {
+        if (input.size() != 3) {
             throw std::runtime_error("Input is not assigned");
         }
         if (output.size() == 0) {
@@ -23,9 +23,15 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        res = input.at(0)->res & input.at(1)->res;
+        if(input.at(2)->res == 0){
+            res = input.at(0)->res;
+        }else if(input.at(2)->res == 1){
+            res = input.at(1)->res;
+        }else{
+            throw std::runtime_error("invalid select signal");
+        }
         executed = true;
-        std::cout << "Executed:LogicCellAND:" << id << std::endl;
+        std::cout << "Executed:LogicCellMUX:" << id << std::endl;
         DependencyUpdate(ReadyQueue);
     }
 
@@ -38,7 +44,7 @@ public:
     }
 
     void AddInput(Logic *logic) {
-        if (input.size() > 1) {
+        if (input.size() > 2) {
             throw std::runtime_error("Input is already assigned");
         }
         input.push_back(logic);
@@ -54,7 +60,6 @@ public:
         ReadyInputCount = 0;
         return executable;
     }
-
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif //IYOKAN_L2_LOGICCELLMUX_HPP

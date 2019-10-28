@@ -41,7 +41,6 @@ public:
     }
 
     bool Tick() {
-        executable = true;
         executed = false;
         ReadyInputCount = 0;
         return executable;

@@ -6,28 +6,30 @@
 #include "NetList.hpp"
 
 int main() {
-    NetList netList("test.json");
+    NetList netList("../test.json");
     netList.ConvertJson();
-    netList.Set(0, 1);
-    netList.Set(1, 0);
-    netList.Set(2, 1);
-    netList.Set(3, 0);
-    netList.Set(4, 1);
-    netList.Set(5, 1);
-    netList.Set(6, 0);
-    netList.Set(7, 0);
+    netList.Set(0, 0);
+    netList.Set(73, 1);
+    netList.Set(74, 1);
+    netList.Set(130, 1);
+    netList.Set(131, 0);
+
+    //netList.SetExecutable(1390);
     netList.PrepareExecution();
-    netList.Execute();
-    std::cout << "Result:" << netList.Get(11) << netList.Get(10) << netList.Get(9) << netList.Get(8) << std::endl;
     netList.Tick();
-    netList.Set(0, 1);
-    netList.Set(1, 0);
-    netList.Set(2, 0);
-    netList.Set(3, 0);
-    netList.Set(4, 0);
-    netList.Set(5, 0);
-    netList.Set(6, 0);
-    netList.Set(7, 1);
+    std::cout << "Result:" << netList.Get(159) << netList.Get(158) << std::endl;
+    /*
+    netList.Tick();
     netList.Execute();
-    std::cout << "Result:" << netList.Get(11) << netList.Get(10) << netList.Get(9) << netList.Get(8) << std::endl;
+    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
+    netList.Tick();
+    netList.Execute();
+    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
+    netList.Tick();
+    netList.Execute();
+    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
+    netList.Tick();
+    netList.Execute();
+    std::cout << "Result:" << netList.Get(135) << netList.Get(134) << netList.Get(133) << netList.Get(132) << std::endl;
+    */
 }

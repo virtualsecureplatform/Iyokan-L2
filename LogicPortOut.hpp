@@ -18,7 +18,6 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        res = input.front()->res;
         executed = true;
         std::cout << "Executed:LogicPortOut:" << id << std::endl;
         DependencyUpdate(ReadyQueue);
@@ -30,7 +29,7 @@ public:
     }
 
     int Get() {
-        return res;
+        return input.front()->res;
     }
 
     void AddInput(Logic *logic) {
@@ -47,7 +46,7 @@ public:
     }
 
     bool Tick() {
-        executable = true;
+        executable = false;
         executed = false;
         ReadyInputCount = 0;
         return executable;

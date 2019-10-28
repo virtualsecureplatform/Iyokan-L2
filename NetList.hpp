@@ -21,6 +21,12 @@
 #include "LogicCellXOR.hpp"
 #include "LogicCellXNOR.hpp"
 #include "LogicCellDFFP.hpp"
+#include "LogicCellNOT.hpp"
+#include "LogicCellOR.hpp"
+#include "LogicCellORNOT.hpp"
+#include "LogicCellNOR.hpp"
+#include "LogicCellANDNOT.hpp"
+#include "LogicCellMUX.hpp"
 
 #include "picojson/picojson.h"
 
@@ -73,12 +79,26 @@ public:
                 Logics[id] = new LogicCellAND(id);
             } else if (type == "NAND") {
                 Logics[id] = new LogicCellNAND(id);
+            } else if (type == "ANDNOT") {
+                Logics[id] = new LogicCellANDNOT(id);
             } else if (type == "XOR") {
                 Logics[id] = new LogicCellXOR(id);
             } else if (type == "XNOR") {
                 Logics[id] = new LogicCellXNOR(id);
             } else if (type == "DFFP") {
                 Logics[id] = new LogicCellDFFP(id);
+            } else if (type == "NOT") {
+                Logics[id] = new LogicCellNOT(id);
+            } else if (type == "NOR") {
+                Logics[id] = new LogicCellNOR(id);
+            } else if (type == "OR") {
+                Logics[id] = new LogicCellOR(id);
+            } else if (type == "ORNOT") {
+                Logics[id] = new LogicCellORNOT(id);
+            } else if (type == "MUX") {
+                Logics[id] = new LogicCellMUX(id);
+            }else{
+                throw std::runtime_error("Not implemented:"+type);
             }
         }
         for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
@@ -107,7 +127,7 @@ public:
             int id = static_cast< int >(cell.at("id").get<double>());
             picojson::object input = cell.at("input").get<picojson::object>();
             picojson::object output = cell.at("output").get<picojson::object>();
-            if (type == "AND" || type == "NAND" || type == "XOR" || type == "XNOR") {
+            if (type == "AND" || type == "NAND" || type == "XOR" || type == "XNOR" || type == "NOR" || type == "ANDNOT" || type == "OR" || type == "ORNOT") {
                 int A = static_cast< int >(input.at("A").get<double>());
                 int B = static_cast< int >(input.at("B").get<double>());
                 picojson::array &Y = output.at("Y").get<picojson::array>();
@@ -125,6 +145,28 @@ public:
                     int bitQ = static_cast< int >(q.get<double>());
                     Logics[id]->AddOutput(Logics[bitQ]);
                 }
+            } else if (type == "NOT") {
+                int A = static_cast< int >(input.at("A").get<double>());
+                picojson::array &Y = output.at("Y").get<picojson::array>();
+                Logics[id]->AddInput(Logics[A]);
+                for (const auto &y : Y) {
+                    int bitY = static_cast< int >(y.get<double>());
+                    Logics[id]->AddOutput(Logics[bitY]);
+                }
+            }else if (type == "MUX") {
+                int A = static_cast< int >(input.at("A").get<double>());
+                int B = static_cast< int >(input.at("B").get<double>());
+                int S = static_cast< int >(input.at("S").get<double>());
+                picojson::array &Y = output.at("Y").get<picojson::array>();
+                Logics[id]->AddInput(Logics[A]);
+                Logics[id]->AddInput(Logics[B]);
+                Logics[id]->AddInput(Logics[S]);
+                for (const auto &y : Y) {
+                    int bitY = static_cast< int >(y.get<double>());
+                    Logics[id]->AddOutput(Logics[bitY]);
+                }
+            }else{
+                throw std::runtime_error("Not executed");
             }
         }
         return 0;
@@ -148,6 +190,7 @@ public:
     }
 
     void Tick() {
+        Execute();
         for (auto logic : Logics) {
             if (logic.second->Tick()) {
                 ReadyQueue.push(logic.second);
@@ -163,9 +206,22 @@ public:
         return ((LogicPortOut *) Logics[id])->Get();
     }
 
+    void Stats(){
+        int cnt = Logics.size();
+        int executed_cnt = 0;
+        for (auto logic : Logics) {
+            if (logic.second->executed) {
+                executed_cnt++;
+            }
+        }
+        std::cout << "Logics: " << cnt << " Executed: " << executed_cnt << std::endl;
+    }
+    void SetExecutable(int id){
+        Logics[id]->SetExecutable();
+    }
 private:
-    std::unordered_map<int, Logic *> Logics;
     std::queue<Logic *> ReadyQueue;
+    std::unordered_map<int, Logic *> Logics;
     std::string JsonFile;
 };
 

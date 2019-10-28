@@ -41,9 +41,12 @@ public:
             }
         }
     }
+    void SetExecutable(){
+       executable = true;
+    }
 
-protected:
     bool executed;
+protected:
     int InputCount;
     int ReadyInputCount;
 
