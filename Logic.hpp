@@ -29,6 +29,8 @@ public:
 
     virtual void AddOutput(Logic *logic) = 0;
 
+    virtual bool Tick() = 0;
+
     void DependencyUpdate(std::queue<Logic *> *ReadyQueue) {
         if (!executed) {
             throw std::runtime_error("this logic is not executed");

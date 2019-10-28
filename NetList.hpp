@@ -20,6 +20,7 @@
 #include "LogicCellNAND.hpp"
 #include "LogicCellXOR.hpp"
 #include "LogicCellXNOR.hpp"
+#include "LogicCellDFFP.hpp"
 
 #include "picojson/picojson.h"
 
@@ -76,6 +77,8 @@ public:
                 Logics[id] = new LogicCellXOR(id);
             } else if (type == "XNOR") {
                 Logics[id] = new LogicCellXNOR(id);
+            } else if (type == "DFFP") {
+                Logics[id] = new LogicCellDFFP(id);
             }
         }
         for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
@@ -114,6 +117,14 @@ public:
                     int bitY = static_cast< int >(y.get<double>());
                     Logics[id]->AddOutput(Logics[bitY]);
                 }
+            } else if (type == "DFFP") {
+                int D = static_cast< int >(input.at("D").get<double>());
+                picojson::array &Q = output.at("Q").get<picojson::array>();
+                Logics[id]->AddInput(Logics[D]);
+                for (const auto &q : Q) {
+                    int bitQ = static_cast< int >(q.get<double>());
+                    Logics[id]->AddOutput(Logics[bitQ]);
+                }
             }
         }
         return 0;
@@ -133,6 +144,14 @@ public:
             ReadyQueue.front()->Execute(&ReadyQueue);
             ReadyQueue.pop();
             //std::cout << "ReadQueueSize: " << ReadyQueue.size() << std::endl;
+        }
+    }
+
+    void Tick() {
+        for (auto logic : Logics) {
+            if (logic.second->Tick()) {
+                ReadyQueue.push(logic.second);
+            }
         }
     }
 

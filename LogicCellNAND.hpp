@@ -38,7 +38,7 @@ public:
     }
 
     void AddInput(Logic *logic) {
-        if (input.size() > 2) {
+        if (input.size() > 1) {
             throw std::runtime_error("Input is already assigned");
         }
         input.push_back(logic);
@@ -46,6 +46,13 @@ public:
 
     void AddOutput(Logic *logic) {
         output.push_back(logic);
+    }
+
+    bool Tick() {
+        executable = false;
+        executed = false;
+        ReadyInputCount = 0;
+        return executable;
     }
 
 };

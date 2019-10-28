@@ -2,17 +2,17 @@
 // Created by naoki on 19/10/27.
 //
 
-#ifndef IYOKAN_L2_LOGICCELLXNOR_HPP
-#define IYOKAN_L2_LOGICCELLXNOR_HPP
+#ifndef IYOKAN_L2_LOGICCELLDFFP_HPP
+#define IYOKAN_L2_LOGICCELLDFFP_HPP
 
 #include "Logic.hpp"
 
-class LogicCellXNOR : public Logic {
+class LogicCellDFFP : public Logic {
 public:
-    LogicCellXNOR(int id) : Logic(id) {}
+    LogicCellDFFP(int id) : Logic(id) {}
 
     void PrepareExecution() {
-        if (input.size() != 2) {
+        if (input.size() != 1) {
             throw std::runtime_error("Input is not assigned");
         }
         if (output.size() == 0) {
@@ -23,22 +23,18 @@ public:
     }
 
     void Execute(std::queue<Logic *> *ReadyQueue) {
-        res = (~(input.at(0)->res ^ input.at(1)->res)) & 0x1;
         executed = true;
-        std::cout << "Executed:LogicCellXNOR:" << id << std::endl;
+        std::cout << "Executed:LogicCellDFFP:" << id << std::endl;
+        //DependencyUpdate(ReadyQueue);
         DependencyUpdate(ReadyQueue);
     }
 
     bool NoticeInputReady() {
-        ReadyInputCount++;
-        if (ReadyInputCount > InputCount) {
-            throw std::runtime_error("ReadyInputCount is invalid");
-        }
-        return InputCount == ReadyInputCount;
+        return false;
     }
 
     void AddInput(Logic *logic) {
-        if (input.size() > 1) {
+        if (input.size() > 0) {
             throw std::runtime_error("Input is already assigned");
         }
         input.push_back(logic);
@@ -49,13 +45,13 @@ public:
     }
 
     bool Tick() {
-        executable = false;
+        res = input.at(0)->res;
+        executable = true;
         executed = false;
         ReadyInputCount = 0;
         return executable;
     }
 
-
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif //IYOKAN_L2_LOGICCELLDFFP_HPP

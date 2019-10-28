@@ -39,6 +39,13 @@ public:
     void AddOutput(Logic *logic) {
         output.push_back(logic);
     }
+
+    bool Tick() {
+        executable = true;
+        executed = false;
+        ReadyInputCount = 0;
+        return executable;
+    }
 };
 
 #endif //IYOKAN_L2_LOGICPORTIN_HPP

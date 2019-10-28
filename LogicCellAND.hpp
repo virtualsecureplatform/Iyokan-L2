@@ -48,6 +48,13 @@ public:
         output.push_back(logic);
     }
 
+    bool Tick() {
+        executable = false;
+        executed = false;
+        ReadyInputCount = 0;
+        return executable;
+    }
+
 };
 
 #endif //IYOKAN_L2_LOGICCELLAND_HPP

@@ -45,6 +45,13 @@ public:
     void AddOutput(Logic *logic) {
 
     }
+
+    bool Tick() {
+        executable = true;
+        executed = false;
+        ReadyInputCount = 0;
+        return executable;
+    }
 };
 
 #endif //IYOKAN_L2_LOGICPORTOUT_HPP
