@@ -8,14 +8,15 @@
 int main() {
     NetList netList("../test.json");
     netList.ConvertJson();
-    netList.Set(0, 0);
-    netList.Set(73, 0);
-    netList.Set(74, 1);
-    netList.Set(130, 1);
-    netList.Set(131, 0);
+    netList.Set("reset", 0);
+    netList.Set("io_in_inA", 16);
+    netList.Set("io_in_inB", 4);
+    netList.Set("io_in_opcode", 0);
+    netList.Set("io_enable", 1);
+    netList.Set("io_flush", 0);
 
-    //netList.SetExecutable(1390);
     netList.PrepareExecution();
     netList.Tick();
-    std::cout << "Result:" << netList.Get(159) << netList.Get(158) << std::endl;
+    netList.Tick();
+    std::cout << "Result:" << netList.Get("io_out_res") << std::endl;
 }

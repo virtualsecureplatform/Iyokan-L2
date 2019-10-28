@@ -107,17 +107,21 @@ public:
             std::string name = port.at("name").get<std::string>();
             int id = static_cast< int >(port.at("id").get<double>());
             picojson::array &bits = port.at("bits").get<picojson::array>();
+            std::string portName = port.at("portName").get<std::string>();
+            int portBit = static_cast< int >(port.at("portBit").get<double>());
             if (type == "input") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddOutput(Logics[logic]);
                 }
+                Inputs[portName][portBit] = (LogicPortIn *)Logics[id];
                 std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
             } else if (type == "output") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddInput(Logics[logic]);
                 }
+                Outputs[portName][portBit] = (LogicPortOut *)Logics[id];
                 std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
             }
         }
@@ -200,11 +204,51 @@ public:
     }
 
     void Set(int id, int value) {
-        ((LogicPortIn *) Logics[id])->Set(value);
+        ((LogicPortIn *) Logics[id])->Set(value&0x1);
+    }
+
+    void Set(int msb, int lsb, int value){
+        for(int i=lsb;i<msb+1;i++){
+            ((LogicPortIn *)Logics[i])->Set(value&0x1);
+            value = value >> 1;
+        }
+    }
+
+    void Set(std::string portName, int value){
+        int length = Inputs[portName].size();
+        if(length == 0){
+            throw std::runtime_error("Unknown input port:"+portName);
+        }
+        for(int i=0;i<length;i++){
+            Inputs[portName][i]->Set(value&0x1);
+            value = value >> 1;
+        }
     }
 
     int Get(int id) {
         return ((LogicPortOut *) Logics[id])->Get();
+    }
+
+    int Get(int msb, int lsb){
+        int value = 0;
+        for(int i=msb;i>lsb-1;i--){
+            value = value << 1;
+            value += ((LogicPortOut *)Logics[i])->Get();
+        }
+        return value;
+    }
+
+    int Get(std::string portName){
+        int length = Outputs[portName].size();
+        if(length == 0){
+            throw std::runtime_error("Unknown output port:"+portName);
+        }
+        int value = 0;
+        for(int i=length-1;i>-1;i--){
+            value = value << 1;
+            value += Outputs[portName][i]->Get();
+        }
+        return value;
     }
 
     void Stats() {
@@ -225,6 +269,8 @@ public:
 private:
     std::queue<Logic *> ReadyQueue;
     std::unordered_map<int, Logic *> Logics;
+    std::unordered_map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
+    std::unordered_map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::string JsonFile;
 };
 

@@ -17007,6 +17007,8 @@
         217
       ],
       "name": "reset",
+      "portName": "reset",
+      "portBit": 0,
       "id": 0,
       "type": "input"
     },
@@ -17015,6 +17017,8 @@
         1300
       ],
       "name": "io_in_inA[0]",
+      "portName": "io_in_inA",
+      "portBit": 0,
       "id": 1,
       "type": "input"
     },
@@ -17023,6 +17027,8 @@
         1302
       ],
       "name": "io_in_inA[1]",
+      "portName": "io_in_inA",
+      "portBit": 1,
       "id": 2,
       "type": "input"
     },
@@ -17031,6 +17037,8 @@
         1304
       ],
       "name": "io_in_inA[2]",
+      "portName": "io_in_inA",
+      "portBit": 2,
       "id": 3,
       "type": "input"
     },
@@ -17039,6 +17047,8 @@
         1306
       ],
       "name": "io_in_inA[3]",
+      "portName": "io_in_inA",
+      "portBit": 3,
       "id": 4,
       "type": "input"
     },
@@ -17047,6 +17057,8 @@
         1308
       ],
       "name": "io_in_inA[4]",
+      "portName": "io_in_inA",
+      "portBit": 4,
       "id": 5,
       "type": "input"
     },
@@ -17055,6 +17067,8 @@
         1310
       ],
       "name": "io_in_inA[5]",
+      "portName": "io_in_inA",
+      "portBit": 5,
       "id": 6,
       "type": "input"
     },
@@ -17063,6 +17077,8 @@
         1312
       ],
       "name": "io_in_inA[6]",
+      "portName": "io_in_inA",
+      "portBit": 6,
       "id": 7,
       "type": "input"
     },
@@ -17071,6 +17087,8 @@
         1314
       ],
       "name": "io_in_inA[7]",
+      "portName": "io_in_inA",
+      "portBit": 7,
       "id": 8,
       "type": "input"
     },
@@ -17079,6 +17097,8 @@
         1316
       ],
       "name": "io_in_inA[8]",
+      "portName": "io_in_inA",
+      "portBit": 8,
       "id": 9,
       "type": "input"
     },
@@ -17087,6 +17107,8 @@
         1318
       ],
       "name": "io_in_inA[9]",
+      "portName": "io_in_inA",
+      "portBit": 9,
       "id": 10,
       "type": "input"
     },
@@ -17095,6 +17117,8 @@
         1320
       ],
       "name": "io_in_inA[10]",
+      "portName": "io_in_inA",
+      "portBit": 10,
       "id": 11,
       "type": "input"
     },
@@ -17103,6 +17127,8 @@
         1322
       ],
       "name": "io_in_inA[11]",
+      "portName": "io_in_inA",
+      "portBit": 11,
       "id": 12,
       "type": "input"
     },
@@ -17111,6 +17137,8 @@
         1324
       ],
       "name": "io_in_inA[12]",
+      "portName": "io_in_inA",
+      "portBit": 12,
       "id": 13,
       "type": "input"
     },
@@ -17119,6 +17147,8 @@
         1326
       ],
       "name": "io_in_inA[13]",
+      "portName": "io_in_inA",
+      "portBit": 13,
       "id": 14,
       "type": "input"
     },
@@ -17127,6 +17157,8 @@
         1328
       ],
       "name": "io_in_inA[14]",
+      "portName": "io_in_inA",
+      "portBit": 14,
       "id": 15,
       "type": "input"
     },
@@ -17135,6 +17167,8 @@
         1330
       ],
       "name": "io_in_inA[15]",
+      "portName": "io_in_inA",
+      "portBit": 15,
       "id": 16,
       "type": "input"
     },
@@ -17143,6 +17177,8 @@
         1268
       ],
       "name": "io_in_inB[0]",
+      "portName": "io_in_inB",
+      "portBit": 0,
       "id": 17,
       "type": "input"
     },
@@ -17151,6 +17187,8 @@
         1270
       ],
       "name": "io_in_inB[1]",
+      "portName": "io_in_inB",
+      "portBit": 1,
       "id": 18,
       "type": "input"
     },
@@ -17159,6 +17197,8 @@
         1272
       ],
       "name": "io_in_inB[2]",
+      "portName": "io_in_inB",
+      "portBit": 2,
       "id": 19,
       "type": "input"
     },
@@ -17167,6 +17207,8 @@
         1274
       ],
       "name": "io_in_inB[3]",
+      "portName": "io_in_inB",
+      "portBit": 3,
       "id": 20,
       "type": "input"
     },
@@ -17175,6 +17217,8 @@
         1276
       ],
       "name": "io_in_inB[4]",
+      "portName": "io_in_inB",
+      "portBit": 4,
       "id": 21,
       "type": "input"
     },
@@ -17183,6 +17227,8 @@
         1278
       ],
       "name": "io_in_inB[5]",
+      "portName": "io_in_inB",
+      "portBit": 5,
       "id": 22,
       "type": "input"
     },
@@ -17191,6 +17237,8 @@
         1280
       ],
       "name": "io_in_inB[6]",
+      "portName": "io_in_inB",
+      "portBit": 6,
       "id": 23,
       "type": "input"
     },
@@ -17199,6 +17247,8 @@
         1282
       ],
       "name": "io_in_inB[7]",
+      "portName": "io_in_inB",
+      "portBit": 7,
       "id": 24,
       "type": "input"
     },
@@ -17207,6 +17257,8 @@
         1284
       ],
       "name": "io_in_inB[8]",
+      "portName": "io_in_inB",
+      "portBit": 8,
       "id": 25,
       "type": "input"
     },
@@ -17215,6 +17267,8 @@
         1286
       ],
       "name": "io_in_inB[9]",
+      "portName": "io_in_inB",
+      "portBit": 9,
       "id": 26,
       "type": "input"
     },
@@ -17223,6 +17277,8 @@
         1288
       ],
       "name": "io_in_inB[10]",
+      "portName": "io_in_inB",
+      "portBit": 10,
       "id": 27,
       "type": "input"
     },
@@ -17231,6 +17287,8 @@
         1290
       ],
       "name": "io_in_inB[11]",
+      "portName": "io_in_inB",
+      "portBit": 11,
       "id": 28,
       "type": "input"
     },
@@ -17239,6 +17297,8 @@
         1292
       ],
       "name": "io_in_inB[12]",
+      "portName": "io_in_inB",
+      "portBit": 12,
       "id": 29,
       "type": "input"
     },
@@ -17247,6 +17307,8 @@
         1294
       ],
       "name": "io_in_inB[13]",
+      "portName": "io_in_inB",
+      "portBit": 13,
       "id": 30,
       "type": "input"
     },
@@ -17255,6 +17317,8 @@
         1296
       ],
       "name": "io_in_inB[14]",
+      "portName": "io_in_inB",
+      "portBit": 14,
       "id": 31,
       "type": "input"
     },
@@ -17263,6 +17327,8 @@
         1298
       ],
       "name": "io_in_inB[15]",
+      "portName": "io_in_inB",
+      "portBit": 15,
       "id": 32,
       "type": "input"
     },
@@ -17271,6 +17337,8 @@
         1260
       ],
       "name": "io_in_opcode[0]",
+      "portName": "io_in_opcode",
+      "portBit": 0,
       "id": 33,
       "type": "input"
     },
@@ -17279,6 +17347,8 @@
         1262
       ],
       "name": "io_in_opcode[1]",
+      "portName": "io_in_opcode",
+      "portBit": 1,
       "id": 34,
       "type": "input"
     },
@@ -17287,6 +17357,8 @@
         1264
       ],
       "name": "io_in_opcode[2]",
+      "portName": "io_in_opcode",
+      "portBit": 2,
       "id": 35,
       "type": "input"
     },
@@ -17295,6 +17367,8 @@
         1266
       ],
       "name": "io_in_opcode[3]",
+      "portName": "io_in_opcode",
+      "portBit": 3,
       "id": 36,
       "type": "input"
     },
@@ -17303,6 +17377,8 @@
         1249
       ],
       "name": "io_in_pcOpcode[0]",
+      "portName": "io_in_pcOpcode",
+      "portBit": 0,
       "id": 37,
       "type": "input"
     },
@@ -17311,6 +17387,8 @@
         1253
       ],
       "name": "io_in_pcOpcode[1]",
+      "portName": "io_in_pcOpcode",
+      "portBit": 1,
       "id": 38,
       "type": "input"
     },
@@ -17319,6 +17397,8 @@
         1257
       ],
       "name": "io_in_pcOpcode[2]",
+      "portName": "io_in_pcOpcode",
+      "portBit": 2,
       "id": 39,
       "type": "input"
     },
@@ -17327,6 +17407,8 @@
         1230
       ],
       "name": "io_in_pc[0]",
+      "portName": "io_in_pc",
+      "portBit": 0,
       "id": 40,
       "type": "input"
     },
@@ -17335,6 +17417,8 @@
         1232
       ],
       "name": "io_in_pc[1]",
+      "portName": "io_in_pc",
+      "portBit": 1,
       "id": 41,
       "type": "input"
     },
@@ -17343,6 +17427,8 @@
         1234
       ],
       "name": "io_in_pc[2]",
+      "portName": "io_in_pc",
+      "portBit": 2,
       "id": 42,
       "type": "input"
     },
@@ -17351,6 +17437,8 @@
         1236
       ],
       "name": "io_in_pc[3]",
+      "portName": "io_in_pc",
+      "portBit": 3,
       "id": 43,
       "type": "input"
     },
@@ -17359,6 +17447,8 @@
         1238
       ],
       "name": "io_in_pc[4]",
+      "portName": "io_in_pc",
+      "portBit": 4,
       "id": 44,
       "type": "input"
     },
@@ -17367,6 +17457,8 @@
         1240
       ],
       "name": "io_in_pc[5]",
+      "portName": "io_in_pc",
+      "portBit": 5,
       "id": 45,
       "type": "input"
     },
@@ -17375,6 +17467,8 @@
         1242
       ],
       "name": "io_in_pc[6]",
+      "portName": "io_in_pc",
+      "portBit": 6,
       "id": 46,
       "type": "input"
     },
@@ -17383,6 +17477,8 @@
         1244
       ],
       "name": "io_in_pc[7]",
+      "portName": "io_in_pc",
+      "portBit": 7,
       "id": 47,
       "type": "input"
     },
@@ -17391,6 +17487,8 @@
         1246
       ],
       "name": "io_in_pc[8]",
+      "portName": "io_in_pc",
+      "portBit": 8,
       "id": 48,
       "type": "input"
     },
@@ -17399,6 +17497,8 @@
         1212
       ],
       "name": "io_in_pcImm[0]",
+      "portName": "io_in_pcImm",
+      "portBit": 0,
       "id": 56,
       "type": "input"
     },
@@ -17407,6 +17507,8 @@
         1214
       ],
       "name": "io_in_pcImm[1]",
+      "portName": "io_in_pcImm",
+      "portBit": 1,
       "id": 57,
       "type": "input"
     },
@@ -17415,6 +17517,8 @@
         1216
       ],
       "name": "io_in_pcImm[2]",
+      "portName": "io_in_pcImm",
+      "portBit": 2,
       "id": 58,
       "type": "input"
     },
@@ -17423,6 +17527,8 @@
         1218
       ],
       "name": "io_in_pcImm[3]",
+      "portName": "io_in_pcImm",
+      "portBit": 3,
       "id": 59,
       "type": "input"
     },
@@ -17431,6 +17537,8 @@
         1220
       ],
       "name": "io_in_pcImm[4]",
+      "portName": "io_in_pcImm",
+      "portBit": 4,
       "id": 60,
       "type": "input"
     },
@@ -17439,6 +17547,8 @@
         1222
       ],
       "name": "io_in_pcImm[5]",
+      "portName": "io_in_pcImm",
+      "portBit": 5,
       "id": 61,
       "type": "input"
     },
@@ -17447,6 +17557,8 @@
         1224
       ],
       "name": "io_in_pcImm[6]",
+      "portName": "io_in_pcImm",
+      "portBit": 6,
       "id": 62,
       "type": "input"
     },
@@ -17455,6 +17567,8 @@
         1226
       ],
       "name": "io_in_pcImm[7]",
+      "portName": "io_in_pcImm",
+      "portBit": 7,
       "id": 63,
       "type": "input"
     },
@@ -17463,6 +17577,8 @@
         1228
       ],
       "name": "io_in_pcImm[8]",
+      "portName": "io_in_pcImm",
+      "portBit": 8,
       "id": 64,
       "type": "input"
     },
@@ -17471,6 +17587,8 @@
         1210
       ],
       "name": "io_in_pcAdd",
+      "portName": "io_in_pcAdd",
+      "portBit": 0,
       "id": 72,
       "type": "input"
     },
@@ -17479,6 +17597,8 @@
         1178
       ],
       "name": "io_memIn_in[0]",
+      "portName": "io_memIn_in",
+      "portBit": 0,
       "id": 73,
       "type": "input"
     },
@@ -17487,6 +17607,8 @@
         1180
       ],
       "name": "io_memIn_in[1]",
+      "portName": "io_memIn_in",
+      "portBit": 1,
       "id": 74,
       "type": "input"
     },
@@ -17495,6 +17617,8 @@
         1182
       ],
       "name": "io_memIn_in[2]",
+      "portName": "io_memIn_in",
+      "portBit": 2,
       "id": 75,
       "type": "input"
     },
@@ -17503,6 +17627,8 @@
         1184
       ],
       "name": "io_memIn_in[3]",
+      "portName": "io_memIn_in",
+      "portBit": 3,
       "id": 76,
       "type": "input"
     },
@@ -17511,6 +17637,8 @@
         1186
       ],
       "name": "io_memIn_in[4]",
+      "portName": "io_memIn_in",
+      "portBit": 4,
       "id": 77,
       "type": "input"
     },
@@ -17519,6 +17647,8 @@
         1188
       ],
       "name": "io_memIn_in[5]",
+      "portName": "io_memIn_in",
+      "portBit": 5,
       "id": 78,
       "type": "input"
     },
@@ -17527,6 +17657,8 @@
         1190
       ],
       "name": "io_memIn_in[6]",
+      "portName": "io_memIn_in",
+      "portBit": 6,
       "id": 79,
       "type": "input"
     },
@@ -17535,6 +17667,8 @@
         1192
       ],
       "name": "io_memIn_in[7]",
+      "portName": "io_memIn_in",
+      "portBit": 7,
       "id": 80,
       "type": "input"
     },
@@ -17543,6 +17677,8 @@
         1194
       ],
       "name": "io_memIn_in[8]",
+      "portName": "io_memIn_in",
+      "portBit": 8,
       "id": 81,
       "type": "input"
     },
@@ -17551,6 +17687,8 @@
         1196
       ],
       "name": "io_memIn_in[9]",
+      "portName": "io_memIn_in",
+      "portBit": 9,
       "id": 82,
       "type": "input"
     },
@@ -17559,6 +17697,8 @@
         1198
       ],
       "name": "io_memIn_in[10]",
+      "portName": "io_memIn_in",
+      "portBit": 10,
       "id": 83,
       "type": "input"
     },
@@ -17567,6 +17707,8 @@
         1200
       ],
       "name": "io_memIn_in[11]",
+      "portName": "io_memIn_in",
+      "portBit": 11,
       "id": 84,
       "type": "input"
     },
@@ -17575,6 +17717,8 @@
         1202
       ],
       "name": "io_memIn_in[12]",
+      "portName": "io_memIn_in",
+      "portBit": 12,
       "id": 85,
       "type": "input"
     },
@@ -17583,6 +17727,8 @@
         1204
       ],
       "name": "io_memIn_in[13]",
+      "portName": "io_memIn_in",
+      "portBit": 13,
       "id": 86,
       "type": "input"
     },
@@ -17591,6 +17737,8 @@
         1206
       ],
       "name": "io_memIn_in[14]",
+      "portName": "io_memIn_in",
+      "portBit": 14,
       "id": 87,
       "type": "input"
     },
@@ -17599,6 +17747,8 @@
         1208
       ],
       "name": "io_memIn_in[15]",
+      "portName": "io_memIn_in",
+      "portBit": 15,
       "id": 88,
       "type": "input"
     },
@@ -17607,6 +17757,8 @@
         1176
       ],
       "name": "io_memIn_memRead",
+      "portName": "io_memIn_memRead",
+      "portBit": 0,
       "id": 105,
       "type": "input"
     },
@@ -17615,6 +17767,8 @@
         1173
       ],
       "name": "io_memIn_memWrite",
+      "portName": "io_memIn_memWrite",
+      "portBit": 0,
       "id": 106,
       "type": "input"
     },
@@ -17623,6 +17777,8 @@
         1170
       ],
       "name": "io_memIn_byteEnable",
+      "portName": "io_memIn_byteEnable",
+      "portBit": 0,
       "id": 107,
       "type": "input"
     },
@@ -17631,6 +17787,8 @@
         1168
       ],
       "name": "io_memIn_signExt",
+      "portName": "io_memIn_signExt",
+      "portBit": 0,
       "id": 108,
       "type": "input"
     },
@@ -17639,6 +17797,8 @@
         1160
       ],
       "name": "io_wbIn_regWrite[0]",
+      "portName": "io_wbIn_regWrite",
+      "portBit": 0,
       "id": 109,
       "type": "input"
     },
@@ -17647,6 +17807,8 @@
         1162
       ],
       "name": "io_wbIn_regWrite[1]",
+      "portName": "io_wbIn_regWrite",
+      "portBit": 1,
       "id": 110,
       "type": "input"
     },
@@ -17655,6 +17817,8 @@
         1164
       ],
       "name": "io_wbIn_regWrite[2]",
+      "portName": "io_wbIn_regWrite",
+      "portBit": 2,
       "id": 111,
       "type": "input"
     },
@@ -17663,6 +17827,8 @@
         1166
       ],
       "name": "io_wbIn_regWrite[3]",
+      "portName": "io_wbIn_regWrite",
+      "portBit": 3,
       "id": 112,
       "type": "input"
     },
@@ -17671,6 +17837,8 @@
         1157
       ],
       "name": "io_wbIn_regWriteEnable",
+      "portName": "io_wbIn_regWriteEnable",
+      "portBit": 0,
       "id": 129,
       "type": "input"
     },
@@ -17762,6 +17930,8 @@
         1330
       ],
       "name": "io_enable",
+      "portName": "io_enable",
+      "portBit": 0,
       "id": 130,
       "type": "input"
     },
@@ -17770,6 +17940,8 @@
         1156
       ],
       "name": "io_flush",
+      "portName": "io_flush",
+      "portBit": 0,
       "id": 131,
       "type": "input"
     },
@@ -17778,6 +17950,8 @@
         337
       ],
       "name": "io_out_res[0]",
+      "portName": "io_out_res",
+      "portBit": 0,
       "id": 132,
       "type": "output"
     },
@@ -17786,6 +17960,8 @@
         415
       ],
       "name": "io_out_res[1]",
+      "portName": "io_out_res",
+      "portBit": 1,
       "id": 133,
       "type": "output"
     },
@@ -17794,6 +17970,8 @@
         481
       ],
       "name": "io_out_res[2]",
+      "portName": "io_out_res",
+      "portBit": 2,
       "id": 134,
       "type": "output"
     },
@@ -17802,6 +17980,8 @@
         537
       ],
       "name": "io_out_res[3]",
+      "portName": "io_out_res",
+      "portBit": 3,
       "id": 135,
       "type": "output"
     },
@@ -17810,6 +17990,8 @@
         589
       ],
       "name": "io_out_res[4]",
+      "portName": "io_out_res",
+      "portBit": 4,
       "id": 136,
       "type": "output"
     },
@@ -17818,6 +18000,8 @@
         639
       ],
       "name": "io_out_res[5]",
+      "portName": "io_out_res",
+      "portBit": 5,
       "id": 137,
       "type": "output"
     },
@@ -17826,6 +18010,8 @@
         692
       ],
       "name": "io_out_res[6]",
+      "portName": "io_out_res",
+      "portBit": 6,
       "id": 138,
       "type": "output"
     },
@@ -17834,6 +18020,8 @@
         743
       ],
       "name": "io_out_res[7]",
+      "portName": "io_out_res",
+      "portBit": 7,
       "id": 139,
       "type": "output"
     },
@@ -17842,6 +18030,8 @@
         786
       ],
       "name": "io_out_res[8]",
+      "portName": "io_out_res",
+      "portBit": 8,
       "id": 140,
       "type": "output"
     },
@@ -17850,6 +18040,8 @@
         828
       ],
       "name": "io_out_res[9]",
+      "portName": "io_out_res",
+      "portBit": 9,
       "id": 141,
       "type": "output"
     },
@@ -17858,6 +18050,8 @@
         871
       ],
       "name": "io_out_res[10]",
+      "portName": "io_out_res",
+      "portBit": 10,
       "id": 142,
       "type": "output"
     },
@@ -17866,6 +18060,8 @@
         912
       ],
       "name": "io_out_res[11]",
+      "portName": "io_out_res",
+      "portBit": 11,
       "id": 143,
       "type": "output"
     },
@@ -17874,6 +18070,8 @@
         954
       ],
       "name": "io_out_res[12]",
+      "portName": "io_out_res",
+      "portBit": 12,
       "id": 144,
       "type": "output"
     },
@@ -17882,6 +18080,8 @@
         996
       ],
       "name": "io_out_res[13]",
+      "portName": "io_out_res",
+      "portBit": 13,
       "id": 145,
       "type": "output"
     },
@@ -17890,6 +18090,8 @@
         1040
       ],
       "name": "io_out_res[14]",
+      "portName": "io_out_res",
+      "portBit": 14,
       "id": 146,
       "type": "output"
     },
@@ -17898,6 +18100,8 @@
         1076
       ],
       "name": "io_out_res[15]",
+      "portName": "io_out_res",
+      "portBit": 15,
       "id": 147,
       "type": "output"
     },
@@ -17906,6 +18110,8 @@
         1079
       ],
       "name": "io_out_jumpAddress[0]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 0,
       "id": 148,
       "type": "output"
     },
@@ -17914,6 +18120,8 @@
         1084
       ],
       "name": "io_out_jumpAddress[1]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 1,
       "id": 149,
       "type": "output"
     },
@@ -17922,6 +18130,8 @@
         1090
       ],
       "name": "io_out_jumpAddress[2]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 2,
       "id": 150,
       "type": "output"
     },
@@ -17930,6 +18140,8 @@
         1096
       ],
       "name": "io_out_jumpAddress[3]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 3,
       "id": 151,
       "type": "output"
     },
@@ -17938,6 +18150,8 @@
         1102
       ],
       "name": "io_out_jumpAddress[4]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 4,
       "id": 152,
       "type": "output"
     },
@@ -17946,6 +18160,8 @@
         1108
       ],
       "name": "io_out_jumpAddress[5]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 5,
       "id": 153,
       "type": "output"
     },
@@ -17954,6 +18170,8 @@
         1114
       ],
       "name": "io_out_jumpAddress[6]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 6,
       "id": 154,
       "type": "output"
     },
@@ -17962,6 +18180,8 @@
         1120
       ],
       "name": "io_out_jumpAddress[7]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 7,
       "id": 155,
       "type": "output"
     },
@@ -17970,6 +18190,8 @@
         1127
       ],
       "name": "io_out_jumpAddress[8]",
+      "portName": "io_out_jumpAddress",
+      "portBit": 8,
       "id": 156,
       "type": "output"
     },
@@ -17978,6 +18200,8 @@
         1154
       ],
       "name": "io_out_jump",
+      "portName": "io_out_jump",
+      "portBit": 0,
       "id": 157,
       "type": "output"
     },
@@ -17986,6 +18210,8 @@
         1390
       ],
       "name": "io_memOut_in[0]",
+      "portName": "io_memOut_in",
+      "portBit": 0,
       "id": 158,
       "type": "output"
     },
@@ -17994,6 +18220,8 @@
         1391
       ],
       "name": "io_memOut_in[1]",
+      "portName": "io_memOut_in",
+      "portBit": 1,
       "id": 159,
       "type": "output"
     },
@@ -18002,6 +18230,8 @@
         1392
       ],
       "name": "io_memOut_in[2]",
+      "portName": "io_memOut_in",
+      "portBit": 2,
       "id": 160,
       "type": "output"
     },
@@ -18010,6 +18240,8 @@
         1393
       ],
       "name": "io_memOut_in[3]",
+      "portName": "io_memOut_in",
+      "portBit": 3,
       "id": 161,
       "type": "output"
     },
@@ -18018,6 +18250,8 @@
         1394
       ],
       "name": "io_memOut_in[4]",
+      "portName": "io_memOut_in",
+      "portBit": 4,
       "id": 162,
       "type": "output"
     },
@@ -18026,6 +18260,8 @@
         1395
       ],
       "name": "io_memOut_in[5]",
+      "portName": "io_memOut_in",
+      "portBit": 5,
       "id": 163,
       "type": "output"
     },
@@ -18034,6 +18270,8 @@
         1396
       ],
       "name": "io_memOut_in[6]",
+      "portName": "io_memOut_in",
+      "portBit": 6,
       "id": 164,
       "type": "output"
     },
@@ -18042,6 +18280,8 @@
         1397
       ],
       "name": "io_memOut_in[7]",
+      "portName": "io_memOut_in",
+      "portBit": 7,
       "id": 165,
       "type": "output"
     },
@@ -18050,6 +18290,8 @@
         1398
       ],
       "name": "io_memOut_in[8]",
+      "portName": "io_memOut_in",
+      "portBit": 8,
       "id": 166,
       "type": "output"
     },
@@ -18058,6 +18300,8 @@
         1399
       ],
       "name": "io_memOut_in[9]",
+      "portName": "io_memOut_in",
+      "portBit": 9,
       "id": 167,
       "type": "output"
     },
@@ -18066,6 +18310,8 @@
         1400
       ],
       "name": "io_memOut_in[10]",
+      "portName": "io_memOut_in",
+      "portBit": 10,
       "id": 168,
       "type": "output"
     },
@@ -18074,6 +18320,8 @@
         1401
       ],
       "name": "io_memOut_in[11]",
+      "portName": "io_memOut_in",
+      "portBit": 11,
       "id": 169,
       "type": "output"
     },
@@ -18082,6 +18330,8 @@
         1402
       ],
       "name": "io_memOut_in[12]",
+      "portName": "io_memOut_in",
+      "portBit": 12,
       "id": 170,
       "type": "output"
     },
@@ -18090,6 +18340,8 @@
         1403
       ],
       "name": "io_memOut_in[13]",
+      "portName": "io_memOut_in",
+      "portBit": 13,
       "id": 171,
       "type": "output"
     },
@@ -18098,6 +18350,8 @@
         1404
       ],
       "name": "io_memOut_in[14]",
+      "portName": "io_memOut_in",
+      "portBit": 14,
       "id": 172,
       "type": "output"
     },
@@ -18106,6 +18360,8 @@
         1405
       ],
       "name": "io_memOut_in[15]",
+      "portName": "io_memOut_in",
+      "portBit": 15,
       "id": 173,
       "type": "output"
     },
@@ -18114,6 +18370,8 @@
         337
       ],
       "name": "io_memOut_address[0]",
+      "portName": "io_memOut_address",
+      "portBit": 0,
       "id": 174,
       "type": "output"
     },
@@ -18122,6 +18380,8 @@
         415
       ],
       "name": "io_memOut_address[1]",
+      "portName": "io_memOut_address",
+      "portBit": 1,
       "id": 175,
       "type": "output"
     },
@@ -18130,6 +18390,8 @@
         481
       ],
       "name": "io_memOut_address[2]",
+      "portName": "io_memOut_address",
+      "portBit": 2,
       "id": 176,
       "type": "output"
     },
@@ -18138,6 +18400,8 @@
         537
       ],
       "name": "io_memOut_address[3]",
+      "portName": "io_memOut_address",
+      "portBit": 3,
       "id": 177,
       "type": "output"
     },
@@ -18146,6 +18410,8 @@
         589
       ],
       "name": "io_memOut_address[4]",
+      "portName": "io_memOut_address",
+      "portBit": 4,
       "id": 178,
       "type": "output"
     },
@@ -18154,6 +18420,8 @@
         639
       ],
       "name": "io_memOut_address[5]",
+      "portName": "io_memOut_address",
+      "portBit": 5,
       "id": 179,
       "type": "output"
     },
@@ -18162,6 +18430,8 @@
         692
       ],
       "name": "io_memOut_address[6]",
+      "portName": "io_memOut_address",
+      "portBit": 6,
       "id": 180,
       "type": "output"
     },
@@ -18170,6 +18440,8 @@
         743
       ],
       "name": "io_memOut_address[7]",
+      "portName": "io_memOut_address",
+      "portBit": 7,
       "id": 181,
       "type": "output"
     },
@@ -18178,6 +18450,8 @@
         786
       ],
       "name": "io_memOut_address[8]",
+      "portName": "io_memOut_address",
+      "portBit": 8,
       "id": 182,
       "type": "output"
     },
@@ -18186,6 +18460,8 @@
         828
       ],
       "name": "io_memOut_address[9]",
+      "portName": "io_memOut_address",
+      "portBit": 9,
       "id": 183,
       "type": "output"
     },
@@ -18194,6 +18470,8 @@
         871
       ],
       "name": "io_memOut_address[10]",
+      "portName": "io_memOut_address",
+      "portBit": 10,
       "id": 184,
       "type": "output"
     },
@@ -18202,6 +18480,8 @@
         912
       ],
       "name": "io_memOut_address[11]",
+      "portName": "io_memOut_address",
+      "portBit": 11,
       "id": 185,
       "type": "output"
     },
@@ -18210,6 +18490,8 @@
         954
       ],
       "name": "io_memOut_address[12]",
+      "portName": "io_memOut_address",
+      "portBit": 12,
       "id": 186,
       "type": "output"
     },
@@ -18218,6 +18500,8 @@
         996
       ],
       "name": "io_memOut_address[13]",
+      "portName": "io_memOut_address",
+      "portBit": 13,
       "id": 187,
       "type": "output"
     },
@@ -18226,6 +18510,8 @@
         1040
       ],
       "name": "io_memOut_address[14]",
+      "portName": "io_memOut_address",
+      "portBit": 14,
       "id": 188,
       "type": "output"
     },
@@ -18234,6 +18520,8 @@
         1076
       ],
       "name": "io_memOut_address[15]",
+      "portName": "io_memOut_address",
+      "portBit": 15,
       "id": 189,
       "type": "output"
     },
@@ -18242,6 +18530,8 @@
         1406
       ],
       "name": "io_memOut_memRead",
+      "portName": "io_memOut_memRead",
+      "portBit": 0,
       "id": 190,
       "type": "output"
     },
@@ -18250,6 +18540,8 @@
         1407
       ],
       "name": "io_memOut_memWrite",
+      "portName": "io_memOut_memWrite",
+      "portBit": 0,
       "id": 191,
       "type": "output"
     },
@@ -18258,6 +18550,8 @@
         1408
       ],
       "name": "io_memOut_byteEnable",
+      "portName": "io_memOut_byteEnable",
+      "portBit": 0,
       "id": 192,
       "type": "output"
     },
@@ -18266,6 +18560,8 @@
         1409
       ],
       "name": "io_memOut_signExt",
+      "portName": "io_memOut_signExt",
+      "portBit": 0,
       "id": 193,
       "type": "output"
     },
@@ -18274,6 +18570,8 @@
         1410
       ],
       "name": "io_wbOut_regWrite[0]",
+      "portName": "io_wbOut_regWrite",
+      "portBit": 0,
       "id": 194,
       "type": "output"
     },
@@ -18282,6 +18580,8 @@
         1411
       ],
       "name": "io_wbOut_regWrite[1]",
+      "portName": "io_wbOut_regWrite",
+      "portBit": 1,
       "id": 195,
       "type": "output"
     },
@@ -18290,6 +18590,8 @@
         1412
       ],
       "name": "io_wbOut_regWrite[2]",
+      "portName": "io_wbOut_regWrite",
+      "portBit": 2,
       "id": 196,
       "type": "output"
     },
@@ -18298,6 +18600,8 @@
         1413
       ],
       "name": "io_wbOut_regWrite[3]",
+      "portName": "io_wbOut_regWrite",
+      "portBit": 3,
       "id": 197,
       "type": "output"
     },
@@ -18306,6 +18610,8 @@
         337
       ],
       "name": "io_wbOut_regWriteData[0]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 0,
       "id": 198,
       "type": "output"
     },
@@ -18314,6 +18620,8 @@
         415
       ],
       "name": "io_wbOut_regWriteData[1]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 1,
       "id": 199,
       "type": "output"
     },
@@ -18322,6 +18630,8 @@
         481
       ],
       "name": "io_wbOut_regWriteData[2]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 2,
       "id": 200,
       "type": "output"
     },
@@ -18330,6 +18640,8 @@
         537
       ],
       "name": "io_wbOut_regWriteData[3]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 3,
       "id": 201,
       "type": "output"
     },
@@ -18338,6 +18650,8 @@
         589
       ],
       "name": "io_wbOut_regWriteData[4]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 4,
       "id": 202,
       "type": "output"
     },
@@ -18346,6 +18660,8 @@
         639
       ],
       "name": "io_wbOut_regWriteData[5]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 5,
       "id": 203,
       "type": "output"
     },
@@ -18354,6 +18670,8 @@
         692
       ],
       "name": "io_wbOut_regWriteData[6]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 6,
       "id": 204,
       "type": "output"
     },
@@ -18362,6 +18680,8 @@
         743
       ],
       "name": "io_wbOut_regWriteData[7]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 7,
       "id": 205,
       "type": "output"
     },
@@ -18370,6 +18690,8 @@
         786
       ],
       "name": "io_wbOut_regWriteData[8]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 8,
       "id": 206,
       "type": "output"
     },
@@ -18378,6 +18700,8 @@
         828
       ],
       "name": "io_wbOut_regWriteData[9]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 9,
       "id": 207,
       "type": "output"
     },
@@ -18386,6 +18710,8 @@
         871
       ],
       "name": "io_wbOut_regWriteData[10]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 10,
       "id": 208,
       "type": "output"
     },
@@ -18394,6 +18720,8 @@
         912
       ],
       "name": "io_wbOut_regWriteData[11]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 11,
       "id": 209,
       "type": "output"
     },
@@ -18402,6 +18730,8 @@
         954
       ],
       "name": "io_wbOut_regWriteData[12]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 12,
       "id": 210,
       "type": "output"
     },
@@ -18410,6 +18740,8 @@
         996
       ],
       "name": "io_wbOut_regWriteData[13]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 13,
       "id": 211,
       "type": "output"
     },
@@ -18418,6 +18750,8 @@
         1040
       ],
       "name": "io_wbOut_regWriteData[14]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 14,
       "id": 212,
       "type": "output"
     },
@@ -18426,6 +18760,8 @@
         1076
       ],
       "name": "io_wbOut_regWriteData[15]",
+      "portName": "io_wbOut_regWriteData",
+      "portBit": 15,
       "id": 213,
       "type": "output"
     },
@@ -18434,6 +18770,8 @@
         1414
       ],
       "name": "io_wbOut_regWriteEnable",
+      "portName": "io_wbOut_regWriteEnable",
+      "portBit": 0,
       "id": 214,
       "type": "output"
     }
