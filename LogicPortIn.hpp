@@ -15,21 +15,33 @@ public:
         if (output.size() == 0) {
             throw std::runtime_error("Output is not assigned");
         }
+        executable = true;
     }
 
-    void Execute(std::queue<Logic *> *ReadyQueue) {
+    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        if(res != bootsSymDecrypt(value, key)){
+            throw new std::runtime_error("value not matched: INPUT");
+        }
         executed = true;
-        std::cout << "Executed:LogicPortIn:" << id << std::endl;
-        DependencyUpdate(ReadyQueue);
+        ReadyQueue->push(this);
+    }
+    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        executed = true;
+        ReadyQueue->push(this);
     }
 
     bool NoticeInputReady() {
         return executable;
     }
 
-    void Set(int value) {
-        res = value;
-        executable = true;
+    void Set(int val, const TFheGateBootstrappingSecretKeySet* key) {
+        res = val;
+        bootsSymEncrypt(value, val, key);
     }
 
     void AddInput(Logic *logic) {
@@ -40,7 +52,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick() {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
         executed = false;
         ReadyInputCount = 0;
         return executable;

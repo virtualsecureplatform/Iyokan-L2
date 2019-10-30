@@ -22,11 +22,27 @@ public:
         ReadyInputCount = 0;
     }
 
-    void Execute(std::queue<Logic *> *ReadyQueue) {
+    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        bootsANDYN(value, input.at(0)->value, input.at(1)->value, &key->cloud);
+        res = (input.at(0)->res & (~input.at(1)->res)) & 0x1;
+        if(res != bootsSymDecrypt(value, key)){
+            throw new std::runtime_error("value not matched: ANDNOT");
+        }
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        bootsANDYN(value, input.at(0)->value, input.at(1)->value, key);
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
         res = (input.at(0)->res & (~input.at(1)->res)) & 0x1;
         executed = true;
-        std::cout << "Executed:LogicCellANDNOT:" << id << std::endl;
-        DependencyUpdate(ReadyQueue);
+        //std::cout << "Executed:LogicCellANDNOT:" << id << std::endl;
+        ReadyQueue->push(this);
     }
 
     bool NoticeInputReady() {
@@ -48,7 +64,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick() {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
         executable = false;
         executed = false;
         ReadyInputCount = 0;

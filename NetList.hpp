@@ -12,6 +12,10 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include "tbb/concurrent_queue.h"
+
+#include <tfhe/tfhe.h>
+#include <tfhe/tfhe_io.h>
 
 #include "Logic.hpp"
 #include "LogicPortIn.hpp"
@@ -34,6 +38,20 @@ class NetList {
 public:
     NetList(const char *json) {
         JsonFile = std::string(json);
+    }
+
+    void PrepareTFHE(){
+        //generate a keyset
+        const int minimum_lambda = 110;
+        params = new_default_gate_bootstrapping_parameters(minimum_lambda);
+
+        //generate a random key
+        uint32_t seed[] = { 314, 1592, 657 };
+        tfhe_random_generator_setSeed(seed,3);
+        key = new_random_gate_bootstrapping_secret_keyset(params);
+        for (auto logic : Logics) {
+            logic.second->PrepareTFHE(&(key->cloud));
+        }
     }
 
     int ConvertJson() {
@@ -114,16 +132,22 @@ public:
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddOutput(Logics[logic]);
                 }
-                Inputs[portName][portBit] = (LogicPortIn *)Logics[id];
-                std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
+                Inputs[portName][portBit] = (LogicPortIn *) Logics[id];
+                //std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
             } else if (type == "output") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddInput(Logics[logic]);
                 }
-                Outputs[portName][portBit] = (LogicPortOut *)Logics[id];
-                std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
+                Outputs[portName][portBit] = (LogicPortOut *) Logics[id];
+                //std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
             }
+        }
+        for(const auto p : Inputs){
+            std::cout << "Input port: " << p.first << std::endl;
+        }
+        for(const auto p : Outputs){
+            std::cout << "Output Port: " << p.first << std::endl;
         }
         for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
             picojson::object cell = e.get<picojson::object>();
@@ -184,69 +208,67 @@ public:
                 ReadyQueue.push(logic.second);
             }
         }
+        executionCount = 0;
     }
 
     void Execute() {
-        while (ReadyQueue.size() > 0) {
-            ReadyQueue.front()->Execute(&ReadyQueue);
-            ReadyQueue.pop();
-            //std::cout << "ReadQueueSize: " << ReadyQueue.size() << std::endl;
+        Logic *logic;
+        if (ReadyQueue.try_pop(logic)) {
+            logic->Execute(&key->cloud, &ExecutedQueue);
+            //logic->Execute(&ExecutedQueue);
         }
     }
 
+    bool DepencyUpdate(){
+        Logic *logic;
+        while(ExecutedQueue.try_pop(logic)){
+            executionCount++;
+            if (!logic->executed) {
+                throw std::runtime_error("this logic is not executed");
+            }
+            std::printf("Executed:%d/%d\n", executionCount, Logics.size());
+            if(executionCount == Logics.size()){
+                return false;
+            }
+            for (Logic *outlogic : logic->output) {
+                if (outlogic->NoticeInputReady()) {
+                    ReadyQueue.push(outlogic);
+                }
+            }
+        }
+        return true;
+    }
+
     void Tick() {
-        Execute();
+        executionCount = 0;
         for (auto logic : Logics) {
-            if (logic.second->Tick()) {
+            if (logic.second->Tick(&key->cloud)) {
                 ReadyQueue.push(logic.second);
             }
         }
     }
 
-    void Set(int id, int value) {
-        ((LogicPortIn *) Logics[id])->Set(value&0x1);
-    }
-
-    void Set(int msb, int lsb, int value){
-        for(int i=lsb;i<msb+1;i++){
-            ((LogicPortIn *)Logics[i])->Set(value&0x1);
-            value = value >> 1;
-        }
-    }
-
-    void Set(std::string portName, int value){
+    void Set(std::string portName, int value) {
         int length = Inputs[portName].size();
-        if(length == 0){
-            throw std::runtime_error("Unknown input port:"+portName);
+        if (length == 0) {
+            throw std::runtime_error("Unknown input port:" + portName);
         }
-        for(int i=0;i<length;i++){
-            Inputs[portName][i]->Set(value&0x1);
+        for (int i = 0; i < length; i++) {
+            Inputs[portName][i]->Set(value & 0x1, key);
             value = value >> 1;
         }
     }
 
-    int Get(int id) {
-        return ((LogicPortOut *) Logics[id])->Get();
-    }
-
-    int Get(int msb, int lsb){
-        int value = 0;
-        for(int i=msb;i>lsb-1;i--){
-            value = value << 1;
-            value += ((LogicPortOut *)Logics[i])->Get();
-        }
-        return value;
-    }
-
-    int Get(std::string portName){
+    int Get(std::string portName) {
         int length = Outputs[portName].size();
-        if(length == 0){
-            throw std::runtime_error("Unknown output port:"+portName);
+        if (length == 0) {
+            throw std::runtime_error("Unknown output port:" + portName);
         }
         int value = 0;
-        for(int i=length-1;i>-1;i--){
+        for (int i = length - 1; i > -1; i--) {
             value = value << 1;
-            value += Outputs[portName][i]->Get();
+            value += Outputs[portName][i]->Get(key);
+            //value += Outputs[portName][i]->Get();
         }
         return value;
     }
@@ -259,7 +281,7 @@ public:
                 executed_cnt++;
             }
         }
-        std::cout << "Logics: " << cnt << " Executed: " << executed_cnt << std::endl;
+        std::printf("Executed:%d/%d\n", executionCount, Logics.size());
     }
 
     void SetExecutable(int id) {
@@ -267,10 +289,14 @@ public:
     }
 
 private:
-    std::queue<Logic *> ReadyQueue;
+    TFheGateBootstrappingParameterSet *params;
+    TFheGateBootstrappingSecretKeySet *key;
+    int executionCount;
     std::unordered_map<int, Logic *> Logics;
-    std::unordered_map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
-    std::unordered_map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
+    tbb::concurrent_queue<Logic *> ReadyQueue;
+    tbb::concurrent_queue<Logic *> ExecutedQueue;
+    std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
+    std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::string JsonFile;
 };
 

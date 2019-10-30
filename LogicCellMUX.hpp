@@ -22,7 +22,29 @@ public:
         ReadyInputCount = 0;
     }
 
-    void Execute(std::queue<Logic *> *ReadyQueue) {
+    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        bootsMUX(value, input.at(2)->value, input.at(1)->value, input.at(0)->value, &key->cloud);
+        if (input.at(2)->res == 0) {
+            res = input.at(0)->res;
+        } else if (input.at(2)->res == 1) {
+            res = input.at(1)->res;
+        } else {
+            throw std::runtime_error("invalid select signal");
+        }
+        if(res != bootsSymDecrypt(value, key)){
+            throw new std::runtime_error("value not matched: MUX");
+        }
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        bootsMUX(value, input.at(2)->value, input.at(1)->value, input.at(0)->value, key);
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
         if (input.at(2)->res == 0) {
             res = input.at(0)->res;
         } else if (input.at(2)->res == 1) {
@@ -31,8 +53,7 @@ public:
             throw std::runtime_error("invalid select signal");
         }
         executed = true;
-        std::cout << "Executed:LogicCellMUX:" << id << std::endl;
-        DependencyUpdate(ReadyQueue);
+        ReadyQueue->push(this);
     }
 
     bool NoticeInputReady() {
@@ -54,7 +75,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick() {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
         executable = false;
         executed = false;
         ReadyInputCount = 0;

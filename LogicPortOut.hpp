@@ -17,10 +17,21 @@ public:
         }
     }
 
-    void Execute(std::queue<Logic *> *ReadyQueue) {
+    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        if(input.at(0)->res != bootsSymDecrypt(input.at(0)->value, key)){
+            throw new std::runtime_error("value not matched: OUTPUT");
+        }
         executed = true;
-        std::cout << "Executed:LogicPortOut:" << id << std::endl;
-        DependencyUpdate(ReadyQueue);
+        ReadyQueue->push(this);
+    }
+    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        executed = true;
+        ReadyQueue->push(this);
+    }
+
+    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
+        executed = true;
+        ReadyQueue->push(this);
     }
 
     bool NoticeInputReady() {
@@ -28,7 +39,11 @@ public:
         return executable;
     }
 
-    int Get() {
+    int Get(TFheGateBootstrappingSecretKeySet *key) {
+        return bootsSymDecrypt(input.front()->value, key);
+    }
+
+    int Get(){
         return input.front()->res;
     }
 
@@ -45,7 +60,7 @@ public:
 
     }
 
-    bool Tick() {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
         executable = false;
         executed = false;
         ReadyInputCount = 0;
