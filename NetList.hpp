@@ -229,11 +229,11 @@ public:
                 throw std::runtime_error("this logic is not executed");
             }
             if(executionCount%100 == 0){
-                std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
+                printf("Executed:%d/%lu\n", executionCount, Logics.size());
             }
             ExecCounter[logic->Type]++;
             if (executionCount == Logics.size()) {
-                std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
+                printf("Executed:%d/%lu\n", executionCount, Logics.size());
                 return false;
             }
             for (Logic *outlogic : logic->output) {
@@ -290,6 +290,11 @@ public:
         std::printf("Logics : %d\n", logicCount);
     }
 
+    void DebugOutput(){
+       for(auto item : Outputs) {
+          std::cout << item.first << " : "  << Get(item.first) << std::endl;
+       }
+    }
     void SetExecutable(int id) {
         Logics[id]->SetExecutable();
     }
