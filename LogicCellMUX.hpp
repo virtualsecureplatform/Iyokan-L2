@@ -31,7 +31,7 @@ public:
         } else {
             throw std::runtime_error("invalid select signal");
         }
-        if(res != bootsSymDecrypt(value, key)){
+        if (res != bootsSymDecrypt(value, key)) {
             throw new std::runtime_error("value not matched: MUX");
         }
         executed = true;

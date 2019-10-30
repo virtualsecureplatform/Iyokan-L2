@@ -24,7 +24,7 @@ public:
     }
 
     void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-        if(res != bootsSymDecrypt(value, key)){
+        if (res != bootsSymDecrypt(value, key)) {
             throw new std::runtime_error("value not matched: DFFP");
         }
         executed = true;
@@ -58,7 +58,7 @@ public:
 
     bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
         res = input.at(0)->res;
-        bootsCOPY(value, input.at(0)->value ,key);
+        bootsCOPY(value, input.at(0)->value, key);
         executable = true;
         executed = false;
         ReadyInputCount = 0;

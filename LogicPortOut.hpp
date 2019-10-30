@@ -18,12 +18,13 @@ public:
     }
 
     void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-        if(input.at(0)->res != bootsSymDecrypt(input.at(0)->value, key)){
+        if (input.at(0)->res != bootsSymDecrypt(input.at(0)->value, key)) {
             throw new std::runtime_error("value not matched: OUTPUT");
         }
         executed = true;
         ReadyQueue->push(this);
     }
+
     void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
         executed = true;
         ReadyQueue->push(this);
@@ -43,7 +44,7 @@ public:
         return bootsSymDecrypt(input.front()->value, key);
     }
 
-    int Get(){
+    int Get() {
         return input.front()->res;
     }
 

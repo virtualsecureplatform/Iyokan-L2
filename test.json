@@ -1,11 +1,13 @@
 {
-  "cells" : [
+  "cells": [
     {
       "input": {
         "A": 0
       },
       "output": {
-        "Y": [2]
+        "Y": [
+          2
+        ]
       },
       "id": 1,
       "type": "NOT"

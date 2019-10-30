@@ -40,14 +40,14 @@ public:
         JsonFile = std::string(json);
     }
 
-    void PrepareTFHE(){
+    void PrepareTFHE() {
         //generate a keyset
         const int minimum_lambda = 110;
         params = new_default_gate_bootstrapping_parameters(minimum_lambda);
 
         //generate a random key
-        uint32_t seed[] = { 314, 1592, 657 };
-        tfhe_random_generator_setSeed(seed,3);
+        uint32_t seed[] = {314, 1592, 657};
+        tfhe_random_generator_setSeed(seed, 3);
         key = new_random_gate_bootstrapping_secret_keyset(params);
         for (auto logic : Logics) {
             logic.second->PrepareTFHE(&(key->cloud));
@@ -143,10 +143,10 @@ public:
                 //std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
             }
         }
-        for(const auto p : Inputs){
+        for (const auto p : Inputs) {
             std::cout << "Input port: " << p.first << std::endl;
         }
-        for(const auto p : Outputs){
+        for (const auto p : Outputs) {
             std::cout << "Output Port: " << p.first << std::endl;
         }
         for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
@@ -219,15 +219,15 @@ public:
         }
     }
 
-    bool DepencyUpdate(){
+    bool DepencyUpdate() {
         Logic *logic;
-        while(ExecutedQueue.try_pop(logic)){
+        while (ExecutedQueue.try_pop(logic)) {
             executionCount++;
             if (!logic->executed) {
                 throw std::runtime_error("this logic is not executed");
             }
-            std::printf("Executed:%d/%d\n", executionCount, Logics.size());
-            if(executionCount == Logics.size()){
+            std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
+            if (executionCount == Logics.size()) {
                 return false;
             }
             for (Logic *outlogic : logic->output) {
@@ -281,12 +281,14 @@ public:
                 executed_cnt++;
             }
         }
-        std::printf("Executed:%d/%d\n", executionCount, Logics.size());
+        std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
     }
 
     void SetExecutable(int id) {
         Logics[id]->SetExecutable();
     }
+
+    bool execute;
 
 private:
     TFheGateBootstrappingParameterSet *params;

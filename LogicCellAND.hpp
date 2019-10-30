@@ -25,7 +25,7 @@ public:
     void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
         bootsAND(value, input.at(0)->value, input.at(1)->value, &key->cloud);
         res = input.at(0)->res & input.at(1)->res;
-        if(res != bootsSymDecrypt(value, key)){
+        if (res != bootsSymDecrypt(value, key)) {
             throw new std::runtime_error("value not matched: AND");
         }
         executed = true;

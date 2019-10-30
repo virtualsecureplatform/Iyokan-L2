@@ -27,7 +27,7 @@ public:
 
     virtual void PrepareExecution() = 0;
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet* bk) {
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
         res = 0;
         value = new_gate_bootstrapping_ciphertext(bk->params);
         bootsCONSTANT(value, 0, bk);
