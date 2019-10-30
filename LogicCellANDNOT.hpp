@@ -9,7 +9,9 @@
 
 class LogicCellANDNOT : public Logic {
 public:
-    LogicCellANDNOT(int id) : Logic(id) {}
+    LogicCellANDNOT(int id) : Logic(id) {
+        Type = "ANDNOT";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

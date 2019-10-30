@@ -9,7 +9,9 @@
 
 class LogicCellORNOT : public Logic {
 public:
-    LogicCellORNOT(int id) : Logic(id) {}
+    LogicCellORNOT(int id) : Logic(id) {
+        Type = "ORNOT";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

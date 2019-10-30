@@ -9,7 +9,9 @@
 
 class LogicCellNOT : public Logic {
 public:
-    LogicCellNOT(int id) : Logic(id) {}
+    LogicCellNOT(int id) : Logic(id) {
+        Type = "NOT";
+    }
 
     void PrepareExecution() {
         if (input.size() != 1) {

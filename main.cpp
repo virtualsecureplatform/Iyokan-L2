@@ -6,7 +6,7 @@
 #include <tfhe/tfhe.h>
 #include <tfhe/tfhe_io.h>
 
-NetList netList("../ExUnitTest.json");
+NetList netList("../test.json");
 
 void *Execute(void *args) {
     while (netList.execute) {
@@ -29,8 +29,6 @@ void *ExecuteAndManage(void *args) {
 
 int main() {
 
-    netList.ConvertJson();
-    netList.PrepareTFHE();
 
     netList.Set("reset", 0);
     netList.Set("io_in_inA", 28);
@@ -59,7 +57,8 @@ int main() {
 
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
                                       1000.0);
-    printf("execution time %lf[ms]\n", time);
+    printf("Execution time %lf[ms]\n", time);
     std::cout << "Result:" << netList.Get("io_out_res") << std::endl;
+    netList.Stats();
 }
 

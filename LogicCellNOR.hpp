@@ -9,7 +9,9 @@
 
 class LogicCellNOR : public Logic {
 public:
-    LogicCellNOR(int id) : Logic(id) {}
+    LogicCellNOR(int id) : Logic(id) {
+        Type = "NOR";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

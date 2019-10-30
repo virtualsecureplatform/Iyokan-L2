@@ -38,6 +38,8 @@ class NetList {
 public:
     NetList(const char *json) {
         JsonFile = std::string(json);
+        ConvertJson();
+        PrepareTFHE();
     }
 
     void PrepareTFHE() {
@@ -226,8 +228,12 @@ public:
             if (!logic->executed) {
                 throw std::runtime_error("this logic is not executed");
             }
-            std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
+            if(executionCount%100 == 0){
+                std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
+            }
+            ExecCounter[logic->Type]++;
             if (executionCount == Logics.size()) {
+                std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
                 return false;
             }
             for (Logic *outlogic : logic->output) {
@@ -274,14 +280,9 @@ public:
     }
 
     void Stats() {
-        int cnt = Logics.size();
-        int executed_cnt = 0;
-        for (auto logic : Logics) {
-            if (logic.second->executed) {
-                executed_cnt++;
-            }
+        for(auto item : ExecCounter){
+            std::printf("%s : %d\n", item.first.c_str(), item.second);
         }
-        std::printf("Executed:%d/%lu\n", executionCount, Logics.size());
     }
 
     void SetExecutable(int id) {
@@ -299,6 +300,7 @@ private:
     tbb::concurrent_queue<Logic *> ExecutedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
+    std::map<std::string, int> ExecCounter;
     std::string JsonFile;
 };
 

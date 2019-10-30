@@ -9,7 +9,9 @@
 
 class LogicCellMUX : public Logic {
 public:
-    LogicCellMUX(int id) : Logic(id) {}
+    LogicCellMUX(int id) : Logic(id) {
+        Type = "MUX";
+    }
 
     void PrepareExecution() {
         if (input.size() != 3) {

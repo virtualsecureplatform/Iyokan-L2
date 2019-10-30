@@ -9,7 +9,9 @@
 
 class LogicCellXNOR : public Logic {
 public:
-    LogicCellXNOR(int id) : Logic(id) {}
+    LogicCellXNOR(int id) : Logic(id) {
+        Type = "XNOR";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

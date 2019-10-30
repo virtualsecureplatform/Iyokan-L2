@@ -9,7 +9,9 @@
 
 class LogicCellAND : public Logic {
 public:
-    LogicCellAND(int id) : Logic(id) {}
+    LogicCellAND(int id) : Logic(id) {
+        Type = "AND";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

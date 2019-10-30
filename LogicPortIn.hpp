@@ -9,7 +9,9 @@
 
 class LogicPortIn : public Logic {
 public:
-    LogicPortIn(int id) : Logic(id) {}
+    LogicPortIn(int id) : Logic(id) {
+        Type = "INPUT";
+    }
 
     void PrepareExecution() {
         if (output.size() == 0) {

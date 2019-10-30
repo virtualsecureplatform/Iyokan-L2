@@ -9,7 +9,9 @@
 
 class LogicCellNAND : public Logic {
 public:
-    LogicCellNAND(int id) : Logic(id) {}
+    LogicCellNAND(int id) : Logic(id) {
+        Type = "NAND";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

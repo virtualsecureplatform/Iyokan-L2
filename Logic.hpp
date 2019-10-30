@@ -63,6 +63,7 @@ public:
     }
 
     bool executed;
+    std::string Type;
     std::vector<Logic *> output{};
 protected:
     int InputCount;

@@ -9,7 +9,9 @@
 
 class LogicCellOR : public Logic {
 public:
-    LogicCellOR(int id) : Logic(id) {}
+    LogicCellOR(int id) : Logic(id) {
+        Type = "OR";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

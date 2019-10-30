@@ -9,7 +9,9 @@
 
 class LogicCellXOR : public Logic {
 public:
-    LogicCellXOR(int id) : Logic(id) {}
+    LogicCellXOR(int id) : Logic(id) {
+        Type = "XOR";
+    }
 
     void PrepareExecution() {
         if (input.size() != 2) {

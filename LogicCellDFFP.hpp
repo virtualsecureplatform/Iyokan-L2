@@ -9,7 +9,9 @@
 
 class LogicCellDFFP : public Logic {
 public:
-    LogicCellDFFP(int id) : Logic(id) {}
+    LogicCellDFFP(int id) : Logic(id) {
+        Type = "DFFP";
+    }
 
     void PrepareExecution() {
         if (input.size() != 1) {
