@@ -280,9 +280,14 @@ public:
     }
 
     void Stats() {
+        int logicCount = 0;
         for(auto item : ExecCounter){
             std::printf("%s : %d\n", item.first.c_str(), item.second);
+            if(item.first != "INPUT" && item.first != "OUTPUT"){
+                logicCount+=item.second;
+            }
         }
+        std::printf("Logics : %d\n", logicCount);
     }
 
     void SetExecutable(int id) {
