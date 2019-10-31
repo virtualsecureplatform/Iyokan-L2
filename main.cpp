@@ -16,16 +16,11 @@ void *Execute(void *args) {
 }
 
 void *ExecuteAndManage(void *args) {
-    while (netList.DepencyUpdate()) {
-        netList.Execute();
-    }
-    netList.Tick();
-    while (netList.DepencyUpdate()) {
-        netList.Execute();
-    }
-    netList.Tick();
-    while (netList.DepencyUpdate()) {
-        netList.Execute();
+    for(int i=0;i<5;i++){
+        netList.Tick();
+        while (netList.DepencyUpdate()) {
+            netList.Execute();
+        }
     }
     netList.execute = false;
     std::cout << "\n" << std::endl;
@@ -34,15 +29,13 @@ void *ExecuteAndManage(void *args) {
 
 int main() {
 
-
     netList.Set("reset", 0);
-    netList.Set("io_idIn_inst", 0xFF02F5);
-    netList.Set("io_idIn_pc", 0);
-    netList.Set("io_memWbIn_regWrite", 0);
-    netList.Set("io_memWbIn_regWriteData", 0);
-    netList.Set("io_memWbIn_regWriteEnable", 0);
-
+    //netList.Set("io_in_jump", 0);
+    //netList.Set("io_enable", 1);
+    //netList.Set("io_in_romData", 0x0E018835);
+    //netList.Set("io_address", 0);
     netList.PrepareExecution();
+    netList.ClearQueue();
 
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();

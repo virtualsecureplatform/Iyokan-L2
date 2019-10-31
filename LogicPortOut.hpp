@@ -14,8 +14,8 @@ public:
     }
 
     void PrepareExecution() {
-        if (input.size() == 0) {
-            throw std::runtime_error("Input is not assigned");
+        if(input.size() == 0){
+            executable = true;
         }
     }
 
@@ -43,11 +43,19 @@ public:
     }
 
     int Get(TFheGateBootstrappingSecretKeySet *key) {
-        return bootsSymDecrypt(input.front()->value, key);
+        if(input.size() > 0){
+            return bootsSymDecrypt(input.front()->value, key);
+        }else{
+            return 0;
+        }
     }
 
     int Get() {
-        return input.front()->res;
+        if(input.size() > 0){
+            return input.front()->res;
+        }else{
+            return 0;
+        }
     }
 
     void AddInput(Logic *logic) {
@@ -64,7 +72,11 @@ public:
     }
 
     bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
-        executable = false;
+        if(input.size() == 0){
+            executable = true;
+        }else{
+            executable = false;
+        }
         executed = false;
         ReadyInputCount = 0;
         return executable;

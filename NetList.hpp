@@ -254,6 +254,11 @@ public:
         }
     }
 
+    void ClearQueue(){
+        ReadyQueue.clear();
+        ExecutedQueue.clear();
+    }
+
     void Set(std::string portName, int value) {
         int length = Inputs[portName].size();
         if (length == 0) {
