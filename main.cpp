@@ -15,8 +15,18 @@ void *Execute(void *args) {
     return NULL;
 }
 
+void Reset(){
+    netList.Set("reset", 1);
+    netList.Tick();
+    while (netList.DepencyUpdate()) {
+        netList.Execute();
+    }
+    netList.DebugOutput();
+    netList.Set("reset", 0);
+}
 void *ExecuteAndManage(void *args) {
-    for(int i=0;i<5;i++){
+    Reset();
+    for(int i=0;i<60;i++){
         netList.Tick();
         while (netList.DepencyUpdate()) {
             netList.Execute();
@@ -29,11 +39,16 @@ void *ExecuteAndManage(void *args) {
 
 int main() {
 
-    netList.Set("reset", 0);
-    //netList.Set("io_in_jump", 0);
-    //netList.Set("io_enable", 1);
-    //netList.Set("io_in_romData", 0x0E018835);
-    //netList.Set("io_address", 0);
+    netList.SetROM(0, 0x0335036E);
+    netList.SetROM(1, 0x01043500);
+    netList.SetROM(2, 0x06320535);
+    netList.SetROM(3, 0x37438000);
+    netList.SetROM(4, 0x34800A54);
+    netList.SetROM(5, 0xCE05541F);
+    netList.SetROM(6, 0xFE0006FE);
+    netList.SetROM(7, 0xC0FE1EFC);
+    netList.SetROM(8, 0x0E000038);
+    netList.SetROM(9, 0x0);
     netList.PrepareExecution();
     netList.ClearQueue();
 

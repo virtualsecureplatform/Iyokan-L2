@@ -31,6 +31,7 @@
 #include "LogicCellNOR.hpp"
 #include "LogicCellANDNOT.hpp"
 #include "LogicCellMUX.hpp"
+#include "LogicCellROM.hpp"
 
 #include "picojson/picojson.h"
 
@@ -59,7 +60,7 @@ public:
     int ConvertJson() {
         std::ifstream ifs(JsonFile, std::ios::in);
         if (ifs.fail()) {
-            std::cerr << "failed to read test.json" << std::endl;
+            std::cerr << "failed to read test-core2.json" << std::endl;
             return 1;
         }
         const std::string json((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -117,6 +118,8 @@ public:
                 Logics[id] = new LogicCellORNOT(id);
             } else if (type == "MUX") {
                 Logics[id] = new LogicCellMUX(id);
+            } else if (type == "ROM") {
+                Logics[id] = new LogicCellROM(id);
             } else {
                 throw std::runtime_error("Not implemented:" + type);
             }
@@ -196,6 +199,15 @@ public:
                     int bitY = static_cast< int >(y.get<double>());
                     Logics[id]->AddOutput(Logics[bitY]);
                 }
+            } else if (type == "ROM"){
+                picojson::array &Q = output.at("Q").get<picojson::array>();
+                int romAddress = static_cast< int >(cell.at("romAddress").get<double>());
+                int romBit = static_cast< int >(cell.at("romBit").get<double>());
+                for (const auto &q : Q) {
+                    int bitQ = static_cast< int >(q.get<double>());
+                    Logics[id]->AddOutput(Logics[bitQ]);
+                }
+                Rom[romAddress][romBit] = (LogicCellROM *) Logics[id];
             } else {
                 throw std::runtime_error("Not executed");
             }
@@ -216,8 +228,8 @@ public:
     void Execute() {
         Logic *logic;
         if (ReadyQueue.try_pop(logic)) {
-            logic->Execute(&key->cloud, &ExecutedQueue);
-            //logic->Execute(&ExecutedQueue);
+            //logic->Execute(&key->cloud, &ExecutedQueue);
+            logic->Execute(&ExecutedQueue);
         }
     }
 
@@ -270,6 +282,17 @@ public:
         }
     }
 
+    void SetROM(int addr, int value) {
+        int length = Rom[addr].size();
+        if (length == 0) {
+            throw std::runtime_error("Unknown Rom Address:" + addr);
+        }
+        for (int i = 0; i < length; i++) {
+            Rom[addr][i]->Set(value & 0x1, &key->cloud);
+            value = value >> 1;
+        }
+    }
+
     int Get(std::string portName) {
         int length = Outputs[portName].size();
         if (length == 0) {
@@ -278,13 +301,14 @@ public:
         int value = 0;
         for (int i = length - 1; i > -1; i--) {
             value = value << 1;
-            value += Outputs[portName][i]->Get(key);
-            //value += Outputs[portName][i]->Get();
+            //value += Outputs[portName][i]->Get(key);
+            value += Outputs[portName][i]->Get();
         }
         return value;
     }
 
     void Stats() {
+        std::cout << "---Execution Stats---" << std::endl;
         int logicCount = 0;
         for(auto item : ExecCounter){
             std::printf("%s : %d\n", item.first.c_str(), item.second);
@@ -296,6 +320,7 @@ public:
     }
 
     void DebugOutput(){
+        std::cout << "---Debug Output---" << std::endl;
        for(auto item : Outputs) {
           std::cout << item.first << " : "  << Get(item.first) << std::endl;
        }
@@ -315,6 +340,7 @@ private:
     tbb::concurrent_queue<Logic *> ExecutedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
+    std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
     std::map<std::string, int> ExecCounter;
     std::string JsonFile;
 };
