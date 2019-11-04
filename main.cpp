@@ -15,7 +15,7 @@ void *Execute(void *args) {
     return NULL;
 }
 
-void Reset(){
+void Reset() {
     netList.Set("reset", 1);
     netList.Tick();
     while (netList.DepencyUpdate(0, 0)) {
@@ -24,9 +24,10 @@ void Reset(){
     netList.DebugOutput();
     netList.Set("reset", 0);
 }
+
 void *ExecuteAndManage(void *args) {
     Reset();
-    for(int i=0;i<60;i++){
+    for (int i = 0; i < 60; i++) {
         netList.Tick();
         while (netList.DepencyUpdate(i, 59)) {
             netList.Execute();
@@ -57,8 +58,8 @@ int main() {
     netList.execute = true;
     pthread_t threads[64];
     pthread_create(&threads[0], NULL, ExecuteAndManage, NULL);
-    for(int i=0;i<63;i++){
-        pthread_create(&threads[i+1], NULL, Execute, NULL);
+    for (int i = 0; i < 63; i++) {
+        pthread_create(&threads[i + 1], NULL, Execute, NULL);
     }
     pthread_join(threads[0], NULL);
     end = std::chrono::system_clock::now();

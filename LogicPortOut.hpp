@@ -14,7 +14,7 @@ public:
     }
 
     void PrepareExecution() {
-        if(input.size() == 0){
+        if (input.size() == 0) {
             executable = true;
         }
     }
@@ -43,17 +43,17 @@ public:
     }
 
     int Get(TFheGateBootstrappingSecretKeySet *key) {
-        if(input.size() > 0){
+        if (input.size() > 0) {
             return bootsSymDecrypt(input.front()->value, key);
-        }else{
+        } else {
             return 0;
         }
     }
 
     int Get() {
-        if(input.size() > 0){
+        if (input.size() > 0) {
             return input.front()->res;
-        }else{
+        } else {
             return 0;
         }
     }
@@ -72,9 +72,9 @@ public:
     }
 
     bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
-        if(input.size() == 0){
+        if (input.size() == 0) {
             executable = true;
-        }else{
+        } else {
             executable = false;
         }
         executed = false;

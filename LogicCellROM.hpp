@@ -58,10 +58,10 @@ public:
         output.push_back(logic);
     }
 
-    void Set(int val, const TFheGateBootstrappingCloudKeySet *bk){
-        res = val&0x1;
+    void Set(int val, const TFheGateBootstrappingCloudKeySet *bk) {
+        res = val & 0x1;
         value = new_gate_bootstrapping_ciphertext(bk->params);
-        bootsCONSTANT(value, val&0x1, bk);
+        bootsCONSTANT(value, val & 0x1, bk);
     }
 
     bool Tick(const TFheGateBootstrappingCloudKeySet *key) {

@@ -61,7 +61,7 @@ public:
     int ConvertJson() {
         std::ifstream ifs(JsonFile, std::ios::in);
         if (ifs.fail()) {
-            std::cerr << "failed to read test-core2.json" << std::endl;
+            std::cerr << "failed to read " << JsonFile << std::endl;
             return 1;
         }
         const std::string json((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -197,7 +197,7 @@ public:
                     int bitY = static_cast< int >(y.get<double>());
                     Logics[id]->AddOutput(Logics[bitY]);
                 }
-            } else if (type == "ROM"){
+            } else if (type == "ROM") {
                 picojson::array &Q = output.at("Q").get<picojson::array>();
                 int romAddress = static_cast< int >(cell.at("romAddress").get<double>());
                 int romBit = static_cast< int >(cell.at("romBit").get<double>());
@@ -238,7 +238,7 @@ public:
             if (!logic->executed) {
                 throw std::runtime_error("this logic is not executed");
             }
-            if(executionCount%100 == 0){
+            if (executionCount % 100 == 0) {
                 printf("Executed:%d/%lu %d/%d\n", executionCount, Logics.size(), nowCnt, maxCnt);
             }
             ExecCounter[logic->Type]++;
@@ -264,7 +264,7 @@ public:
         }
     }
 
-    void ClearQueue(){
+    void ClearQueue() {
         ReadyQueue.clear();
         ExecutedQueue.clear();
     }
@@ -308,21 +308,22 @@ public:
     void Stats() {
         std::cout << "---Execution Stats---" << std::endl;
         int logicCount = 0;
-        for(auto item : ExecCounter){
+        for (auto item : ExecCounter) {
             std::printf("%s : %d\n", item.first.c_str(), item.second);
-            if(item.first != "INPUT" && item.first != "OUTPUT"){
-                logicCount+=item.second;
+            if (item.first != "INPUT" && item.first != "OUTPUT" && item.first != "ROM" && item.first != "DFFP") {
+                logicCount += item.second;
             }
         }
         std::printf("Logics : %d\n", logicCount);
     }
 
-    void DebugOutput(){
+    void DebugOutput() {
         std::cout << "---Debug Output---" << std::endl;
-       for(auto item : Outputs) {
-          std::cout << item.first << " : "  << Get(item.first) << std::endl;
-       }
+        for (auto item : Outputs) {
+            std::cout << item.first << " : " << Get(item.first) << std::endl;
+        }
     }
+
     void SetExecutable(int id) {
         Logics[id]->SetExecutable();
     }
@@ -331,16 +332,17 @@ public:
 
     class compare_f {
     public:
-        bool operator()(const Logic* u, const Logic* v) const {
+        bool operator()(const Logic *u, const Logic *v) const {
             return u->priority < v->priority;
         }
     };
+
 private:
     TFheGateBootstrappingParameterSet *params;
     TFheGateBootstrappingSecretKeySet *key;
     int executionCount;
     std::unordered_map<int, Logic *> Logics;
-    tbb::concurrent_priority_queue<Logic*, compare_f> ReadyQueue;
+    tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
     tbb::concurrent_queue<Logic *> ExecutedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
