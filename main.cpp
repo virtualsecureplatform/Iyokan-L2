@@ -6,7 +6,7 @@
 #include <tfhe/tfhe.h>
 #include <tfhe/tfhe_io.h>
 
-NetList netList("../test.json");
+NetList netList("../test-pri.json");
 
 void *Execute(void *args) {
     while (netList.execute) {
@@ -18,7 +18,7 @@ void *Execute(void *args) {
 void Reset(){
     netList.Set("reset", 1);
     netList.Tick();
-    while (netList.DepencyUpdate()) {
+    while (netList.DepencyUpdate(0, 0)) {
         netList.Execute();
     }
     netList.DebugOutput();
@@ -28,7 +28,7 @@ void *ExecuteAndManage(void *args) {
     Reset();
     for(int i=0;i<60;i++){
         netList.Tick();
-        while (netList.DepencyUpdate()) {
+        while (netList.DepencyUpdate(i, 59)) {
             netList.Execute();
         }
     }
@@ -55,16 +55,12 @@ int main() {
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();
     netList.execute = true;
-    pthread_t thread_1, thread_2, thread_3, thread_4, thread_5, thread_6, thread_7, thread_8;
-    pthread_create(&thread_1, NULL, ExecuteAndManage, NULL);
-    pthread_create(&thread_2, NULL, Execute, NULL);
-    pthread_create(&thread_3, NULL, Execute, NULL);
-    pthread_create(&thread_4, NULL, Execute, NULL);
-    pthread_create(&thread_5, NULL, Execute, NULL);
-    pthread_create(&thread_6, NULL, Execute, NULL);
-    pthread_create(&thread_7, NULL, Execute, NULL);
-    pthread_create(&thread_8, NULL, Execute, NULL);
-    pthread_join(thread_1, NULL);
+    pthread_t threads[64];
+    pthread_create(&threads[0], NULL, ExecuteAndManage, NULL);
+    for(int i=0;i<63;i++){
+        pthread_create(&threads[i+1], NULL, Execute, NULL);
+    }
+    pthread_join(threads[0], NULL);
     end = std::chrono::system_clock::now();
 
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /

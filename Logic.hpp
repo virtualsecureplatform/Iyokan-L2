@@ -17,6 +17,7 @@ public:
     int id;
     bool executable;
     int res;
+    int priority;
     LweSample *value;
 
     Logic(int _id) {

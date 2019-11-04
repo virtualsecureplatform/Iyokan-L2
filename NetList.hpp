@@ -13,6 +13,7 @@
 #include <string>
 #include <iterator>
 #include "tbb/concurrent_queue.h"
+#include "tbb/concurrent_priority_queue.h"
 
 #include <tfhe/tfhe.h>
 #include <tfhe/tfhe_io.h>
@@ -79,24 +80,20 @@ public:
             picojson::object port = e.get<picojson::object>();
             std::string type = port.at("type").get<std::string>();
             int id = static_cast< int >(port.at("id").get<double>());
-            //std::cout << type << std::endl;
-            //std::cout << id << std::endl;
+            int priority = static_cast< int >(port.at("priority").get<double>());
             if (type == "input") {
-                //std::cout << "INSERT input" << std::endl;
                 Logics[id] = new LogicPortIn(id);
             } else if (type == "output") {
-                //std::cout << "INSERT output" << std::endl;
                 Logics[id] = new LogicPortOut(id);
             }
+            Logics[id]->priority = priority;
         }
         for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
             picojson::object cell = e.get<picojson::object>();
             std::string type = cell.at("type").get<std::string>();
             int id = static_cast< int >(cell.at("id").get<double>());
-            //std::cout << type << std::endl;
-            //std::cout << id << std::endl;
+            int priority = static_cast< int >(cell.at("priority").get<double>());
             if (type == "AND") {
-                //std::cout << "INSERT AND" << std::endl;
                 Logics[id] = new LogicCellAND(id);
             } else if (type == "NAND") {
                 Logics[id] = new LogicCellNAND(id);
@@ -123,6 +120,7 @@ public:
             } else {
                 throw std::runtime_error("Not implemented:" + type);
             }
+            Logics[id]->priority = priority;
         }
         for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
             picojson::object port = e.get<picojson::object>();
@@ -228,12 +226,12 @@ public:
     void Execute() {
         Logic *logic;
         if (ReadyQueue.try_pop(logic)) {
-            //logic->Execute(&key->cloud, &ExecutedQueue);
-            logic->Execute(&ExecutedQueue);
+            logic->Execute(&key->cloud, &ExecutedQueue);
+            //logic->Execute(&ExecutedQueue);
         }
     }
 
-    bool DepencyUpdate() {
+    bool DepencyUpdate(int nowCnt, int maxCnt) {
         Logic *logic;
         while (ExecutedQueue.try_pop(logic)) {
             executionCount++;
@@ -241,11 +239,11 @@ public:
                 throw std::runtime_error("this logic is not executed");
             }
             if(executionCount%100 == 0){
-                printf("Executed:%d/%lu\n", executionCount, Logics.size());
+                printf("Executed:%d/%lu %d/%d\n", executionCount, Logics.size(), nowCnt, maxCnt);
             }
             ExecCounter[logic->Type]++;
             if (executionCount == Logics.size()) {
-                printf("Executed:%d/%lu\n", executionCount, Logics.size());
+                printf("Executed:%d/%lu %d/%d\n", executionCount, Logics.size(), nowCnt, maxCnt);
                 return false;
             }
             for (Logic *outlogic : logic->output) {
@@ -301,8 +299,8 @@ public:
         int value = 0;
         for (int i = length - 1; i > -1; i--) {
             value = value << 1;
-            //value += Outputs[portName][i]->Get(key);
-            value += Outputs[portName][i]->Get();
+            value += Outputs[portName][i]->Get(key);
+            //value += Outputs[portName][i]->Get();
         }
         return value;
     }
@@ -331,12 +329,18 @@ public:
 
     bool execute;
 
+    class compare_f {
+    public:
+        bool operator()(const Logic* u, const Logic* v) const {
+            return u->priority < v->priority;
+        }
+    };
 private:
     TFheGateBootstrappingParameterSet *params;
     TFheGateBootstrappingSecretKeySet *key;
     int executionCount;
     std::unordered_map<int, Logic *> Logics;
-    tbb::concurrent_queue<Logic *> ReadyQueue;
+    tbb::concurrent_priority_queue<Logic*, compare_f> ReadyQueue;
     tbb::concurrent_queue<Logic *> ExecutedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
