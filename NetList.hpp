@@ -38,7 +38,8 @@
 
 class NetList {
 public:
-    NetList(const char *json) {
+    NetList(const char *json, bool v) {
+        verbose = v;
         JsonFile = std::string(json);
         ConvertJson();
         PrepareTFHE();
@@ -136,21 +137,21 @@ public:
                     Logics[id]->AddOutput(Logics[logic]);
                 }
                 Inputs[portName][portBit] = (LogicPortIn *) Logics[id];
-                //std::cout << name << "(LogicID " << id << ") has to be set value" << std::endl;
             } else if (type == "output") {
                 for (const auto &b : bits) {
                     int logic = static_cast< int >(b.get<double>());
                     Logics[id]->AddInput(Logics[logic]);
                 }
                 Outputs[portName][portBit] = (LogicPortOut *) Logics[id];
-                //std::cout << name << "(LogicID " << id << ") has output value" << std::endl;
             }
         }
-        for (const auto p : Inputs) {
-            std::cout << "Input port: " << p.first << std::endl;
-        }
-        for (const auto p : Outputs) {
-            std::cout << "Output Port: " << p.first << std::endl;
+        if(verbose) {
+            for (const auto p : Inputs) {
+                std::cout << "Input port: " << p.first << std::endl;
+            }
+            for (const auto p : Outputs) {
+                std::cout << "Output Port: " << p.first << std::endl;
+            }
         }
         for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
             picojson::object cell = e.get<picojson::object>();
@@ -213,61 +214,6 @@ public:
         return 0;
     }
 
-    void PrepareExecution() {
-        for (auto logic : Logics) {
-            logic.second->PrepareExecution();
-            if (logic.second->executable) {
-                ReadyQueue.push(logic.second);
-            }
-        }
-        executionCount = 0;
-    }
-
-    void Execute() {
-        Logic *logic;
-        if (ReadyQueue.try_pop(logic)) {
-            logic->Execute(&key->cloud, &ExecutedQueue);
-            //logic->Execute(&ExecutedQueue);
-        }
-    }
-
-    bool DepencyUpdate(int nowCnt, int maxCnt) {
-        Logic *logic;
-        while (ExecutedQueue.try_pop(logic)) {
-            executionCount++;
-            if (!logic->executed) {
-                throw std::runtime_error("this logic is not executed");
-            }
-            if (executionCount % 100 == 0) {
-                printf("Executed:%d/%lu %d/%d\n", executionCount, Logics.size(), nowCnt, maxCnt);
-            }
-            ExecCounter[logic->Type]++;
-            if (executionCount == Logics.size()) {
-                printf("Executed:%d/%lu %d/%d\n", executionCount, Logics.size(), nowCnt, maxCnt);
-                return false;
-            }
-            for (Logic *outlogic : logic->output) {
-                if (outlogic->NoticeInputReady()) {
-                    ReadyQueue.push(outlogic);
-                }
-            }
-        }
-        return true;
-    }
-
-    void Tick() {
-        executionCount = 0;
-        for (auto logic : Logics) {
-            if (logic.second->Tick(&key->cloud)) {
-                ReadyQueue.push(logic.second);
-            }
-        }
-    }
-
-    void ClearQueue() {
-        ReadyQueue.clear();
-        ExecutedQueue.clear();
-    }
 
     void Set(std::string portName, int value) {
         int length = Inputs[portName].size();
@@ -299,22 +245,10 @@ public:
         int value = 0;
         for (int i = length - 1; i > -1; i--) {
             value = value << 1;
-            value += Outputs[portName][i]->Get(key);
-            //value += Outputs[portName][i]->Get();
+            //value += Outputs[portName][i]->Get(key);
+            value += Outputs[portName][i]->Get();
         }
         return value;
-    }
-
-    void Stats() {
-        std::cout << "---Execution Stats---" << std::endl;
-        int logicCount = 0;
-        for (auto item : ExecCounter) {
-            std::printf("%s : %d\n", item.first.c_str(), item.second);
-            if (item.first != "INPUT" && item.first != "OUTPUT" && item.first != "ROM" && item.first != "DFFP") {
-                logicCount += item.second;
-            }
-        }
-        std::printf("Logics : %d\n", logicCount);
     }
 
     void DebugOutput() {
@@ -330,24 +264,15 @@ public:
 
     bool execute;
 
-    class compare_f {
-    public:
-        bool operator()(const Logic *u, const Logic *v) const {
-            return u->priority < v->priority;
-        }
-    };
 
-private:
-    TFheGateBootstrappingParameterSet *params;
     TFheGateBootstrappingSecretKeySet *key;
-    int executionCount;
     std::unordered_map<int, Logic *> Logics;
-    tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
-    tbb::concurrent_queue<Logic *> ExecutedQueue;
+private:
+    bool verbose = false;
+    TFheGateBootstrappingParameterSet *params;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
-    std::map<std::string, int> ExecCounter;
     std::string JsonFile;
 };
 
