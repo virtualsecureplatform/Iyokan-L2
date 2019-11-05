@@ -5,9 +5,9 @@
 #ifndef IYOKAN_L2_EXECMANAGER_HPP
 #define IYOKAN_L2_EXECMANAGER_HPP
 #include <vector>
+#include <thread>
 #include "Logic.hpp"
 #include "Utils.hpp"
-#include "ExecWorker.hpp"
 #include "tbb/concurrent_priority_queue.h"
 #include "tbb/concurrent_queue.h"
 #include "tfhe/tfhe.h"
@@ -20,16 +20,13 @@ public:
         key = cloudKey;
         workerNum = num;
         verbose = v;
-        for(int i=0;i<num;i++){
-            workers.emplace_back(ExecWorker(key));
-        }
     }
 
     void Prepare(){
         PrepareExecution();
-        ClearQueues();
-        for(int i=0;i<workers.size();i++){
-            workers[i].Start();
+        ClearQueue();
+        for(int i=0;i<workerNum;i++){
+            threads.emplace_back(std::thread(Worker, this));
         }
         Reset();
     }
@@ -41,7 +38,7 @@ public:
                 usleep(100);
             }
         }
-        TerminateWorker();
+        TerminateWorkers();
     }
 
     void Stats() {
@@ -55,28 +52,40 @@ public:
         }
         std::printf("Logics : %d\n", logicCount);
     }
+
+    int GetExecutedLogicNum() {
+        int logicCount = 0;
+        for (auto item : ExecCounter) {
+            if (item.first != "INPUT" && item.first != "OUTPUT" && item.first != "ROM" && item.first != "DFFP") {
+                logicCount += item.second;
+            }
+        }
+        return logicCount;
+    }
+    bool terminate = false;
 private:
 
     int executionCount = 0;
     NetList *netList;
     const TFheGateBootstrappingCloudKeySet *key;
-    std::vector<ExecWorker> workers;
+    tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
+    tbb::concurrent_queue<Logic *> ExecutedQueue;
 
-    int readyQueueRoundRobinCouneter = 0;
     int workerNum = 0;
     int step = 0;
     bool verbose = true;
     std::map<std::string, int> ExecCounter;
+    std::vector<std::thread> threads;
 
-    void AddReadyQueue(Logic *logic){
-        workers[readyQueueRoundRobinCouneter].AddReadyQueue(logic);
-        readyQueueRoundRobinCouneter = (readyQueueRoundRobinCouneter+1)%workerNum;
+    void ClearQueue(){
+        ReadyQueue.clear();
+        ExecutedQueue.clear();
     }
 
     bool DepencyUpdate(int nowCnt, int maxCnt) {
         Logic *logic;
         for(int i=0;i<workerNum;i++) {
-            while (workers[i].GetExecutedQueue(logic)) {
+            while (ExecutedQueue.try_pop(logic)) {
                 executionCount++;
                 if (!logic->executed) {
                     throw std::runtime_error("this logic is not executed");
@@ -93,7 +102,7 @@ private:
                 }
                 for (Logic *outlogic : logic->output) {
                     if (outlogic->NoticeInputReady()) {
-                        AddReadyQueue(outlogic);
+                        ReadyQueue.push(outlogic);
                     }
                 }
             }
@@ -112,30 +121,37 @@ private:
         for (auto logic : netList->Logics) {
             logic.second->PrepareExecution();
             if (logic.second->executable) {
-                AddReadyQueue(logic.second);
+                ReadyQueue.push(logic.second);
             }
         }
         executionCount = 0;
-    }
-
-    void ClearQueues(){
-        for(int i=0;i<workers.size();i++){
-            workers[i].ClearQueue();
-        }
     }
 
     void Tick() {
         executionCount = 0;
         for (auto logic : netList->Logics) {
             if (logic.second->Tick(key)) {
-                AddReadyQueue(logic.second);
+                ReadyQueue.push(logic.second);
             }
         }
     }
 
-    void TerminateWorker(){
-        for(int i=0;i<workers.size();i++){
-            workers[i].Terminate();
+    void TerminateWorkers(){
+        terminate = true;
+        for(int i=0;i<threads.size();i++){
+            threads[i].detach();
+        }
+    }
+
+    static void Worker(ExecManager *worker){
+        while(!worker->terminate){
+            Logic *logic;
+            if (worker->ReadyQueue.try_pop(logic)) {
+                //logic->Execute(worker->key, &worker->ExecutedQueue);
+                logic->Execute(&worker->ExecutedQueue);
+            }else{
+                usleep(100);
+            }
         }
     }
 };

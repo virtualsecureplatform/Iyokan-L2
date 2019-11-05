@@ -12,30 +12,32 @@ int main(int argc, char* argv[]) {
 
     int opt;
     opterr = 0;
-    bool debugMode = false;
+    bool perfMode = false;
+    bool verbose = false;
     int execCycle = 60;
     int threadNum = 4;
-    while((opt = getopt(argc, argv, "dct:")) != -1){
+    while((opt = getopt(argc, argv, "vpc:t:")) != -1){
         switch(opt){
-            case 'd':
-                debugMode = true;
+            case 'v':
+                verbose = true;
+                break;
+            case 'p':
+                perfMode = true;
                 break;
             case 'c':
-                execCycle = atoi(argv[optind]);
-                optind++;
+                execCycle = atoi(optarg);
                 break;
             case 't':
-                threadNum = atoi(argv[optind]);
-                optind++;
+                threadNum = atoi(optarg);
                 break;
             default:
-                std::cout << "Usage: [-d] [-c cycle] [-t thread_num]" << std::endl;
+                std::cout << "Usage: [-d] [-v] [-c cycle] [-t thread_num]" << std::endl;
                 exit(1);
                 break;
         }
     }
-    NetList netList("../test.json", false);
-    ExecManager manager(&netList, threadNum, execCycle, &netList.key->cloud, debugMode);
+    NetList netList("../test.json", verbose);
+    ExecManager manager(&netList, threadNum, execCycle, &netList.key->cloud, verbose);
 
     netList.SetROM(0, 0x0E018835);
     netList.SetROM(1, 0x0);
@@ -50,7 +52,7 @@ int main(int argc, char* argv[]) {
     netList.SetROM(7, 0xC0FE1EFC);
     netList.SetROM(8, 0x0E000038);
     netList.SetROM(9, 0x0);
-    */
+     */
 
     manager.Prepare();
     std::chrono::system_clock::time_point start, end;
@@ -58,10 +60,15 @@ int main(int argc, char* argv[]) {
     manager.Start();
     end = std::chrono::system_clock::now();
 
+
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
                                       1000.0);
-    printf("Execution time %lf[ms]\n", time);
-    netList.DebugOutput();
-    manager.Stats();
+    if(perfMode){
+        printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
+    }else{
+        printf("Execution time %lf[ms]\n", time);
+        netList.DebugOutput();
+        manager.Stats();
+    }
 }
 
