@@ -14,9 +14,11 @@ public:
     }
 
     void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-        res = 0;
-        value = new_gate_bootstrapping_ciphertext(bk->params);
-        bootsCONSTANT(value, 0, bk);
+        if(!created){
+            res = 0;
+            value = new_gate_bootstrapping_ciphertext(bk->params);
+            bootsCONSTANT(value, 0, bk);
+        }
     }
     void PrepareExecution() {
         if (output.size() == 0) {
@@ -49,7 +51,9 @@ public:
 
     void Set(int val, const TFheGateBootstrappingSecretKeySet *key) {
         res = val;
+        value = new_gate_bootstrapping_ciphertext(key->params);
         bootsSymEncrypt(value, val, key);
+        created = true;
     }
 
     void AddInput(Logic *logic) {
@@ -65,6 +69,8 @@ public:
         ReadyInputCount = 0;
         return executable;
     }
+private:
+    bool created = false;
 };
 
 #endif //IYOKAN_L2_LOGICPORTIN_HPP

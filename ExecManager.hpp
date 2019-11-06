@@ -40,6 +40,7 @@ public:
                 usleep(100);
             }
         }
+        Tick(false);
         TerminateWorkers();
     }
 
