@@ -12,6 +12,12 @@ public:
     LogicCellROM(int id) : Logic(id) {
         Type = "ROM";
     }
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        if(!created){
+            value = new_gate_bootstrapping_ciphertext(bk->params);
+            bootsCONSTANT(value, 0, bk);
+        }
+    }
 
     void PrepareExecution() {
         if (input.size() != 0) {
@@ -62,14 +68,17 @@ public:
         res = val & 0x1;
         value = new_gate_bootstrapping_ciphertext(bk->params);
         bootsCONSTANT(value, val & 0x1, bk);
+        created = true;
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         executable = true;
         executed = false;
         ReadyInputCount = 0;
         return executable;
     }
+private:
+    bool created = false;
 };
 
 #endif //IYOKAN_L2_LOGICCELLROM_HPP

@@ -33,6 +33,7 @@
 #include "LogicCellANDNOT.hpp"
 #include "LogicCellMUX.hpp"
 #include "LogicCellROM.hpp"
+#include "LogicCellRAM.hpp"
 
 #include "picojson/picojson.h"
 
@@ -118,6 +119,8 @@ public:
                 Logics[id] = new LogicCellMUX(id);
             } else if (type == "ROM") {
                 Logics[id] = new LogicCellROM(id);
+            } else if (type == "RAM") {
+                Logics[id] = new LogicCellRAM(id);
             } else {
                 throw std::runtime_error("Not implemented:" + type);
             }
@@ -145,7 +148,7 @@ public:
                 Outputs[portName][portBit] = (LogicPortOut *) Logics[id];
             }
         }
-        if(verbose) {
+        if (verbose) {
             for (const auto p : Inputs) {
                 std::cout << "Input port: " << p.first << std::endl;
             }
@@ -207,6 +210,17 @@ public:
                     Logics[id]->AddOutput(Logics[bitQ]);
                 }
                 Rom[romAddress][romBit] = (LogicCellROM *) Logics[id];
+            } else if (type == "RAM") {
+                int ramAddress = static_cast< int >(cell.at("ramAddress").get<double>());
+                int ramBit = static_cast< int >(cell.at("ramBit").get<double>());
+                int D = static_cast< int >(input.at("D").get<double>());
+                picojson::array &Q = output.at("Q").get<picojson::array>();
+                Logics[id]->AddInput(Logics[D]);
+                for (const auto &q : Q) {
+                    int bitQ = static_cast< int >(q.get<double>());
+                    Logics[id]->AddOutput(Logics[bitQ]);
+                }
+                Ram[ramAddress][ramBit] = (LogicCellRAM *) Logics[id];
             } else {
                 throw std::runtime_error("Not executed");
             }
@@ -236,6 +250,16 @@ public:
             value = value >> 1;
         }
     }
+    void SetRAM(int addr, int value) {
+        int length = Ram[addr].size();
+        if (length == 0) {
+            throw std::runtime_error("Unknown Ram Address:" + addr);
+        }
+        for (int i = 0; i < length; i++) {
+            Ram[addr][i]->Set(value & 0x1, &key->cloud);
+            value = value >> 1;
+        }
+    }
 
     int Get(std::string portName) {
         int length = Outputs[portName].size();
@@ -251,6 +275,20 @@ public:
         return value;
     }
 
+    int GetRAM(int addr) {
+        int length = Ram[addr].size();
+        if (length == 0) {
+            throw std::runtime_error("Unknown Ram Address:" + addr);
+        }
+        int value = 0;
+        for (int i = length - 1; i > -1; i--) {
+            value = value << 1;
+            //value += Outputs[portName][i]->Get(key);
+            value += Ram[addr][i]->Get();
+        }
+        return value;
+    }
+
     void DebugOutput() {
         std::cout << "---Debug Output---" << std::endl;
         for (auto item : Outputs) {
@@ -258,6 +296,11 @@ public:
         }
     }
 
+    void DumpRAM(){
+        for(auto item : Ram){
+            std::printf("RAM[%d] 0x%02X\n", item.first, GetRAM(item.first));
+        }
+    }
     void SetExecutable(int id) {
         Logics[id]->SetExecutable();
     }
@@ -273,6 +316,7 @@ private:
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
+    std::unordered_map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
     std::string JsonFile;
 };
 

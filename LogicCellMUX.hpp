@@ -12,6 +12,11 @@ public:
     LogicCellMUX(int id) : Logic(id) {
         Type = "MUX";
     }
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        res = 0;
+        value = new_gate_bootstrapping_ciphertext(bk->params);
+        bootsCONSTANT(value, 0, bk);
+    }
 
     void PrepareExecution() {
         if (input.size() != 3) {
@@ -77,7 +82,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         executable = false;
         executed = false;
         ReadyInputCount = 0;

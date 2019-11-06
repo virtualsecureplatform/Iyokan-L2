@@ -13,6 +13,11 @@ public:
         Type = "ANDNOT";
     }
 
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        res = 0;
+        value = new_gate_bootstrapping_ciphertext(bk->params);
+        bootsCONSTANT(value, 0, bk);
+    }
     void PrepareExecution() {
         if (input.size() != 2) {
             throw std::runtime_error("Input is not assigned ANDNOT");
@@ -66,7 +71,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         executable = false;
         executed = false;
         ReadyInputCount = 0;

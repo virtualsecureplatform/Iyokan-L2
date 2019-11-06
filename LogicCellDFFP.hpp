@@ -13,6 +13,11 @@ public:
         Type = "DFFP";
     }
 
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        res = 0;
+        value = new_gate_bootstrapping_ciphertext(bk->params);
+        bootsCONSTANT(value, 0, bk);
+    }
     void PrepareExecution() {
         if (input.size() != 1) {
             throw std::runtime_error("Input is not assigned");
@@ -58,7 +63,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         res = input.at(0)->res;
         bootsCOPY(value, input.at(0)->value, key);
         executable = true;

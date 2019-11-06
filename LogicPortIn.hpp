@@ -13,6 +13,11 @@ public:
         Type = "INPUT";
     }
 
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        res = 0;
+        value = new_gate_bootstrapping_ciphertext(bk->params);
+        bootsCONSTANT(value, 0, bk);
+    }
     void PrepareExecution() {
         if (output.size() == 0) {
             throw std::runtime_error("Output is not assigned");
@@ -55,7 +60,7 @@ public:
         output.push_back(logic);
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         executed = false;
         ReadyInputCount = 0;
         return executable;

@@ -8,16 +8,16 @@
 #include <tfhe/tfhe_io.h>
 #include "ExecManager.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
     int opt;
     opterr = 0;
     bool perfMode = false;
-    bool verbose = false;
+    bool verbose = true;
     int execCycle = 60;
     int threadNum = 4;
-    while((opt = getopt(argc, argv, "vpc:t:")) != -1){
-        switch(opt){
+    while ((opt = getopt(argc, argv, "vpc:t:")) != -1) {
+        switch (opt) {
             case 'v':
                 verbose = true;
                 break;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
                 threadNum = atoi(optarg);
                 break;
             default:
-                std::cout << "Usage: [-d] [-v] [-c cycle] [-t thread_num]" << std::endl;
+                std::cout << "Usage: [-p] [-v] [-c cycle] [-t thread_num]" << std::endl;
                 exit(1);
                 break;
         }
@@ -39,9 +39,10 @@ int main(int argc, char* argv[]) {
     NetList netList("../test.json", verbose);
     ExecManager manager(&netList, threadNum, execCycle, &netList.key->cloud, verbose);
 
+    /*
     netList.SetROM(0, 0x0E018835);
     netList.SetROM(1, 0x0);
-    /*
+     */
     netList.SetROM(0, 0x0335036E);
     netList.SetROM(1, 0x01043500);
     netList.SetROM(2, 0x06320535);
@@ -52,8 +53,13 @@ int main(int argc, char* argv[]) {
     netList.SetROM(7, 0xC0FE1EFC);
     netList.SetROM(8, 0x0E000038);
     netList.SetROM(9, 0x0);
-     */
 
+    /*
+    netList.SetRAM(0, 1);
+    netList.SetRAM(1, 2);
+    netList.SetRAM(2, 3);
+    netList.SetRAM(3, 4);
+     */
     manager.Prepare();
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();
@@ -63,11 +69,12 @@ int main(int argc, char* argv[]) {
 
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
                                       1000.0);
-    if(perfMode){
+    if (perfMode) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
-    }else{
+    } else {
         printf("Execution time %lf[ms]\n", time);
         netList.DebugOutput();
+        netList.DumpRAM();
         manager.Stats();
     }
 }

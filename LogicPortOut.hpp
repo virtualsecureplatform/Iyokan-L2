@@ -13,6 +13,11 @@ public:
         Type = "OUTPUT";
     }
 
+    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
+        res = 0;
+        value = new_gate_bootstrapping_ciphertext(bk->params);
+        bootsCONSTANT(value, 0, bk);
+    }
     void PrepareExecution() {
         if (input.size() == 0) {
             executable = true;
@@ -71,7 +76,7 @@ public:
 
     }
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key) {
+    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
         if (input.size() == 0) {
             executable = true;
         } else {

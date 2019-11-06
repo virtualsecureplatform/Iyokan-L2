@@ -4,6 +4,7 @@
 
 #ifndef IYOKAN_L2_EXECMANAGER_HPP
 #define IYOKAN_L2_EXECMANAGER_HPP
+
 #include <vector>
 #include <thread>
 #include "Logic.hpp"
@@ -12,9 +13,10 @@
 #include "tbb/concurrent_queue.h"
 #include "tfhe/tfhe.h"
 #include "tfhe/tfhe_io.h"
-class ExecManager{
+
+class ExecManager {
 public:
-    ExecManager(NetList *_netList, int num, int _step, const TFheGateBootstrappingCloudKeySet *cloudKey, bool v){
+    ExecManager(NetList *_netList, int num, int _step, const TFheGateBootstrappingCloudKeySet *cloudKey, bool v) {
         netList = _netList;
         step = _step;
         key = cloudKey;
@@ -22,19 +24,19 @@ public:
         verbose = v;
     }
 
-    void Prepare(){
+    void Prepare() {
         PrepareExecution();
         ClearQueue();
-        for(int i=0;i<workerNum;i++){
+        for (int i = 0; i < workerNum; i++) {
             threads.emplace_back(std::thread(Worker, this));
         }
         Reset();
     }
 
-    void Start(){
-        for(int i=0;i<step;i++){
-            Tick();
-            while(DepencyUpdate(i+1,step)){
+    void Start() {
+        for (int i = 0; i < step; i++) {
+            Tick(false);
+            while (DepencyUpdate(i + 1, step)) {
                 usleep(100);
             }
         }
@@ -62,6 +64,7 @@ public:
         }
         return logicCount;
     }
+
     bool terminate = false;
 private:
 
@@ -77,14 +80,14 @@ private:
     std::map<std::string, int> ExecCounter;
     std::vector<std::thread> threads;
 
-    void ClearQueue(){
+    void ClearQueue() {
         ReadyQueue.clear();
         ExecutedQueue.clear();
     }
 
     bool DepencyUpdate(int nowCnt, int maxCnt) {
         Logic *logic;
-        for(int i=0;i<workerNum;i++) {
+        for (int i = 0; i < workerNum; i++) {
             while (ExecutedQueue.try_pop(logic)) {
                 executionCount++;
                 if (!logic->executed) {
@@ -95,7 +98,7 @@ private:
                 }
                 ExecCounter[logic->Type]++;
                 if (executionCount == netList->Logics.size()) {
-                    if(verbose){
+                    if (verbose) {
                         printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
                     }
                     return false;
@@ -112,7 +115,7 @@ private:
 
     void Reset() {
         netList->Set("reset", 1);
-        Tick();
+        Tick(true);
         while (DepencyUpdate(0, 0));
         netList->Set("reset", 0);
     }
@@ -127,32 +130,33 @@ private:
         executionCount = 0;
     }
 
-    void Tick() {
+    void Tick(bool reset) {
         executionCount = 0;
         for (auto logic : netList->Logics) {
-            if (logic.second->Tick(key)) {
+            if (logic.second->Tick(key, reset)) {
                 ReadyQueue.push(logic.second);
             }
         }
     }
 
-    void TerminateWorkers(){
+    void TerminateWorkers() {
         terminate = true;
-        for(int i=0;i<threads.size();i++){
+        for (int i = 0; i < threads.size(); i++) {
             threads[i].detach();
         }
     }
 
-    static void Worker(ExecManager *worker){
-        while(!worker->terminate){
+    static void Worker(ExecManager *worker) {
+        while (!worker->terminate) {
             Logic *logic;
             if (worker->ReadyQueue.try_pop(logic)) {
                 //logic->Execute(worker->key, &worker->ExecutedQueue);
                 logic->Execute(&worker->ExecutedQueue);
-            }else{
+            } else {
                 usleep(100);
             }
         }
     }
 };
+
 #endif //IYOKAN_L2_EXECMANAGER_HPP
