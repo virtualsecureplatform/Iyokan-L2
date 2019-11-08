@@ -15,6 +15,8 @@
 #include "tfhe/tfhe_io.h"
 #include "NetList.hpp"
 
+#include "Config.hpp"
+
 class ExecManager {
 public:
     ExecManager(NetList *_netList, int num, int _step, const TFheGateBootstrappingCloudKeySet *cloudKey, bool v);
@@ -58,8 +60,11 @@ private:
         while (!worker->terminate) {
             Logic *logic;
             if (worker->ReadyQueue.try_pop(logic)) {
-                //logic->Execute(worker->key, &worker->ExecutedQueue);
+#ifdef FHE
+                logic->Execute(worker->key, &worker->ExecutedQueue);
+#else
                 logic->Execute(&worker->ExecutedQueue);
+#endif
             } else {
                 usleep(100);
             }

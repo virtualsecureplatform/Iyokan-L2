@@ -30,6 +30,7 @@
 #include "LogicCellRAM.hpp"
 
 #include "../picojson/picojson.h"
+#include "Config.hpp"
 
 NetList::NetList(const char *json, bool v) {
     verbose = v;
@@ -262,8 +263,11 @@ int NetList::Get(std::string portName) {
     int value = 0;
     for (int i = length - 1; i > -1; i--) {
         value = value << 1;
-        //value += Outputs[portName][i]->Get(key);
+#ifdef FHE
+        value += Outputs[portName][i]->Get(key);
+#else
         value += Outputs[portName][i]->Get();
+#endif
     }
     return value;
 }
@@ -276,8 +280,11 @@ int NetList::GetRAM(int addr) {
     int value = 0;
     for (int i = length - 1; i > -1; i--) {
         value = value << 1;
-        //value += Outputs[portName][i]->Get(key);
+#ifdef FHE
+        value += Ram[addr][i]->Get(key);
+#else
         value += Ram[addr][i]->Get();
+#endif
     }
     return value;
 }
