@@ -15,10 +15,13 @@
 class Logic {
 public:
     int id;
+    int priority;
+    std::string Type;
+    bool executed;
     bool executable;
     int res;
-    int priority;
     LweSample *value;
+    std::vector<Logic *> output{};
 
     Logic(int _id) {
         id = _id;
@@ -44,24 +47,6 @@ public:
 
     virtual bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) = 0;
 
-    void DependencyUpdate(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-        if (!executed) {
-            throw std::runtime_error("this logic is not executed");
-        }
-        for (Logic *logic : output) {
-            if (logic->NoticeInputReady()) {
-                ReadyQueue->push(logic);
-            }
-        }
-    }
-
-    void SetExecutable() {
-        executable = true;
-    }
-
-    bool executed;
-    std::string Type;
-    std::vector<Logic *> output{};
 protected:
     int InputCount;
     int ReadyInputCount;
