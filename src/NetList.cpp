@@ -235,7 +235,14 @@ void NetList::SetPortCipher(std::string portName, LweSample *valueArray) {
 }
 
 void NetList::SetPortPlain(std::string portName, int value) {
-
+    int length = Inputs[portName].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown input port:" + portName);
+    }
+    for (int i = 0; i < length; i++) {
+        Inputs[portName][i]->SetPlain(value & 0x1);
+        value = value >> 1;
+    }
 }
 
 void NetList::SetROMCipher(int addr, LweSample *valueArray) {
@@ -243,7 +250,14 @@ void NetList::SetROMCipher(int addr, LweSample *valueArray) {
 }
 
 void NetList::SetROMPlain(int addr, int value) {
-
+    int length = Rom[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Rom Address:" + addr);
+    }
+    for (int i = 0; i < length; i++) {
+        Rom[addr][i]->SetPlain(value & 0x1);
+        value = value >> 1;
+    }
 }
 
 void NetList::SetRAMCipher(int addr, LweSample *valueArray) {
@@ -251,7 +265,14 @@ void NetList::SetRAMCipher(int addr, LweSample *valueArray) {
 }
 
 void NetList::SetRAMPlain(int addr, uint8_t value) {
-
+    int length = Ram[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Ram Address:" + addr);
+    }
+    for (int i = 0; i < length; i++) {
+        Ram[addr][i]->SetPlain(value & 0x1);
+        value = value >> 1;
+    }
 }
 
 LweSample *NetList::GetPortCipher(std::string portName) {
@@ -259,7 +280,16 @@ LweSample *NetList::GetPortCipher(std::string portName) {
 }
 
 int NetList::GetPortPlain(std::string portName) {
-
+    int length = Outputs[portName].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown output port:" + portName);
+    }
+    int value = 0;
+    for (int i = length - 1; i > -1; i--) {
+        value = value << 1;
+        value += Outputs[portName][i]->GetPlain();
+    }
+    return value;
 }
 
 LweSample *NetList::GetRAMCipher(int addr) {
@@ -267,7 +297,16 @@ LweSample *NetList::GetRAMCipher(int addr) {
 }
 
 int NetList::GetRAMPlain(int addr) {
-
+    int length = Ram[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Ram Address:" + addr);
+    }
+    int value = 0;
+    for (int i = length - 1; i > -1; i--) {
+        value = value << 1;
+        value += Ram[addr][i]->GetPlain();
+    }
+    return value;
 }
 
 void NetList::DebugOutput() {
