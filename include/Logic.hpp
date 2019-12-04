@@ -31,7 +31,7 @@ public:
         priority = pri;
         executedQueue = queue;
 
-        if(ck != nullptr){
+        if (ck != nullptr) {
             cipher = true;
             //key = const_cast<TFheGateBootstrappingCloudKeySet *>(ck);
             key = ck;

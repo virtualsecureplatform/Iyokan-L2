@@ -23,7 +23,7 @@ public:
 
     bool Tick(bool reset);
 
-    LweSample* GetCipher();
+    LweSample *GetCipher();
 
     int GetPlain();
 };

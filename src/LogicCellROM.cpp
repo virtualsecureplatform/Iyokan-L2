@@ -5,7 +5,7 @@ LogicCellROM::LogicCellROM(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "ROM";
 }
 
@@ -18,10 +18,10 @@ void LogicCellROM::Prepare() {
     }
 
     if (!created) {
-        if(cipher) {
+        if (cipher) {
             value = new_gate_bootstrapping_ciphertext(key->params);
             bootsCONSTANT(value, 0, key);
-        }else{
+        } else {
             res = 0;
         }
     }
@@ -51,12 +51,12 @@ void LogicCellROM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-void LogicCellROM::SetCipher(LweSample *val){
+void LogicCellROM::SetCipher(LweSample *val) {
     bootsCOPY(value, val, key);
     created = true;
 }
 
-void LogicCellROM::SetPlain(int val){
+void LogicCellROM::SetPlain(int val) {
     res = val & 0x1;
     created = true;
 }

@@ -1,13 +1,12 @@
 #include "LogicCellDFFP.hpp"
 
 LogicCellDFFP::LogicCellDFFP(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck
-    ) :Logic(id, pri, queue, ck)
-    {
-        Type = "DFFP";
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) : Logic(id, pri, queue, ck) {
+    Type = "DFFP";
 }
 
 void LogicCellDFFP::Prepare() {
@@ -17,10 +16,10 @@ void LogicCellDFFP::Prepare() {
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
-    if(cipher){
+    if (cipher) {
         value = new_gate_bootstrapping_ciphertext(key->params);
         bootsCONSTANT(value, 0, key);
-    }else{
+    } else {
         res = 0;
     }
 

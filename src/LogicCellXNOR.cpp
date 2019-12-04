@@ -5,7 +5,7 @@ LogicCellXNOR::LogicCellXNOR(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "XNOR";
 }
 
@@ -17,10 +17,10 @@ void LogicCellXNOR::Prepare() {
         throw std::runtime_error("Output is not assigned");
     }
 
-    if(cipher){
+    if (cipher) {
         value = new_gate_bootstrapping_ciphertext(key->params);
         bootsCONSTANT(value, 0, key);
-    }else{
+    } else {
         res = 0;
     }
 
@@ -29,9 +29,9 @@ void LogicCellXNOR::Prepare() {
 }
 
 void LogicCellXNOR::Execute() {
-    if(cipher){
+    if (cipher) {
         bootsXNOR(value, input.at(0)->value, input.at(1)->value, key);
-    }else{
+    } else {
         res = (~(input.at(0)->res ^ input.at(1)->res)) & 0x1;
     }
     executed = true;

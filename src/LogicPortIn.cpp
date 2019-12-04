@@ -5,7 +5,7 @@ LogicPortIn::LogicPortIn(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "INPUT";
 }
 
@@ -14,10 +14,10 @@ void LogicPortIn::Prepare() {
         throw std::runtime_error("Output is not assigned");
     }
     if (!created) {
-        if(cipher){
+        if (cipher) {
             value = new_gate_bootstrapping_ciphertext(key->params);
             bootsCONSTANT(value, 0, key);
-        }else{
+        } else {
             res = 0;
         }
     }
@@ -33,13 +33,13 @@ bool LogicPortIn::NoticeInputReady() {
     return executable;
 }
 
-void LogicPortIn::SetCipher(LweSample *val){
+void LogicPortIn::SetCipher(LweSample *val) {
     bootsCOPY(value, val, key);
     created = true;
 }
 
-void LogicPortIn::SetPlain(int val){
-    res = val&0x1;
+void LogicPortIn::SetPlain(int val) {
+    res = val & 0x1;
     created = true;
 }
 

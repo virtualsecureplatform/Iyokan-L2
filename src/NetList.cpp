@@ -37,13 +37,13 @@ NetList::NetList(
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *cloudKey,
         bool v
-        ) {
+) {
 
     verbose = v;
-    if(cloudKey != nullptr){
+    if (cloudKey != nullptr) {
         key = cloudKey;
         cipher = true;
-    }else{
+    } else {
         cipher = false;
     }
 
@@ -230,7 +230,7 @@ int NetList::ConvertJson(std::string jsonFile) {
     return 0;
 }
 
-void NetList::SetPortCipher(std::string portName, LweSample * valueArray) {
+void NetList::SetPortCipher(std::string portName, LweSample *valueArray) {
 
 }
 
@@ -238,7 +238,7 @@ void NetList::SetPortPlain(std::string portName, int value) {
 
 }
 
-void NetList::SetROMCipher(int addr, LweSample * valueArray) {
+void NetList::SetROMCipher(int addr, LweSample *valueArray) {
 
 }
 
@@ -246,7 +246,7 @@ void NetList::SetROMPlain(int addr, int value) {
 
 }
 
-void NetList::SetRAMCipher(int addr, LweSample * valueArray) {
+void NetList::SetRAMCipher(int addr, LweSample *valueArray) {
 
 }
 
@@ -254,7 +254,7 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
 
 }
 
-LweSample* NetList::GetPortCipher(std::string portName) {
+LweSample *NetList::GetPortCipher(std::string portName) {
 
 }
 
@@ -262,7 +262,7 @@ int NetList::GetPortPlain(std::string portName) {
 
 }
 
-LweSample* NetList::GetRAMCipher(int addr) {
+LweSample *NetList::GetRAMCipher(int addr) {
 
 }
 

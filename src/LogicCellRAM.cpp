@@ -5,7 +5,7 @@ LogicCellRAM::LogicCellRAM(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "RAM";
 }
 
@@ -18,10 +18,10 @@ void LogicCellRAM::Prepare() {
     }
 
     if (!created) {
-        if(cipher){
+        if (cipher) {
             value = new_gate_bootstrapping_ciphertext(key->params);
             bootsCONSTANT(value, res, key);
-        }else{
+        } else {
             res = 0;
         }
     }
@@ -51,29 +51,29 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-void LogicCellRAM::SetCipher(LweSample *val){
+void LogicCellRAM::SetCipher(LweSample *val) {
     bootsCOPY(value, val, key);
     created = true;
 }
 
-void LogicCellRAM::SetPlain(int val){
+void LogicCellRAM::SetPlain(int val) {
     res = val & 0x1;
     created = true;
 }
 
-LweSample* LogicCellRAM::GetCipher(){
+LweSample *LogicCellRAM::GetCipher() {
     return value;
 }
 
-int LogicCellRAM::GetPlain(){
+int LogicCellRAM::GetPlain() {
     return res;
 }
 
 bool LogicCellRAM::Tick(bool reset) {
     if (!reset) {
-        if(cipher){
+        if (cipher) {
             bootsCOPY(value, input.at(0)->value, key);
-        }else{
+        } else {
             res = input.at(0)->res;
         }
     }

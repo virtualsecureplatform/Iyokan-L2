@@ -5,11 +5,11 @@ LogicCellOR::LogicCellOR(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "OR";
 }
 
-void LogicCellOR::Prepare(){
+void LogicCellOR::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");
     }
@@ -17,10 +17,10 @@ void LogicCellOR::Prepare(){
         throw std::runtime_error("Output is not assigned");
     }
 
-    if(cipher){
+    if (cipher) {
         value = new_gate_bootstrapping_ciphertext(key->params);
         bootsCONSTANT(value, 0, key);
-    }else{
+    } else {
         res = 0;
     }
 
@@ -29,9 +29,9 @@ void LogicCellOR::Prepare(){
 }
 
 void LogicCellOR::Execute() {
-    if(cipher) {
+    if (cipher) {
         bootsOR(value, input.at(0)->value, input.at(1)->value, key);
-    }else{
+    } else {
         res = (input.at(0)->res | input.at(1)->res) & 0x1;
     }
     executed = true;

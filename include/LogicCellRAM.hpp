@@ -27,7 +27,7 @@ public:
 
     void SetPlain(int val);
 
-    LweSample* GetCipher();
+    LweSample *GetCipher();
 
     int GetPlain();
 

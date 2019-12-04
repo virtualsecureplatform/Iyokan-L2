@@ -5,7 +5,7 @@ LogicPortOut::LogicPortOut(
         int pri,
         tbb::concurrent_queue<Logic *> *queue,
         const TFheGateBootstrappingCloudKeySet *ck
-) :Logic(id, pri, queue, ck){
+) : Logic(id, pri, queue, ck) {
     Type = "OUTPUT";
 }
 
@@ -13,10 +13,10 @@ void LogicPortOut::Prepare() {
     if (input.size() == 0) {
         executable = true;
     }
-    if(cipher){
+    if (cipher) {
         value = new_gate_bootstrapping_ciphertext(key->params);
         bootsCONSTANT(value, 0, key);
-    }else{
+    } else {
         res = 0;
     }
 }
@@ -31,7 +31,7 @@ bool LogicPortOut::NoticeInputReady() {
     return executable;
 }
 
-LweSample* LogicPortOut::GetCipher() {
+LweSample *LogicPortOut::GetCipher() {
     if (input.size() > 0) {
         return input.front()->value;
     } else {
