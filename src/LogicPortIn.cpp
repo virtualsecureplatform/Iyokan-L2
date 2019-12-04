@@ -1,52 +1,46 @@
 #include "LogicPortIn.hpp"
 
-LogicPortIn::LogicPortIn(int id) : Logic(id) {
+LogicPortIn::LogicPortIn(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) :Logic(id, pri, queue, ck){
     Type = "INPUT";
 }
 
-void LogicPortIn::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    if (!created) {
-        res = 0;
-        value = new_gate_bootstrapping_ciphertext(bk->params);
-        bootsCONSTANT(value, 0, bk);
-    }
-}
-
-void LogicPortIn::PrepareExecution() {
+void LogicPortIn::Prepare() {
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
+    }
+    if (!created) {
+        if(cipher){
+            value = new_gate_bootstrapping_ciphertext(key->params);
+            bootsCONSTANT(value, 0, key);
+        }else{
+            res = 0;
+        }
     }
     executable = true;
 }
 
-void LogicPortIn::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: INPUT");
-    }
+void LogicPortIn::Execute() {
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicPortIn::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicPortIn::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicPortIn::NoticeInputReady() {
     return executable;
 }
 
+/*
 void LogicPortIn::Set(int val, const TFheGateBootstrappingSecretKeySet *key) {
     res = val;
     value = new_gate_bootstrapping_ciphertext(key->params);
     bootsSymEncrypt(value, val, key);
     created = true;
 }
+ */
 
 void LogicPortIn::AddInput(Logic *logic) {
 
@@ -56,7 +50,7 @@ void LogicPortIn::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicPortIn::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicPortIn::Tick(bool reset) {
     executed = false;
     ReadyInputCount = 0;
     return executable;

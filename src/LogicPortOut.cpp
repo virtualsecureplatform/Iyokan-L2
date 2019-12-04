@@ -1,37 +1,29 @@
 #include "LogicPortOut.hpp"
 
-LogicPortOut::LogicPortOut(int id) : Logic(id) {
+LogicPortOut::LogicPortOut(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) :Logic(id, pri, queue, ck){
     Type = "OUTPUT";
 }
 
-void LogicPortOut::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
-}
-
-void LogicPortOut::PrepareExecution() {
+void LogicPortOut::Prepare() {
     if (input.size() == 0) {
         executable = true;
     }
-}
-
-void LogicPortOut::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    if (input.at(0)->res != bootsSymDecrypt(input.at(0)->value, key)) {
-        throw new std::runtime_error("value not matched: OUTPUT");
+    if(cipher){
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
+    }else{
+        res = 0;
     }
-    executed = true;
-    ReadyQueue->push(this);
 }
 
-void LogicPortOut::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
+void LogicPortOut::Execute() {
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicPortOut::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicPortOut::NoticeInputReady() {
@@ -39,6 +31,7 @@ bool LogicPortOut::NoticeInputReady() {
     return executable;
 }
 
+/*
 int LogicPortOut::Get(TFheGateBootstrappingSecretKeySet *key) {
     if (input.size() > 0) {
         return bootsSymDecrypt(input.front()->value, key);
@@ -54,6 +47,7 @@ int LogicPortOut::Get() {
         return 0;
     }
 }
+ */
 
 void LogicPortOut::AddInput(Logic *logic) {
     if (input.size() > 0) {
@@ -68,7 +62,7 @@ void LogicPortOut::AddOutput(Logic *logic) {
 
 }
 
-bool LogicPortOut::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicPortOut::Tick(bool reset) {
     if (input.size() == 0) {
         executable = true;
     } else {

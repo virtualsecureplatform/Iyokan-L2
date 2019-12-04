@@ -9,29 +9,19 @@
 
 class LogicPortOut : public Logic {
 public:
-    LogicPortOut(int id);
+    LogicPortOut(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    void Prepare();
 
-    void PrepareExecution();
-
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
-
-    int Get(TFheGateBootstrappingSecretKeySet *key);
-
-    int Get();
 
     void AddInput(Logic *logic);
 
     void AddOutput(Logic *logic);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
+    bool Tick(bool reset);
 };
 
 #endif //IYOKAN_L2_LOGICPORTOUT_HPP

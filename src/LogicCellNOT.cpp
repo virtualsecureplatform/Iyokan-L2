@@ -1,46 +1,41 @@
 #include "LogicCellNOT.hpp"
 
-LogicCellNOT::LogicCellNOT(int id) : Logic(id) {
+LogicCellNOT::LogicCellNOT(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) :Logic(id, pri, queue, ck){
     Type = "NOT";
 }
 
-void LogicCellNOT::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
-}
-
-void LogicCellNOT::PrepareExecution() {
+void LogicCellNOT::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
+    if(cipher){
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
+    }else{
+        res = 0;
+    }
+
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellNOT::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsNOT(value, input.at(0)->value, &key->cloud);
-    res = (~input.at(0)->res) & 0x1;
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: NOT");
+void LogicCellNOT::Execute() {
+    if(cipher){
+        bootsNOT(value, input.at(0)->value, key);
+    }else{
+        res = (~input.at(0)->res) & 0x1;
     }
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellNOT::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsNOT(value, input.at(0)->value, key);
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellNOT::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    res = (~input.at(0)->res) & 0x1;
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellNOT::NoticeInputReady() {
@@ -62,7 +57,7 @@ void LogicCellNOT::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellNOT::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellNOT::Tick(bool reset) {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

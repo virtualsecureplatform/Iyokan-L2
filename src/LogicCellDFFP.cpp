@@ -1,43 +1,37 @@
 #include "LogicCellDFFP.hpp"
 
-LogicCellDFFP::LogicCellDFFP(int id) : Logic(id) {
-    Type = "DFFP";
+LogicCellDFFP::LogicCellDFFP(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck
+    ) :Logic(id, pri, queue, ck)
+    {
+        Type = "DFFP";
 }
 
-void LogicCellDFFP::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
-}
-
-void LogicCellDFFP::PrepareExecution() {
+void LogicCellDFFP::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+    if(cipher){
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
+    }else{
+        res = 0;
+    }
+
     executable = true;
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellDFFP::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: DFFP");
-    }
+void LogicCellDFFP::Execute() {
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellDFFP::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellDFFP::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellDFFP::NoticeInputReady() {
@@ -55,7 +49,7 @@ void LogicCellDFFP::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellDFFP::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellDFFP::Tick(bool reset) {
     res = input.at(0)->res;
     bootsCOPY(value, input.at(0)->value, key);
     executable = true;

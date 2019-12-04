@@ -1,46 +1,41 @@
 #include "LogicCellORNOT.hpp"
 
-LogicCellORNOT::LogicCellORNOT(int id) : Logic(id) {
+LogicCellORNOT::LogicCellORNOT(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) :Logic(id, pri, queue, ck){
     Type = "ORNOT";
 }
 
-void LogicCellORNOT::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
-}
-
-void LogicCellORNOT::PrepareExecution() {
+void LogicCellORNOT::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned ORNOT");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
+    if(cipher){
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
+    }else{
+        res = 0;
+    }
+
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellORNOT::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsORYN(value, input.at(0)->value, input.at(1)->value, &key->cloud);
-    res = (input.at(0)->res | (~input.at(1)->res)) & 0x1;
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: ORNOT");
+void LogicCellORNOT::Execute() {
+    if(cipher){
+        bootsORYN(value, input.at(0)->value, input.at(1)->value, key);
+    }else{
+        res = (input.at(0)->res | (~input.at(1)->res)) & 0x1;
     }
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellORNOT::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsORYN(value, input.at(0)->value, input.at(1)->value, key);
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellORNOT::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    res = (input.at(0)->res | (~input.at(1)->res)) & 0x1;
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellORNOT::NoticeInputReady() {
@@ -62,7 +57,7 @@ void LogicCellORNOT::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellORNOT::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellORNOT::Tick(bool reset) {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

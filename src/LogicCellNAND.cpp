@@ -1,46 +1,41 @@
 #include "LogicCellNAND.hpp"
 
-LogicCellNAND::LogicCellNAND(int id) : Logic(id) {
+LogicCellNAND::LogicCellNAND(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *ck
+) :Logic(id, pri, queue, ck){
     Type = "NAND";
 }
 
-void LogicCellNAND::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
-}
-
-void LogicCellNAND::PrepareExecution() {
+void LogicCellNAND::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
+    if(cipher){
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
+    }else{
+        res = 0;
+    }
+
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellNAND::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsNAND(value, input.at(0)->value, input.at(1)->value, &key->cloud);
-    res = (~(input.at(0)->res & input.at(1)->res)) & 0x1;
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: NAND");
+void LogicCellNAND::Execute() {
+    if(cipher){
+        bootsNAND(value, input.at(0)->value, input.at(1)->value, key);
+    }else{
+        res = (~(input.at(0)->res & input.at(1)->res)) & 0x1;
     }
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellNAND::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsNAND(value, input.at(0)->value, input.at(1)->value, key);
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellNAND::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    res = (~(input.at(0)->res & input.at(1)->res)) & 0x1;
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellNAND::NoticeInputReady() {
@@ -62,7 +57,7 @@ void LogicCellNAND::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellNAND::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellNAND::Tick(bool reset) {
     executable = false;
     executed = false;
     ReadyInputCount = 0;
