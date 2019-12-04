@@ -9,6 +9,14 @@ LogicCellMUX::LogicCellMUX(
     Type = "MUX";
 }
 
+LogicCellMUX::LogicCellMUX(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "MUX";
+}
+
 void LogicCellMUX::Prepare() {
     if (input.size() != 3) {
         throw std::runtime_error("Input is not assigned");

@@ -11,6 +11,8 @@ class LogicPortIn : public Logic {
 public:
     LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

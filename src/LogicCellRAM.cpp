@@ -9,6 +9,14 @@ LogicCellRAM::LogicCellRAM(
     Type = "RAM";
 }
 
+LogicCellRAM::LogicCellRAM(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "RAM";
+}
+
 void LogicCellRAM::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");

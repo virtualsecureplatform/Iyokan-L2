@@ -11,6 +11,8 @@ class LogicCellDFFP : public Logic {
 public:
     LogicCellDFFP(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellDFFP(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

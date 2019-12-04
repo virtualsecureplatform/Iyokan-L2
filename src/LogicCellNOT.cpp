@@ -9,6 +9,14 @@ LogicCellNOT::LogicCellNOT(
     Type = "NOT";
 }
 
+LogicCellNOT::LogicCellNOT(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "NOT";
+}
+
 void LogicCellNOT::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");

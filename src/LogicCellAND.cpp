@@ -9,6 +9,14 @@ LogicCellAND::LogicCellAND(
     Type = "AND";
 }
 
+LogicCellAND::LogicCellAND(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "AND";
+}
+
 void LogicCellAND::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");
@@ -29,7 +37,7 @@ void LogicCellAND::Prepare() {
 
 void LogicCellAND::Execute() {
     if (cipher) {
-        bootsAND(value, input.at(0)->value, input.at(1)->value, key)
+        bootsAND(value, input.at(0)->value, input.at(1)->value, key);
     } else {
         res = input.at(0)->res & input.at(1)->res;
     }

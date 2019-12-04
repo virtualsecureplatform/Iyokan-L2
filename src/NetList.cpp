@@ -40,13 +40,20 @@ NetList::NetList(
 ) {
 
     verbose = v;
-    if (cloudKey != nullptr) {
         key = cloudKey;
         cipher = true;
-    } else {
-        cipher = false;
-    }
+    executedQueue = queue;
+    ConvertJson(std::string(json));
+}
 
+NetList::NetList(
+        const char *json,
+        tbb::concurrent_queue<Logic *> *queue,
+        bool v
+) {
+
+    verbose = v;
+    cipher = false;
     executedQueue = queue;
     ConvertJson(std::string(json));
 }
@@ -86,9 +93,17 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast< int >(port.at("id").get<double>());
         int priority = static_cast< int >(port.at("priority").get<double>());
         if (type == "input") {
-            Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicPortIn(id, priority, executedQueue);
+            }
         } else if (type == "output") {
-            Logics[id] = new LogicPortOut(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicPortOut(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicPortOut(id, priority, executedQueue);
+            }
         }
         Logics[id]->priority = priority;
     }
@@ -98,31 +113,83 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast< int >(cell.at("id").get<double>());
         int priority = static_cast< int >(cell.at("priority").get<double>());
         if (type == "AND") {
-            Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellAND(id, priority, executedQueue);
+            }
         } else if (type == "NAND") {
-            Logics[id] = new LogicCellNAND(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellNAND(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellNAND(id, priority, executedQueue);
+            }
         } else if (type == "ANDNOT") {
-            Logics[id] = new LogicCellANDNOT(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellANDNOT(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellANDNOT(id, priority, executedQueue);
+            }
         } else if (type == "XOR") {
-            Logics[id] = new LogicCellXOR(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellXOR(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellXOR(id, priority, executedQueue);
+            }
         } else if (type == "XNOR") {
-            Logics[id] = new LogicCellXNOR(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellXNOR(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellXNOR(id, priority, executedQueue);
+            }
         } else if (type == "DFFP") {
-            Logics[id] = new LogicCellDFFP(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellDFFP(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellDFFP(id, priority, executedQueue);
+            }
         } else if (type == "NOT") {
-            Logics[id] = new LogicCellNOT(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellNOT(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellNOT(id, priority, executedQueue);
+            }
         } else if (type == "NOR") {
-            Logics[id] = new LogicCellNOR(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellNOR(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellNOR(id, priority, executedQueue);
+            }
         } else if (type == "OR") {
-            Logics[id] = new LogicCellOR(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellOR(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellOR(id, priority, executedQueue);
+            }
         } else if (type == "ORNOT") {
-            Logics[id] = new LogicCellORNOT(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellORNOT(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellORNOT(id, priority, executedQueue);
+            }
         } else if (type == "MUX") {
-            Logics[id] = new LogicCellMUX(id, priority, executedQueue, key);
+            if(cipher) {
+                Logics[id] = new LogicCellMUX(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellMUX(id, priority, executedQueue);
+            }
         } else if (type == "ROM") {
-            Logics[id] = new LogicCellROM(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellROM(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellROM(id, priority, executedQueue);
+            }
         } else if (type == "RAM") {
-            Logics[id] = new LogicCellRAM(id, priority, executedQueue, key);
+            if(cipher){
+                Logics[id] = new LogicCellRAM(id, priority, executedQueue, key);
+            }else{
+                Logics[id] = new LogicCellRAM(id, priority, executedQueue);
+            }
         } else {
             throw std::runtime_error("Not implemented:" + type);
         }
@@ -310,7 +377,14 @@ int NetList::GetRAMPlain(int addr) {
 }
 
 void NetList::DebugOutput() {
+    std::cout << "---Debug Output---" << std::endl;
+    if(cipher){
 
+    }else{
+        for (auto item : Outputs) {
+            std::cout << item.first << " : " << GetPortPlain(item.first) << std::endl;
+        }
+    }
 }
 /*
 void NetList::Set(std::string portName, int value) {

@@ -11,6 +11,8 @@ class LogicCellORNOT : public Logic {
 public:
     LogicCellORNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellORNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

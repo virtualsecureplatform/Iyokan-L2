@@ -1,12 +1,13 @@
 #include "ExecManager.hpp"
 
-ExecManager::ExecManager(NetList *_netList, int num, int _step, const TFheGateBootstrappingCloudKeySet *cloudKey,
-                         bool v) {
-    netList = _netList;
+ExecManager::ExecManager(int num, int _step, bool v) {
     step = _step;
-    key = cloudKey;
     workerNum = num;
     verbose = v;
+}
+
+void ExecManager::SetNetList(NetList *_netList){
+   netList = _netList;
 }
 
 void ExecManager::Prepare() {
@@ -19,7 +20,6 @@ void ExecManager::Prepare() {
 }
 
 void ExecManager::Start() {
-    netList->BuggyKey();
     for (int i = 0; i < step; i++) {
         Tick(false);
         while (DepencyUpdate(i + 1, step)) {
@@ -86,15 +86,15 @@ bool ExecManager::DepencyUpdate(int nowCnt, int maxCnt) {
 }
 
 void ExecManager::Reset() {
-    netList->Set("reset", 1);
+    netList->SetPortPlain("reset", 1);
     Tick(true);
     while (DepencyUpdate(0, 0));
-    netList->Set("reset", 0);
+    netList->SetPortPlain("reset", 0);
 }
 
 void ExecManager::PrepareExecution() {
     for (auto logic : netList->Logics) {
-        logic.second->PrepareExecution();
+        logic.second->Prepare();
         if (logic.second->executable) {
             ReadyQueue.push(logic.second);
         }
@@ -105,7 +105,7 @@ void ExecManager::PrepareExecution() {
 void ExecManager::Tick(bool reset) {
     executionCount = 0;
     for (auto logic : netList->Logics) {
-        if (logic.second->Tick(key, reset)) {
+        if (logic.second->Tick(reset)) {
             ReadyQueue.push(logic.second);
         }
     }

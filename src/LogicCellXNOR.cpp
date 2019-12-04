@@ -9,6 +9,14 @@ LogicCellXNOR::LogicCellXNOR(
     Type = "XNOR";
 }
 
+LogicCellXNOR::LogicCellXNOR(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "XNOR";
+}
+
 void LogicCellXNOR::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");

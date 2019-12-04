@@ -11,6 +11,8 @@ class LogicCellANDNOT : public Logic {
 public:
     LogicCellANDNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellANDNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

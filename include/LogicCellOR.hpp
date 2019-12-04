@@ -11,6 +11,8 @@ class LogicCellOR : public Logic {
 public:
     LogicCellOR(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellOR(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

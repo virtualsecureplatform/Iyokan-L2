@@ -9,6 +9,14 @@ LogicCellROM::LogicCellROM(
     Type = "ROM";
 }
 
+LogicCellROM::LogicCellROM(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "ROM";
+}
+
 void LogicCellROM::Prepare() {
     if (input.size() != 0) {
         throw std::runtime_error("Input is not assigned");

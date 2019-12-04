@@ -11,6 +11,8 @@ class LogicCellRAM : public Logic {
 public:
     LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

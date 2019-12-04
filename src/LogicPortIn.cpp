@@ -9,6 +9,14 @@ LogicPortIn::LogicPortIn(
     Type = "INPUT";
 }
 
+LogicPortIn::LogicPortIn(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "INPUT";
+}
+
 void LogicPortIn::Prepare() {
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");

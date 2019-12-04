@@ -11,6 +11,8 @@ class LogicCellMUX : public Logic {
 public:
     LogicCellMUX(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellMUX(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

@@ -9,6 +9,14 @@ LogicCellDFFP::LogicCellDFFP(
     Type = "DFFP";
 }
 
+LogicCellDFFP::LogicCellDFFP(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "DFFP";
+}
+
 void LogicCellDFFP::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");
@@ -49,8 +57,11 @@ void LogicCellDFFP::AddOutput(Logic *logic) {
 }
 
 bool LogicCellDFFP::Tick(bool reset) {
-    res = input.at(0)->res;
-    bootsCOPY(value, input.at(0)->value, key);
+    if(cipher){
+        bootsCOPY(value, input.at(0)->value, key);
+    }else{
+        res = input.at(0)->res;
+    }
     executable = true;
     executed = false;
     ReadyInputCount = 0;

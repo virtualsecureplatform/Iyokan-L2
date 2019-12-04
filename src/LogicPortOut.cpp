@@ -9,6 +9,14 @@ LogicPortOut::LogicPortOut(
     Type = "OUTPUT";
 }
 
+LogicPortOut::LogicPortOut(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "OUTPUT";
+}
+
 void LogicPortOut::Prepare() {
     if (input.size() == 0) {
         executable = true;

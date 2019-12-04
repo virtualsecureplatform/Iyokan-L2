@@ -11,6 +11,8 @@ class LogicCellNAND : public Logic {
 public:
     LogicCellNAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellNAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();

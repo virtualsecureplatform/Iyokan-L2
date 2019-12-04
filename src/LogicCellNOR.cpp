@@ -9,6 +9,14 @@ LogicCellNOR::LogicCellNOR(
     Type = "NOR";
 }
 
+LogicCellNOR::LogicCellNOR(
+        int id,
+        int pri,
+        tbb::concurrent_queue<Logic *> *queue
+) : Logic(id, pri, queue) {
+    Type = "NOR";
+}
+
 void LogicCellNOR::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");

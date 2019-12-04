@@ -31,15 +31,24 @@ public:
         priority = pri;
         executedQueue = queue;
 
-        if (ck != nullptr) {
-            cipher = true;
-            //key = const_cast<TFheGateBootstrappingCloudKeySet *>(ck);
-            key = ck;
-        }
+        cipher = true;
+        key = ck;
 
         executable = false;
         executed = false;
     }
+
+    Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue) {
+        id = _id;
+        priority = pri;
+        executedQueue = queue;
+
+        cipher = false;
+
+        executable = false;
+        executed = false;
+    }
+
 
     virtual void Prepare() = 0;
 

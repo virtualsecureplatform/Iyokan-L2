@@ -11,6 +11,8 @@ class LogicCellXNOR : public Logic {
 public:
     LogicCellXNOR(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
+    LogicCellXNOR(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+
     void Prepare();
 
     void Execute();
