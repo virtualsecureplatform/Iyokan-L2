@@ -46,25 +46,28 @@ public:
 
     int ConvertJson(std::string jsonFile);
 
-    void SetPortCipher(std::string portName, LweSample *valueArray);
 
-    void SetPortPlain(std::string portName, int value);
+    void SetPortCipher(std::string portName, LweSample *valueArray);
 
     void SetROMCipher(int addr, LweSample *valueArray);
 
-    void SetROMPlain(int addr, int value);
-
     void SetRAMCipher(int addr, LweSample *valueArray);
-
-    void SetRAMPlain(int addr, uint8_t value);
 
     LweSample *GetPortCipher(std::string portName);
 
-    int GetPortPlain(std::string portName);
-
     LweSample *GetRAMCipher(int addr);
 
+
+    void SetPortPlain(std::string portName, int value);
+
+    void SetROMPlain(int addr, int value);
+
+    void SetRAMPlain(int addr, uint8_t value);
+
+    int GetPortPlain(std::string portName);
+
     int GetRAMPlain(int addr);
+
 
     void DebugOutput();
 

@@ -57,9 +57,9 @@ void LogicCellDFFP::AddOutput(Logic *logic) {
 }
 
 bool LogicCellDFFP::Tick(bool reset) {
-    if(cipher){
+    if (cipher) {
         bootsCOPY(value, input.at(0)->value, key);
-    }else{
+    } else {
         res = input.at(0)->res;
     }
     executable = true;

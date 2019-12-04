@@ -40,8 +40,8 @@ NetList::NetList(
 ) {
 
     verbose = v;
-        key = cloudKey;
-        cipher = true;
+    key = cloudKey;
+    cipher = true;
     executedQueue = queue;
     ConvertJson(std::string(json));
 }
@@ -93,15 +93,15 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast< int >(port.at("id").get<double>());
         int priority = static_cast< int >(port.at("priority").get<double>());
         if (type == "input") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicPortIn(id, priority, executedQueue);
             }
         } else if (type == "output") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicPortOut(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicPortOut(id, priority, executedQueue);
             }
         }
@@ -113,81 +113,81 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast< int >(cell.at("id").get<double>());
         int priority = static_cast< int >(cell.at("priority").get<double>());
         if (type == "AND") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellAND(id, priority, executedQueue);
             }
         } else if (type == "NAND") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellNAND(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellNAND(id, priority, executedQueue);
             }
         } else if (type == "ANDNOT") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellANDNOT(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellANDNOT(id, priority, executedQueue);
             }
         } else if (type == "XOR") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellXOR(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellXOR(id, priority, executedQueue);
             }
         } else if (type == "XNOR") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellXNOR(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellXNOR(id, priority, executedQueue);
             }
         } else if (type == "DFFP") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellDFFP(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellDFFP(id, priority, executedQueue);
             }
         } else if (type == "NOT") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellNOT(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellNOT(id, priority, executedQueue);
             }
         } else if (type == "NOR") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellNOR(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellNOR(id, priority, executedQueue);
             }
         } else if (type == "OR") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellOR(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellOR(id, priority, executedQueue);
             }
         } else if (type == "ORNOT") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellORNOT(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellORNOT(id, priority, executedQueue);
             }
         } else if (type == "MUX") {
-            if(cipher) {
+            if (cipher) {
                 Logics[id] = new LogicCellMUX(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellMUX(id, priority, executedQueue);
             }
         } else if (type == "ROM") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellROM(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellROM(id, priority, executedQueue);
             }
         } else if (type == "RAM") {
-            if(cipher){
+            if (cipher) {
                 Logics[id] = new LogicCellRAM(id, priority, executedQueue, key);
-            }else{
+            } else {
                 Logics[id] = new LogicCellRAM(id, priority, executedQueue);
             }
         } else {
@@ -378,9 +378,9 @@ int NetList::GetRAMPlain(int addr) {
 
 void NetList::DebugOutput() {
     std::cout << "---Debug Output---" << std::endl;
-    if(cipher){
+    if (cipher) {
 
-    }else{
+    } else {
         for (auto item : Outputs) {
             std::cout << item.first << " : " << GetPortPlain(item.first) << std::endl;
         }

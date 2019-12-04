@@ -6,8 +6,8 @@ ExecManager::ExecManager(int num, int _step, bool v) {
     verbose = v;
 }
 
-void ExecManager::SetNetList(NetList *_netList){
-   netList = _netList;
+void ExecManager::SetNetList(NetList *_netList) {
+    netList = _netList;
 }
 
 void ExecManager::Prepare() {
