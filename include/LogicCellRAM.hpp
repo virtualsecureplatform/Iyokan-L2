@@ -23,6 +23,14 @@ public:
 
     bool Tick(bool reset);
 
+    void SetCipher(LweSample *val);
+
+    void SetPlain(int val);
+
+    LweSample* GetCipher();
+
+    int GetPlain();
+
 private:
     bool created = false;
 };

@@ -33,14 +33,15 @@ bool LogicPortIn::NoticeInputReady() {
     return executable;
 }
 
-/*
-void LogicPortIn::Set(int val, const TFheGateBootstrappingSecretKeySet *key) {
-    res = val;
-    value = new_gate_bootstrapping_ciphertext(key->params);
-    bootsSymEncrypt(value, val, key);
+void LogicPortIn::SetCipher(LweSample *val){
+    bootsCOPY(value, val, key);
     created = true;
 }
- */
+
+void LogicPortIn::SetPlain(int val){
+    res = val&0x1;
+    created = true;
+}
 
 void LogicPortIn::AddInput(Logic *logic) {
 

@@ -22,6 +22,7 @@ public:
     bool executable;
     int res;
     LweSample *value;
+    bool cipher = false;
     TFheGateBootstrappingCloudKeySet *key;
     tbb::concurrent_queue<Logic *> *executedQueue;
     std::vector<Logic *> output{};
@@ -55,7 +56,6 @@ public:
 protected:
     int InputCount;
     int ReadyInputCount;
-    bool cipher = false;
     std::vector<Logic *> input{};
 };
 

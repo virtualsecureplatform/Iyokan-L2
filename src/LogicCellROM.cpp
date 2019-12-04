@@ -51,14 +51,15 @@ void LogicCellROM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-/*
-void LogicCellROM::Set(int val, const TFheGateBootstrappingCloudKeySet *bk) {
-    res = val & 0x1;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, val & 0x1, bk);
+void LogicCellROM::SetCipher(LweSample *val){
+    bootsCOPY(value, val, key);
     created = true;
 }
- */
+
+void LogicCellROM::SetPlain(int val){
+    res = val & 0x1;
+    created = true;
+}
 
 bool LogicCellROM::Tick(bool reset) {
     executable = true;

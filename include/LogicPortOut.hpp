@@ -22,6 +22,10 @@ public:
     void AddOutput(Logic *logic);
 
     bool Tick(bool reset);
+
+    LweSample* GetCipher();
+
+    int GetPlain();
 };
 
 #endif //IYOKAN_L2_LOGICPORTOUT_HPP

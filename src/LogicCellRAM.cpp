@@ -51,22 +51,23 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-/*
-void LogicCellRAM::Set(int val, const TFheGateBootstrappingCloudKeySet *bk) {
-    res = val & 0x1;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, val & 0x1, bk);
+void LogicCellRAM::SetCipher(LweSample *val){
+    bootsCOPY(value, val, key);
     created = true;
 }
 
-int LogicCellRAM::Get(TFheGateBootstrappingSecretKeySet *key) {
-    return bootsSymDecrypt(value, key);
+void LogicCellRAM::SetPlain(int val){
+    res = val & 0x1;
+    created = true;
 }
 
-int LogicCellRAM::Get() {
+LweSample* LogicCellRAM::GetCipher(){
+    return value;
+}
+
+int LogicCellRAM::GetPlain(){
     return res;
 }
- */
 
 bool LogicCellRAM::Tick(bool reset) {
     if (!reset) {

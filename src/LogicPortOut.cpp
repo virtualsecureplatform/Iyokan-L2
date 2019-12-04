@@ -31,23 +31,21 @@ bool LogicPortOut::NoticeInputReady() {
     return executable;
 }
 
-/*
-int LogicPortOut::Get(TFheGateBootstrappingSecretKeySet *key) {
+LweSample* LogicPortOut::GetCipher() {
     if (input.size() > 0) {
-        return bootsSymDecrypt(input.front()->value, key);
+        return input.front()->value;
     } else {
-        return 0;
+        return nullptr;
     }
 }
 
-int LogicPortOut::Get() {
+int LogicPortOut::GetPlain() {
     if (input.size() > 0) {
         return input.front()->res;
     } else {
         return 0;
     }
 }
- */
 
 void LogicPortOut::AddInput(Logic *logic) {
     if (input.size() > 0) {
