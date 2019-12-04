@@ -58,7 +58,7 @@ void LogicCellMUX::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
 bool LogicCellMUX::NoticeInputReady() {
     ReadyInputCount++;
     if (ReadyInputCount > InputCount) {
-        throw std::runtime_error("ReadyInputCount is invalid");
+        throw std::runtime_error("[MUX] ReadyInputCount is invalid");
     }
     return InputCount == ReadyInputCount;
 }

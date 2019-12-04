@@ -19,6 +19,7 @@ void ExecManager::Prepare() {
 }
 
 void ExecManager::Start() {
+    netList->BuggyKey();
     for (int i = 0; i < step; i++) {
         Tick(false);
         while (DepencyUpdate(i + 1, step)) {

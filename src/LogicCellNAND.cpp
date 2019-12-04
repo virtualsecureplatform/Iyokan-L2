@@ -46,7 +46,7 @@ void LogicCellNAND::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
 bool LogicCellNAND::NoticeInputReady() {
     ReadyInputCount++;
     if (ReadyInputCount > InputCount) {
-        throw std::runtime_error("ReadyInputCount is invalid");
+        throw std::runtime_error("[NAND] ReadyInputCount is invalid");
     }
     return InputCount == ReadyInputCount;
 }

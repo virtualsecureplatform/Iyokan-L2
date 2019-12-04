@@ -47,7 +47,7 @@ public:
 
     void Set(std::string portName, int value);
 
-    void SetROM(int addr, int value);
+    void SetROM(int addr, uint32_t value);
 
     void SetRAM(int addr, int value);
 
@@ -59,6 +59,10 @@ public:
 
     void DumpRAM();
 
+    void DumpRAMtoFile(std::string path, int cycle);
+
+    void BuggyKey();
+
     bool execute;
     TFheGateBootstrappingSecretKeySet *key;
     std::unordered_map<int, Logic *> Logics;
@@ -68,7 +72,7 @@ private:
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
-    std::unordered_map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
+    std::map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
     std::string JsonFile;
 };
 

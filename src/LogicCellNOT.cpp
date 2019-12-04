@@ -46,7 +46,7 @@ void LogicCellNOT::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
 bool LogicCellNOT::NoticeInputReady() {
     ReadyInputCount++;
     if (ReadyInputCount > InputCount) {
-        throw std::runtime_error("ReadyInputCount is invalid");
+        throw std::runtime_error("[NOT] ReadyInputCount is invalid");
     }
     return InputCount == ReadyInputCount;
 }

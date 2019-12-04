@@ -5,6 +5,7 @@
 #include <sstream>
 #include <string>
 #include <iterator>
+#include <string.h>
 #include "tbb/concurrent_queue.h"
 #include "tbb/concurrent_priority_queue.h"
 
@@ -233,7 +234,7 @@ void NetList::Set(std::string portName, int value) {
     }
 }
 
-void NetList::SetROM(int addr, int value) {
+void NetList::SetROM(int addr, uint32_t value) {
     int length = Rom[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
@@ -298,6 +299,24 @@ void NetList::DebugOutput() {
 
 void NetList::DumpRAM() {
     for (auto item : Ram) {
-        std::printf("RAM[%d] 0x%02X\n", item.first, GetRAM(item.first));
+        if(item.first > 15 && item.first < 42){
+            std::printf("RAM[%d] 0x%02X\n", item.first, GetRAM(item.first));
+        }
     }
+}
+
+void NetList::DumpRAMtoFile(std::string path, int cycle) {
+    std::string filePath = path + std::to_string(cycle) + ".dump";
+    FILE* pFile;
+    pFile = fopen(filePath.c_str(), "w");
+    for(auto item : Ram){
+        if(item.first > 15 && item.first < 42){
+            std::fprintf(pFile, "%d %02X\n", item.first, GetRAM(item.first));
+        }
+    }
+    fclose(pFile);
+}
+
+void NetList::BuggyKey(){
+    key->lwe_key->key[0] = (~key->lwe_key->key[0])&0x1;
 }

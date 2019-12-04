@@ -46,7 +46,7 @@ void LogicCellXNOR::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
 bool LogicCellXNOR::NoticeInputReady() {
     ReadyInputCount++;
     if (ReadyInputCount > InputCount) {
-        throw std::runtime_error("ReadyInputCount is invalid");
+        throw std::runtime_error("[XNOR] ReadyInputCount is invalid");
     }
     return InputCount == ReadyInputCount;
 }

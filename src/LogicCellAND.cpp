@@ -46,7 +46,7 @@ void LogicCellAND::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
 bool LogicCellAND::NoticeInputReady() {
     ReadyInputCount++;
     if (ReadyInputCount > InputCount) {
-        throw std::runtime_error("ReadyInputCount is invalid");
+        throw std::runtime_error("[AND] ReadyInputCount is invalid");
     }
     return InputCount == ReadyInputCount;
 }
