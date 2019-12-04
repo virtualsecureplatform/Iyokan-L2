@@ -39,41 +39,45 @@
 
 class NetList {
 public:
-    NetList(const char *json, bool v);
+    NetList(const char *json, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *cloudKey, bool v);
 
-    void PrepareTFHE();
+    int ConvertJson(std::string jsonFile);
 
-    int ConvertJson();
+    void SetPortCipher(std::string portName, LweSample* valueArray);
 
-    void Set(std::string portName, int value);
+    void SetPortPlain(std::string portName, int value);
 
-    void SetROM(int addr, uint32_t value);
+    void SetROMCipher(int addr, LweSample* valueArray);
 
-    void SetRAM(int addr, int value);
+    void SetROMPlain(int addr, int value);
 
-    int Get(std::string portName);
+    void SetRAMCipher(int addr, LweSample* valueArray);
 
-    int GetRAM(int addr);
+    void SetRAMPlain(int addr, uint8_t value);
+
+    LweSample* GetPortCipher(std::string portName);
+
+    int GetPortPlain(std::string portName);
+
+    LweSample* GetRAMCipher(int addr);
+
+    int GetRAMPlain(int addr);
 
     void DebugOutput();
 
-    void DumpRAM();
-
-    void DumpRAMtoFile(std::string path, int cycle);
-
-    void BuggyKey();
-
     bool execute;
-    TFheGateBootstrappingSecretKeySet *key;
+
     std::unordered_map<int, Logic *> Logics;
+
 private:
+    bool cipher = false;
     bool verbose = false;
-    TFheGateBootstrappingParameterSet *params;
+    const TFheGateBootstrappingCloudKeySet *key;
+    tbb::concurrent_queue<Logic *> *executedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
     std::map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
-    std::string JsonFile;
 };
 
 #endif //IYOKAN_L2_NETLIST_HPP

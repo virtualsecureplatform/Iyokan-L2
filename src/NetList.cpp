@@ -31,33 +31,41 @@
 #include "LogicCellRAM.hpp"
 
 #include "../picojson/picojson.h"
-#include "Config.hpp"
 
-NetList::NetList(const char *json, bool v) {
+NetList::NetList(
+        const char *json,
+        tbb::concurrent_queue<Logic *> *queue,
+        const TFheGateBootstrappingCloudKeySet *cloudKey,
+        bool v
+        ) {
+
     verbose = v;
-    JsonFile = std::string(json);
-    ConvertJson();
-    PrepareTFHE();
+    if(cloudKey != nullptr){
+        key = cloudKey;
+        cipher = true;
+    }else{
+        cipher = false;
+    }
+
+    executedQueue = queue;
+    ConvertJson(std::string(json));
 }
 
-void NetList::PrepareTFHE() {
+void PrepareTFHE() {
     //generate a keyset
     const int minimum_lambda = 110;
-    params = new_default_gate_bootstrapping_parameters(minimum_lambda);
+    TFheGateBootstrappingParameterSet *params = new_default_gate_bootstrapping_parameters(minimum_lambda);
 
     //generate a random key
     uint32_t seed[] = {314, 1592, 657};
     tfhe_random_generator_setSeed(seed, 3);
-    key = new_random_gate_bootstrapping_secret_keyset(params);
-    for (auto logic : Logics) {
-        logic.second->PrepareTFHE(&(key->cloud));
-    }
+    TFheGateBootstrappingSecretKeySet *key = new_random_gate_bootstrapping_secret_keyset(params);
 }
 
-int NetList::ConvertJson() {
-    std::ifstream ifs(JsonFile, std::ios::in);
+int NetList::ConvertJson(std::string jsonFile) {
+    std::ifstream ifs(jsonFile, std::ios::in);
     if (ifs.fail()) {
-        std::cerr << "failed to read " << JsonFile << std::endl;
+        std::cerr << "failed to read " << jsonFile << std::endl;
         return 1;
     }
     const std::string json((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
@@ -78,9 +86,9 @@ int NetList::ConvertJson() {
         int id = static_cast< int >(port.at("id").get<double>());
         int priority = static_cast< int >(port.at("priority").get<double>());
         if (type == "input") {
-            Logics[id] = new LogicPortIn(id);
+            Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
         } else if (type == "output") {
-            Logics[id] = new LogicPortOut(id);
+            Logics[id] = new LogicPortOut(id, priority, executedQueue, key);
         }
         Logics[id]->priority = priority;
     }
@@ -90,31 +98,31 @@ int NetList::ConvertJson() {
         int id = static_cast< int >(cell.at("id").get<double>());
         int priority = static_cast< int >(cell.at("priority").get<double>());
         if (type == "AND") {
-            Logics[id] = new LogicCellAND(id);
+            Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
         } else if (type == "NAND") {
-            Logics[id] = new LogicCellNAND(id);
+            Logics[id] = new LogicCellNAND(id, priority, executedQueue, key);
         } else if (type == "ANDNOT") {
-            Logics[id] = new LogicCellANDNOT(id);
+            Logics[id] = new LogicCellANDNOT(id, priority, executedQueue, key);
         } else if (type == "XOR") {
-            Logics[id] = new LogicCellXOR(id);
+            Logics[id] = new LogicCellXOR(id, priority, executedQueue, key);
         } else if (type == "XNOR") {
-            Logics[id] = new LogicCellXNOR(id);
+            Logics[id] = new LogicCellXNOR(id, priority, executedQueue, key);
         } else if (type == "DFFP") {
-            Logics[id] = new LogicCellDFFP(id);
+            Logics[id] = new LogicCellDFFP(id, priority, executedQueue, key);
         } else if (type == "NOT") {
-            Logics[id] = new LogicCellNOT(id);
+            Logics[id] = new LogicCellNOT(id, priority, executedQueue, key);
         } else if (type == "NOR") {
-            Logics[id] = new LogicCellNOR(id);
+            Logics[id] = new LogicCellNOR(id, priority, executedQueue, key);
         } else if (type == "OR") {
-            Logics[id] = new LogicCellOR(id);
+            Logics[id] = new LogicCellOR(id, priority, executedQueue, key);
         } else if (type == "ORNOT") {
-            Logics[id] = new LogicCellORNOT(id);
+            Logics[id] = new LogicCellORNOT(id, priority, executedQueue, key);
         } else if (type == "MUX") {
-            Logics[id] = new LogicCellMUX(id);
+            Logics[id] = new LogicCellMUX(id, priority, executedQueue, key);
         } else if (type == "ROM") {
-            Logics[id] = new LogicCellROM(id);
+            Logics[id] = new LogicCellROM(id, priority, executedQueue, key);
         } else if (type == "RAM") {
-            Logics[id] = new LogicCellRAM(id);
+            Logics[id] = new LogicCellRAM(id, priority, executedQueue, key);
         } else {
             throw std::runtime_error("Not implemented:" + type);
         }
@@ -222,7 +230,50 @@ int NetList::ConvertJson() {
     return 0;
 }
 
+void NetList::SetPortCipher(std::string portName, LweSample * valueArray) {
 
+}
+
+void NetList::SetPortPlain(std::string portName, int value) {
+
+}
+
+void NetList::SetROMCipher(int addr, LweSample * valueArray) {
+
+}
+
+void NetList::SetROMPlain(int addr, int value) {
+
+}
+
+void NetList::SetRAMCipher(int addr, LweSample * valueArray) {
+
+}
+
+void NetList::SetRAMPlain(int addr, uint8_t value) {
+
+}
+
+LweSample* NetList::GetPortCipher(std::string portName) {
+
+}
+
+int NetList::GetPortPlain(std::string portName) {
+
+}
+
+LweSample* NetList::GetRAMCipher(int addr) {
+
+}
+
+int NetList::GetRAMPlain(int addr) {
+
+}
+
+void NetList::DebugOutput() {
+
+}
+/*
 void NetList::Set(std::string portName, int value) {
     int length = Inputs[portName].size();
     if (length == 0) {
@@ -320,3 +371,4 @@ void NetList::DumpRAMtoFile(std::string path, int cycle) {
 void NetList::BuggyKey(){
     key->lwe_key->key[0] = (~key->lwe_key->key[0])&0x1;
 }
+ */

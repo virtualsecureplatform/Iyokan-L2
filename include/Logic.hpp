@@ -23,8 +23,7 @@ public:
     int res;
     LweSample *value;
     bool cipher = false;
-    TFheGateBootstrappingCloudKeySet *key;
-    tbb::concurrent_queue<Logic *> *executedQueue;
+    const TFheGateBootstrappingCloudKeySet *key;
     std::vector<Logic *> output{};
 
     Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck) {
@@ -34,7 +33,8 @@ public:
 
         if(ck != nullptr){
             cipher = true;
-            key = const_cast<TFheGateBootstrappingCloudKeySet *>(ck);
+            //key = const_cast<TFheGateBootstrappingCloudKeySet *>(ck);
+            key = ck;
         }
 
         executable = false;
@@ -54,6 +54,7 @@ public:
     virtual bool Tick(bool reset) = 0;
 
 protected:
+    tbb::concurrent_queue<Logic *> *executedQueue;
     int InputCount;
     int ReadyInputCount;
     std::vector<Logic *> input{};
