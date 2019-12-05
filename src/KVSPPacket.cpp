@@ -5,6 +5,7 @@
 #include <tfhe/tfhe.h>
 #include <tfhe/tfhe_io.h>
 
+namespace {
 uint32_t read32le(std::istream &is) {
     uint32_t ret = 0;
     int ch = 0;
@@ -45,7 +46,6 @@ void write64le(std::ostream &os, uint64_t val) {
     write32le(os, val >> 32);
 }
 
-namespace {
 auto make_lwe_sample(const TFheGateBootstrappingParameterSet *params) {
     return std::shared_ptr<LweSample>{
         new_gate_bootstrapping_ciphertext(params),
