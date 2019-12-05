@@ -297,7 +297,7 @@ int NetList::ConvertJson(std::string jsonFile) {
     return 0;
 }
 
-void NetList::SetPortCipher(std::string portName, LweSample *valueArray) {
+void NetList::SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray) {
 
 }
 
@@ -312,7 +312,7 @@ void NetList::SetPortPlain(std::string portName, int value) {
     }
 }
 
-void NetList::SetROMCipher(int addr, LweSample *valueArray) {
+void NetList::SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
 
 }
 
@@ -327,7 +327,7 @@ void NetList::SetROMPlain(int addr, int value) {
     }
 }
 
-void NetList::SetRAMCipher(int addr, LweSample *valueArray) {
+void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
 
 }
 
@@ -342,7 +342,7 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
     }
 }
 
-LweSample *NetList::GetPortCipher(std::string portName) {
+std::vector<std::shared_ptr<LweSample>> NetList::GetPortCipher(std::string portName) {
 
 }
 
@@ -359,7 +359,7 @@ int NetList::GetPortPlain(std::string portName) {
     return value;
 }
 
-LweSample *NetList::GetRAMCipher(int addr) {
+std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
 
 }
 
