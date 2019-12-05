@@ -37,4 +37,4 @@ private:
     bool created = false;
 };
 
-#endif //IYOKAN_L2_LOGICCELLRAM_HPP
+#endif  //IYOKAN_L2_LOGICCELLRAM_HPP

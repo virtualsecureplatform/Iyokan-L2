@@ -1,19 +1,17 @@
 #include "LogicPortOut.hpp"
 
 LogicPortOut::LogicPortOut(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *ck
-) : Logic(id, pri, queue, ck) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "OUTPUT";
 }
 
 LogicPortOut::LogicPortOut(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue
-) : Logic(id, pri, queue) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
     Type = "OUTPUT";
 }
 
@@ -65,7 +63,6 @@ void LogicPortOut::AddInput(Logic *logic) {
 }
 
 void LogicPortOut::AddOutput(Logic *logic) {
-
 }
 
 bool LogicPortOut::Tick(bool reset) {

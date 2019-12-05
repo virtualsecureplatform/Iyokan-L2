@@ -1,19 +1,17 @@
 #include "LogicCellROM.hpp"
 
 LogicCellROM::LogicCellROM(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *ck
-) : Logic(id, pri, queue, ck) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "ROM";
 }
 
 LogicCellROM::LogicCellROM(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue
-) : Logic(id, pri, queue) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
     Type = "ROM";
 }
 

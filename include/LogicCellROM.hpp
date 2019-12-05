@@ -33,4 +33,4 @@ private:
     bool created = false;
 };
 
-#endif //IYOKAN_L2_LOGICCELLROM_HPP
+#endif  //IYOKAN_L2_LOGICCELLROM_HPP

@@ -32,8 +32,8 @@ public:
     int GetExecutedLogicNum();
 
     bool terminate = false;
-private:
 
+private:
     int executionCount = 0;
     NetList *netList;
     tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
@@ -68,4 +68,4 @@ private:
     }
 };
 
-#endif //IYOKAN_L2_EXECMANAGER_HPP
+#endif  //IYOKAN_L2_EXECMANAGER_HPP

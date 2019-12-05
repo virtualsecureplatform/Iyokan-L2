@@ -12,4 +12,4 @@ public:
     }
 };
 
-#endif //IYOKAN_L2_UTILS_HPP
+#endif  //IYOKAN_L2_UTILS_HPP

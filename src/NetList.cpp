@@ -33,12 +33,10 @@
 #include "../picojson/picojson.h"
 
 NetList::NetList(
-        const char *json,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *cloudKey,
-        bool v
-) {
-
+    const char *json,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *cloudKey,
+    bool v) {
     verbose = v;
     key = cloudKey;
     cipher = true;
@@ -47,11 +45,9 @@ NetList::NetList(
 }
 
 NetList::NetList(
-        const char *json,
-        tbb::concurrent_queue<Logic *> *queue,
-        bool v
-) {
-
+    const char *json,
+    tbb::concurrent_queue<Logic *> *queue,
+    bool v) {
     verbose = v;
     cipher = false;
     executedQueue = queue;
@@ -90,8 +86,8 @@ int NetList::ConvertJson(std::string jsonFile) {
     for (const auto &e : ports) {  // vectorをrange-based-forでまわしている。
         picojson::object port = e.get<picojson::object>();
         std::string type = port.at("type").get<std::string>();
-        int id = static_cast< int >(port.at("id").get<double>());
-        int priority = static_cast< int >(port.at("priority").get<double>());
+        int id = static_cast<int>(port.at("id").get<double>());
+        int priority = static_cast<int>(port.at("priority").get<double>());
         if (type == "input") {
             if (cipher) {
                 Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
@@ -110,8 +106,8 @@ int NetList::ConvertJson(std::string jsonFile) {
     for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
         picojson::object cell = e.get<picojson::object>();
         std::string type = cell.at("type").get<std::string>();
-        int id = static_cast< int >(cell.at("id").get<double>());
-        int priority = static_cast< int >(cell.at("priority").get<double>());
+        int id = static_cast<int>(cell.at("id").get<double>());
+        int priority = static_cast<int>(cell.at("priority").get<double>());
         if (type == "AND") {
             if (cipher) {
                 Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
@@ -199,22 +195,22 @@ int NetList::ConvertJson(std::string jsonFile) {
         picojson::object port = e.get<picojson::object>();
         std::string type = port.at("type").get<std::string>();
         std::string name = port.at("name").get<std::string>();
-        int id = static_cast< int >(port.at("id").get<double>());
+        int id = static_cast<int>(port.at("id").get<double>());
         picojson::array &bits = port.at("bits").get<picojson::array>();
         std::string portName = port.at("portName").get<std::string>();
-        int portBit = static_cast< int >(port.at("portBit").get<double>());
+        int portBit = static_cast<int>(port.at("portBit").get<double>());
         if (type == "input") {
             for (const auto &b : bits) {
-                int logic = static_cast< int >(b.get<double>());
+                int logic = static_cast<int>(b.get<double>());
                 Logics[id]->AddOutput(Logics[logic]);
             }
-            Inputs[portName][portBit] = (LogicPortIn *) Logics[id];
+            Inputs[portName][portBit] = (LogicPortIn *)Logics[id];
         } else if (type == "output") {
             for (const auto &b : bits) {
-                int logic = static_cast< int >(b.get<double>());
+                int logic = static_cast<int>(b.get<double>());
                 Logics[id]->AddInput(Logics[logic]);
             }
-            Outputs[portName][portBit] = (LogicPortOut *) Logics[id];
+            Outputs[portName][portBit] = (LogicPortOut *)Logics[id];
         }
     }
     if (verbose) {
@@ -228,68 +224,68 @@ int NetList::ConvertJson(std::string jsonFile) {
     for (const auto &e : cells) {  // vectorをrange-based-forでまわしている。
         picojson::object cell = e.get<picojson::object>();
         std::string type = cell.at("type").get<std::string>();
-        int id = static_cast< int >(cell.at("id").get<double>());
+        int id = static_cast<int>(cell.at("id").get<double>());
         picojson::object input = cell.at("input").get<picojson::object>();
         picojson::object output = cell.at("output").get<picojson::object>();
         if (type == "AND" || type == "NAND" || type == "XOR" || type == "XNOR" || type == "NOR" ||
             type == "ANDNOT" || type == "OR" || type == "ORNOT") {
-            int A = static_cast< int >(input.at("A").get<double>());
-            int B = static_cast< int >(input.at("B").get<double>());
+            int A = static_cast<int>(input.at("A").get<double>());
+            int B = static_cast<int>(input.at("B").get<double>());
             picojson::array &Y = output.at("Y").get<picojson::array>();
             Logics[id]->AddInput(Logics[A]);
             Logics[id]->AddInput(Logics[B]);
             for (const auto &y : Y) {
-                int bitY = static_cast< int >(y.get<double>());
+                int bitY = static_cast<int>(y.get<double>());
                 Logics[id]->AddOutput(Logics[bitY]);
             }
         } else if (type == "DFFP") {
-            int D = static_cast< int >(input.at("D").get<double>());
+            int D = static_cast<int>(input.at("D").get<double>());
             picojson::array &Q = output.at("Q").get<picojson::array>();
             Logics[id]->AddInput(Logics[D]);
             for (const auto &q : Q) {
-                int bitQ = static_cast< int >(q.get<double>());
+                int bitQ = static_cast<int>(q.get<double>());
                 Logics[id]->AddOutput(Logics[bitQ]);
             }
         } else if (type == "NOT") {
-            int A = static_cast< int >(input.at("A").get<double>());
+            int A = static_cast<int>(input.at("A").get<double>());
             picojson::array &Y = output.at("Y").get<picojson::array>();
             Logics[id]->AddInput(Logics[A]);
             for (const auto &y : Y) {
-                int bitY = static_cast< int >(y.get<double>());
+                int bitY = static_cast<int>(y.get<double>());
                 Logics[id]->AddOutput(Logics[bitY]);
             }
         } else if (type == "MUX") {
-            int A = static_cast< int >(input.at("A").get<double>());
-            int B = static_cast< int >(input.at("B").get<double>());
-            int S = static_cast< int >(input.at("S").get<double>());
+            int A = static_cast<int>(input.at("A").get<double>());
+            int B = static_cast<int>(input.at("B").get<double>());
+            int S = static_cast<int>(input.at("S").get<double>());
             picojson::array &Y = output.at("Y").get<picojson::array>();
             Logics[id]->AddInput(Logics[A]);
             Logics[id]->AddInput(Logics[B]);
             Logics[id]->AddInput(Logics[S]);
             for (const auto &y : Y) {
-                int bitY = static_cast< int >(y.get<double>());
+                int bitY = static_cast<int>(y.get<double>());
                 Logics[id]->AddOutput(Logics[bitY]);
             }
         } else if (type == "ROM") {
             picojson::array &Q = output.at("Q").get<picojson::array>();
-            int romAddress = static_cast< int >(cell.at("romAddress").get<double>());
-            int romBit = static_cast< int >(cell.at("romBit").get<double>());
+            int romAddress = static_cast<int>(cell.at("romAddress").get<double>());
+            int romBit = static_cast<int>(cell.at("romBit").get<double>());
             for (const auto &q : Q) {
-                int bitQ = static_cast< int >(q.get<double>());
+                int bitQ = static_cast<int>(q.get<double>());
                 Logics[id]->AddOutput(Logics[bitQ]);
             }
-            Rom[romAddress][romBit] = (LogicCellROM *) Logics[id];
+            Rom[romAddress][romBit] = (LogicCellROM *)Logics[id];
         } else if (type == "RAM") {
-            int ramAddress = static_cast< int >(cell.at("ramAddress").get<double>());
-            int ramBit = static_cast< int >(cell.at("ramBit").get<double>());
-            int D = static_cast< int >(input.at("D").get<double>());
+            int ramAddress = static_cast<int>(cell.at("ramAddress").get<double>());
+            int ramBit = static_cast<int>(cell.at("ramBit").get<double>());
+            int D = static_cast<int>(input.at("D").get<double>());
             picojson::array &Q = output.at("Q").get<picojson::array>();
             Logics[id]->AddInput(Logics[D]);
             for (const auto &q : Q) {
-                int bitQ = static_cast< int >(q.get<double>());
+                int bitQ = static_cast<int>(q.get<double>());
                 Logics[id]->AddOutput(Logics[bitQ]);
             }
-            Ram[ramAddress][ramBit] = (LogicCellRAM *) Logics[id];
+            Ram[ramAddress][ramBit] = (LogicCellRAM *)Logics[id];
         } else {
             throw std::runtime_error("Not executed");
         }
@@ -298,7 +294,6 @@ int NetList::ConvertJson(std::string jsonFile) {
 }
 
 void NetList::SetPortCipher(std::string portName, LweSample *valueArray) {
-
 }
 
 void NetList::SetPortPlain(std::string portName, int value) {
@@ -313,7 +308,6 @@ void NetList::SetPortPlain(std::string portName, int value) {
 }
 
 void NetList::SetROMCipher(int addr, LweSample *valueArray) {
-
 }
 
 void NetList::SetROMPlain(int addr, int value) {
@@ -328,7 +322,6 @@ void NetList::SetROMPlain(int addr, int value) {
 }
 
 void NetList::SetRAMCipher(int addr, LweSample *valueArray) {
-
 }
 
 void NetList::SetRAMPlain(int addr, uint8_t value) {
@@ -343,7 +336,6 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
 }
 
 LweSample *NetList::GetPortCipher(std::string portName) {
-
 }
 
 int NetList::GetPortPlain(std::string portName) {
@@ -360,7 +352,6 @@ int NetList::GetPortPlain(std::string portName) {
 }
 
 LweSample *NetList::GetRAMCipher(int addr) {
-
 }
 
 int NetList::GetRAMPlain(int addr) {
@@ -379,7 +370,6 @@ int NetList::GetRAMPlain(int addr) {
 void NetList::DebugOutput() {
     std::cout << "---Debug Output---" << std::endl;
     if (cipher) {
-
     } else {
         for (auto item : Outputs) {
             std::cout << item.first << " : " << GetPortPlain(item.first) << std::endl;

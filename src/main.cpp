@@ -7,7 +7,6 @@
 #include "ExecManager.hpp"
 
 int main(int argc, char *argv[]) {
-
     int opt;
     opterr = 0;
     bool perfMode = false;
@@ -112,7 +111,6 @@ int main(int argc, char *argv[]) {
     manager.Start();
     end = std::chrono::system_clock::now();
 
-
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
                                       1000.0);
     if (perfMode) {
@@ -123,4 +121,3 @@ int main(int argc, char *argv[]) {
         manager.Stats();
     }
 }
-
