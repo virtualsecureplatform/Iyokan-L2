@@ -24,7 +24,6 @@ public:
     void AddOutput(Logic *logic);
 
     bool Tick(bool reset);
-
 };
 
-#endif //IYOKAN_L2_LOGICCELLANDNOT_HPP
+#endif  //IYOKAN_L2_LOGICCELLANDNOT_HPP

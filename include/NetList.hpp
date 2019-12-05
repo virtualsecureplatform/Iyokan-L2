@@ -46,7 +46,6 @@ public:
 
     int ConvertJson(std::string jsonFile);
 
-
     void SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray);
 
     void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
@@ -57,7 +56,6 @@ public:
 
     std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
 
-
     void SetPortPlain(std::string portName, int value);
 
     void SetROMPlain(int addr, int value);
@@ -67,7 +65,6 @@ public:
     int GetPortPlain(std::string portName);
 
     int GetRAMPlain(int addr);
-
 
     void DebugOutput();
 
@@ -86,4 +83,4 @@ private:
     std::map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
 };
 
-#endif //IYOKAN_L2_NETLIST_HPP
+#endif  //IYOKAN_L2_NETLIST_HPP

@@ -88,7 +88,8 @@ bool ExecManager::DepencyUpdate(int nowCnt, int maxCnt) {
 void ExecManager::Reset() {
     netList->SetPortPlain("reset", 1);
     Tick(true);
-    while (DepencyUpdate(0, 0));
+    while (DepencyUpdate(0, 0))
+        ;
     netList->SetPortPlain("reset", 0);
 }
 
@@ -117,4 +118,3 @@ void ExecManager::TerminateWorkers() {
         threads[i].detach();
     }
 }
-

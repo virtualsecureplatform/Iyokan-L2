@@ -1,19 +1,17 @@
 #include "LogicCellNOT.hpp"
 
 LogicCellNOT::LogicCellNOT(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *ck
-) : Logic(id, pri, queue, ck) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "NOT";
 }
 
 LogicCellNOT::LogicCellNOT(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue
-) : Logic(id, pri, queue) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
     Type = "NOT";
 }
 

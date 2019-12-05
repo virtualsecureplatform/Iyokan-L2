@@ -26,4 +26,4 @@ public:
     bool Tick(bool reset);
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif  //IYOKAN_L2_LOGICCELLAND_HPP

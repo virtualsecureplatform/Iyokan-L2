@@ -5,7 +5,6 @@
 
 class LogicCellAND : public Logic {
 public:
-
     LogicCellAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
     LogicCellAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
@@ -21,7 +20,6 @@ public:
     void AddOutput(Logic *logic);
 
     bool Tick(bool reset);
-
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif  //IYOKAN_L2_LOGICCELLAND_HPP

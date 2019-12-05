@@ -1,19 +1,17 @@
 #include "LogicPortIn.hpp"
 
 LogicPortIn::LogicPortIn(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *ck
-) : Logic(id, pri, queue, ck) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "INPUT";
 }
 
 LogicPortIn::LogicPortIn(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue
-) : Logic(id, pri, queue) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
     Type = "INPUT";
 }
 
@@ -52,7 +50,6 @@ void LogicPortIn::SetPlain(int val) {
 }
 
 void LogicPortIn::AddInput(Logic *logic) {
-
 }
 
 void LogicPortIn::AddOutput(Logic *logic) {

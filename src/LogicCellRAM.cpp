@@ -1,19 +1,17 @@
 #include "LogicCellRAM.hpp"
 
 LogicCellRAM::LogicCellRAM(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue,
-        const TFheGateBootstrappingCloudKeySet *ck
-) : Logic(id, pri, queue, ck) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "RAM";
 }
 
 LogicCellRAM::LogicCellRAM(
-        int id,
-        int pri,
-        tbb::concurrent_queue<Logic *> *queue
-) : Logic(id, pri, queue) {
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
     Type = "RAM";
 }
 
@@ -90,4 +88,3 @@ bool LogicCellRAM::Tick(bool reset) {
     ReadyInputCount = 0;
     return executable;
 }
-

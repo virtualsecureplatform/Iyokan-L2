@@ -49,7 +49,6 @@ public:
         executed = false;
     }
 
-
     virtual void Prepare() = 0;
 
     virtual void Execute() = 0;

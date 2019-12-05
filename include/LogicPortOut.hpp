@@ -30,4 +30,4 @@ public:
     int GetPlain();
 };
 
-#endif //IYOKAN_L2_LOGICPORTOUT_HPP
+#endif  //IYOKAN_L2_LOGICPORTOUT_HPP
