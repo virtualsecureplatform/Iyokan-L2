@@ -1,5 +1,6 @@
 BasedOnStyle: google
 IndentWidth: 4
-BreakBeforeBraces: Stroustrup
-AllowShortCaseLabelsOnASingleLine: true
-IndentCaseLabels: false
+BreakBeforeBraces: Attach
+AccessModifierOffset: -4
+ColumnLimit: 0
+SortIncludes: false
