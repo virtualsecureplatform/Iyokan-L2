@@ -57,8 +57,8 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-void LogicCellRAM::SetCipher(LweSample *val) {
-    bootsCOPY(value, val, key);
+void LogicCellRAM::SetCipher(std::shared_ptr<LweSample> val) {
+    bootsCOPY(value, val.get(), key);
     created = true;
 }
 

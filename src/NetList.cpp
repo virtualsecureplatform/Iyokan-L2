@@ -307,7 +307,19 @@ void NetList::SetPortPlain(std::string portName, int value) {
     }
 }
 
-void NetList::SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
+void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
+    int addr = byte_addr/4;
+    int word_num = byte_addr%4;
+    int length = Rom[addr].size();
+    if(valueArray.size() != 8){
+        throw std::runtime_error("Invalid value");
+    }
+    if (length == 0) {
+        throw std::runtime_error("Unknown Rom Address:" + addr);
+    }
+    for (int i = 0; i < length; i++) {
+        Rom[addr][i+(word_num)*8]->SetCipher(valueArray.at(i));
+    }
 }
 
 void NetList::SetROMPlain(int addr, int value) {
@@ -322,6 +334,16 @@ void NetList::SetROMPlain(int addr, int value) {
 }
 
 void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
+    if(valueArray.size() != 8){
+        throw std::runtime_error("Invalid value");
+    }
+    int length = Ram[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Ram Address:" + addr);
+    }
+    for (int i = 0; i < length; i++) {
+        Ram[addr][i]->SetCipher(valueArray.at(i));
+    }
 }
 
 void NetList::SetRAMPlain(int addr, uint8_t value) {

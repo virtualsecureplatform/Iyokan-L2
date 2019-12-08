@@ -57,8 +57,8 @@ void LogicCellROM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-void LogicCellROM::SetCipher(LweSample *val) {
-    bootsCOPY(value, val, key);
+void LogicCellROM::SetCipher(std::shared_ptr<LweSample> val) {
+    bootsCOPY(value, val.get(), key);
     created = true;
 }
 

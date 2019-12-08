@@ -25,7 +25,7 @@ public:
 
     bool Tick(bool reset);
 
-    void SetCipher(LweSample *val);
+    void SetCipher(std::shared_ptr<LweSample> val);
 
     void SetPlain(int val);
 
