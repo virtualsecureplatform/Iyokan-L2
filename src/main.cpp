@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <tfhe/tfhe_io.h>
 #include "ExecManager.hpp"
+#include "KVSPPacket.hpp"
 
 int main(int argc, char *argv[]) {
     int opt;
@@ -33,9 +34,13 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
+    std::ifstream ifs{"mitou.enc", std::ios_base::binary};
+    auto packet = KVSPReqPacket::readFrom(ifs);
     ExecManager manager(threadNum, execCycle, verbose);
-    NetList netList("../../vsp-core.json", &manager.ExecutedQueue, verbose);
+    NetList netList("../../vsp-core.json", &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
+    netList.SetROMCipherAll(packet.rom);
     manager.SetNetList(&netList);
+
 
     /*
     netList.Set("io_address", 3);
@@ -43,8 +48,10 @@ int main(int argc, char *argv[]) {
     netList.Set("io_writeEnable", 1);
      */
     //LI 0x24
+    /*
     netList.SetROMPlain(0, 0x0E2A8835);
     netList.SetROMPlain(1, 0x0);
+     */
     /*
     netList.SetROM(0, 0x35041135);
     netList.SetROM(1, 0x101C2A00);

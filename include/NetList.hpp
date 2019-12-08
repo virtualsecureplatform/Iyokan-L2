@@ -50,6 +50,8 @@ public:
 
     void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
+    void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+
     void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
     std::vector<std::shared_ptr<LweSample>> GetPortCipher(std::string portName);

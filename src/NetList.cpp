@@ -322,6 +322,12 @@ void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>
     }
 }
 
+void NetList::SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray){
+    for(int i=0;i<valueArray.size();i++){
+        Rom[i/32][i%32]->SetCipher(valueArray.at(i));
+    }
+}
+
 void NetList::SetROMPlain(int addr, int value) {
     int length = Rom[addr].size();
     if (length == 0) {
