@@ -34,85 +34,15 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
-    std::ifstream ifs{"mitou.enc", std::ios_base::binary};
+    std::ifstream ifs{"../../test.enc", std::ios_base::binary};
     auto packet = KVSPReqPacket::readFrom(ifs);
     ExecManager manager(threadNum, execCycle, verbose);
     NetList netList("../../vsp-core.json", &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
-    netList.SetROMCipherAll(packet.rom);
     manager.SetNetList(&netList);
-
-
-    /*
-    netList.Set("io_address", 3);
-    netList.Set("io_in", 3);
-    netList.Set("io_writeEnable", 1);
-     */
-    //LI 0x24
-    /*
-    netList.SetROMPlain(0, 0x0E2A8835);
-    netList.SetROMPlain(1, 0x0);
-     */
-    /*
-    netList.SetROM(0, 0x35041135);
-    netList.SetROM(1, 0x101C2A00);
-    netList.SetROM(2, 0x000E1814);
-     */
-
-    /*
-    netList.SetROM(0, 0x0A350974);
-    netList.SetROM(1, 0x15FBF430);
-    netList.SetROM(2, 0xB8980098);
-    netList.SetROM(3, 0x0200981D);
-    netList.SetROM(4, 0xF69AF729);
-    netList.SetROM(5, 0x0000000E);
-
-    netList.SetRAM(0x11, 0x01);
-    netList.SetRAM(0x13, 0x01);
-    netList.SetRAM(0x14, 0x80);
-    netList.SetRAM(0x15, 0x02);
-    netList.SetRAM(0x16, 0x80);
-    netList.SetRAM(0x17, 0x02);
-    netList.SetRAM(0x18, 0x40);
-    netList.SetRAM(0x19, 0x04);
-    netList.SetRAM(0x1A, 0x40);
-    netList.SetRAM(0x1B, 0x04);
-    netList.SetRAM(0x1C, 0xA0);
-    netList.SetRAM(0x1D, 0x0A);
-    netList.SetRAM(0x1E, 0xA0);
-    netList.SetRAM(0x1F, 0x0A);
-    netList.SetRAM(0x20, 0x10);
-    netList.SetRAM(0x21, 0x11);
-    netList.SetRAM(0x22, 0x10);
-    netList.SetRAM(0x23, 0x11);
-    netList.SetRAM(0x24, 0x88);
-    netList.SetRAM(0x25, 0x22);
-    netList.SetRAM(0x26, 0x88);
-    netList.SetRAM(0x27, 0x22);
-    netList.SetRAM(0x28, 0x7C);
-    netList.SetRAM(0x29, 0x7C);
-    */
-
-    /*
-    netList.SetROM(0, 0x0335036E);
-    netList.SetROM(1, 0x01043500);
-    netList.SetROM(2, 0x06320535);
-    netList.SetROM(3, 0x37438000);
-    netList.SetROM(4, 0x34800A54);
-    netList.SetROM(5, 0xCE05541F);
-    netList.SetROM(6, 0xFE0006FE);
-    netList.SetROM(7, 0xC0FE1EFC);
-    netList.SetROM(8, 0x0E000038);
-    netList.SetROM(9, 0x0);
-     */
-
-    /*
-    netList.SetRAM(0, 1);
-    netList.SetRAM(1, 2);
-    netList.SetRAM(2, 3);
-    netList.SetRAM(3, 4);
-     */
-
     manager.Prepare();
+    netList.SetROMCipherAll(packet.rom);
+
+
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();
     manager.Start();
@@ -124,7 +54,30 @@ int main(int argc, char *argv[]) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
     } else {
         printf("Execution time %lf[ms]\n", time);
-        netList.DebugOutput();
+        //netList.DebugOutput();
         manager.Stats();
     }
+    std::vector<std::shared_ptr<LweSample>> flags = {packet.rom[0]};
+    std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
+        {
+            netList.GetPortCipher("io_testRegx8"),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
+        };
+    std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
+    std::ofstream ofs{"result.enc", std::ios_base::binary};
+    KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
 }

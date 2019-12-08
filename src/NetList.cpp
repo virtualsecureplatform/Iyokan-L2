@@ -364,6 +364,15 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
 }
 
 std::vector<std::shared_ptr<LweSample>> NetList::GetPortCipher(std::string portName) {
+    int length = Outputs[portName].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown output port:" + portName);
+    }
+    std::vector<std::shared_ptr<LweSample>> valueArray;
+    for(int i= 0; i<length;i++){
+        valueArray.push_back(std::shared_ptr<LweSample>(Outputs[portName][i]->GetCipher()));
+    }
+    return valueArray;
 }
 
 int NetList::GetPortPlain(std::string portName) {

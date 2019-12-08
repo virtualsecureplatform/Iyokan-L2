@@ -2,3 +2,4 @@
 main
 cmake-build-debug
 *.json
+*.enc
