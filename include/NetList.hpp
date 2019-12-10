@@ -39,10 +39,10 @@
 
 class NetList {
 public:
-    NetList(const char *json, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *cloudKey,
+    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *cloudKey,
             bool v);
 
-    NetList(const char *json, tbb::concurrent_queue<Logic *> *queue, bool v);
+    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, bool v);
 
     int ConvertJson(std::string jsonFile);
 
@@ -52,9 +52,13 @@ public:
 
     void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
 
+    void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+
     void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
     std::vector<std::shared_ptr<LweSample>> GetPortCipher(std::string portName);
+
+    std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
     std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
 

@@ -33,7 +33,7 @@
 #include "../picojson/picojson.h"
 
 NetList::NetList(
-    const char *json,
+    std::string json,
     tbb::concurrent_queue<Logic *> *queue,
     const TFheGateBootstrappingCloudKeySet *cloudKey,
     bool v) {
@@ -41,17 +41,17 @@ NetList::NetList(
     key = cloudKey;
     cipher = true;
     executedQueue = queue;
-    ConvertJson(std::string(json));
+    ConvertJson(json);
 }
 
 NetList::NetList(
-    const char *json,
+    std::string json,
     tbb::concurrent_queue<Logic *> *queue,
     bool v) {
     verbose = v;
     cipher = false;
     executedQueue = queue;
-    ConvertJson(std::string(json));
+    ConvertJson(json);
 }
 
 void PrepareTFHE() {
@@ -308,24 +308,46 @@ void NetList::SetPortPlain(std::string portName, int value) {
 }
 
 void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
-    int addr = byte_addr/4;
-    int word_num = byte_addr%4;
+    int addr = byte_addr / 4;
+    int word_num = byte_addr % 4;
     int length = Rom[addr].size();
-    if(valueArray.size() != 8){
+    if (valueArray.size() != 8) {
         throw std::runtime_error("Invalid value");
     }
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
     }
     for (int i = 0; i < length; i++) {
-        Rom[addr][i+(word_num)*8]->SetCipher(valueArray.at(i));
+        Rom[addr][i + (word_num)*8]->SetCipher(valueArray.at(i));
     }
 }
 
-void NetList::SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray){
-    for(int i=0;i<valueArray.size();i++){
-        Rom[i/32][i%32]->SetCipher(valueArray.at(i));
+void NetList::SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray) {
+    for (int i = 0; i < valueArray.size(); i++) {
+        Rom[i / 32][i % 32]->SetCipher(valueArray.at(i));
     }
+}
+
+void NetList::SetROMDecryptCipherAll(
+    std::vector<std::shared_ptr<LweSample>> valueArray,
+    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey) {
+    for (int i = 0; i < valueArray.size(); i++) {
+        Rom[i / 32][i % 32]->SetPlain(bootsSymDecrypt(valueArray.at(i).get(), secretKey.get()) & 0x1);
+    }
+}
+
+std::vector<std::shared_ptr<LweSample>> NetList::GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey) {
+    int portValue = GetPortPlain(portName);
+    std::vector<std::shared_ptr<LweSample>> valueArray;
+    for (int i = 0; i < width; i++) {
+        std::shared_ptr<LweSample> value{
+            new_gate_bootstrapping_ciphertext(secretKey.get()->params),
+            delete_gate_bootstrapping_ciphertext};
+        bootsSymEncrypt(value.get(), portValue & 0x1, secretKey.get());
+        valueArray.push_back(value);
+        portValue = portValue >> 1;
+    }
+    return valueArray;
 }
 
 void NetList::SetROMPlain(int addr, int value) {
@@ -340,7 +362,7 @@ void NetList::SetROMPlain(int addr, int value) {
 }
 
 void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
-    if(valueArray.size() != 8){
+    if (valueArray.size() != 8) {
         throw std::runtime_error("Invalid value");
     }
     int length = Ram[addr].size();
@@ -369,7 +391,7 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetPortCipher(std::string portN
         throw std::runtime_error("Unknown output port:" + portName);
     }
     std::vector<std::shared_ptr<LweSample>> valueArray;
-    for(int i= 0; i<length;i++){
+    for (int i = 0; i < length; i++) {
         valueArray.push_back(std::shared_ptr<LweSample>(Outputs[portName][i]->GetCipher()));
     }
     return valueArray;

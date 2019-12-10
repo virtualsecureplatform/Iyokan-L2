@@ -12,9 +12,14 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 20;
+    int execCycle = 10;
     int threadNum = 4;
-    while ((opt = getopt(argc, argv, "vpc:t:")) != -1) {
+    std::string logicFile = "../../vsp-core.json";
+    std::string cipherFile = "../../li.enc";
+    std::string resultFile = "../../result.enc";
+    std::string secretKeyFile = "../../secret.key";
+    bool testMode = true;
+    while ((opt = getopt(argc, argv, "vpc:t:l:i:o:s:")) != -1) {
         switch (opt) {
             case 'v':
                 verbose = true;
@@ -28,20 +33,44 @@ int main(int argc, char *argv[]) {
             case 't':
                 threadNum = atoi(optarg);
                 break;
+            case 'l':
+                logicFile = optarg;
+                break;
+            case 'i':
+                cipherFile = optarg;
+                break;
+            case 'o':
+                resultFile = optarg;
+                break;
+            case 's':
+                secretKeyFile = optarg;
+                testMode = true;
             default:
-                std::cout << "Usage: [-p] [-v] [-c cycle] [-t thread_num]" << std::endl;
+                std::cout << "Usage: [-p] [-v] [-c cycle] [-t thread_num] [-l logic_file_name] [-i cipher_file_name] [-o result_file_name]" << std::endl;
                 exit(1);
                 break;
         }
     }
-    std::ifstream ifs{"../../test.enc", std::ios_base::binary};
+    std::ifstream ifs{cipherFile, std::ios_base::binary};
     auto packet = KVSPReqPacket::readFrom(ifs);
+    std::ifstream ifs_secret(secretKeyFile, std::ios_base::binary);
+    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey{
+        new_tfheGateBootstrappingSecretKeySet_fromStream(ifs_secret),
+        delete_gate_bootstrapping_secret_keyset};
+
     ExecManager manager(threadNum, execCycle, verbose);
-    NetList netList("../../vsp-core.json", &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
+    NetList netList(logicFile, &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
+    if (testMode) {
+        netList = NetList(logicFile, &manager.ExecutedQueue, verbose);
+    }
     manager.SetNetList(&netList);
     manager.Prepare();
-    netList.SetROMCipherAll(packet.rom);
 
+    if (testMode) {
+        netList.SetROMDecryptCipherAll(packet.rom, secretKey);
+    } else {
+        netList.SetROMCipherAll(packet.rom);
+    }
 
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();
@@ -54,30 +83,55 @@ int main(int argc, char *argv[]) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
     } else {
         printf("Execution time %lf[ms]\n", time);
-        //netList.DebugOutput();
+        netList.DebugOutput();
         manager.Stats();
     }
-    std::vector<std::shared_ptr<LweSample>> flags = {packet.rom[0]};
-    std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
-        {
-            netList.GetPortCipher("io_testRegx8"),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-            std::vector<std::shared_ptr<LweSample>>(packet.ram.begin() + 0, packet.ram.begin() + 16),
-        };
-    std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
-    std::ofstream ofs{"result.enc", std::ios_base::binary};
-    KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
+    if (testMode) {
+        std::vector<std::shared_ptr<LweSample>> flags = {netList.GetPortEncryptPlain("io_finishFlag", 1, secretKey)};
+        std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
+            {
+                netList.GetPortEncryptPlain("io_regOut_x0", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x1", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x2", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x3", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x4", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x5", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x6", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x7", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x8", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x9", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x10", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x11", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x12", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x13", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x14", 16, secretKey),
+                netList.GetPortEncryptPlain("io_regOut_x15", 16, secretKey)};
+        std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
+        std::ofstream ofs{resultFile, std::ios_base::binary};
+        KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
+
+    } else {
+        std::vector<std::shared_ptr<LweSample>> flags = {netList.GetPortCipher("io_finishFlag")};
+        std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
+            {
+                netList.GetPortCipher("io_regOut_x0"),
+                netList.GetPortCipher("io_regOut_x1"),
+                netList.GetPortCipher("io_regOut_x2"),
+                netList.GetPortCipher("io_regOut_x3"),
+                netList.GetPortCipher("io_regOut_x4"),
+                netList.GetPortCipher("io_regOut_x5"),
+                netList.GetPortCipher("io_regOut_x6"),
+                netList.GetPortCipher("io_regOut_x7"),
+                netList.GetPortCipher("io_regOut_x8"),
+                netList.GetPortCipher("io_regOut_x9"),
+                netList.GetPortCipher("io_regOut_x10"),
+                netList.GetPortCipher("io_regOut_x11"),
+                netList.GetPortCipher("io_regOut_x12"),
+                netList.GetPortCipher("io_regOut_x13"),
+                netList.GetPortCipher("io_regOut_x14"),
+                netList.GetPortCipher("io_regOut_x15")};
+        std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
+        std::ofstream ofs{resultFile, std::ios_base::binary};
+        KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
+    }
 }
