@@ -4,4 +4,8 @@ cmake-build-debug
 *.json
 *.enc
 *.key
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
 !vsp-core.json
