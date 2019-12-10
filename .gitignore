@@ -4,3 +4,4 @@ cmake-build-debug
 *.json
 *.enc
 *.key
+!vsp-core.json
