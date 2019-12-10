@@ -19,12 +19,6 @@ void LogicPortOut::Prepare() {
     if (input.size() == 0) {
         executable = true;
     }
-    if (cipher) {
-        value = new_gate_bootstrapping_ciphertext(key->params);
-        bootsCONSTANT(value, 0, key);
-    } else {
-        res = 0;
-    }
 }
 
 void LogicPortOut::Execute() {

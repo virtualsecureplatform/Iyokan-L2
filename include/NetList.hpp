@@ -56,6 +56,10 @@ public:
 
     void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
+    void SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+
+    void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+
     std::vector<std::shared_ptr<LweSample>> GetPortCipher(std::string portName);
 
     std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
@@ -63,6 +67,8 @@ public:
     std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
 
     std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
+
+    std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
     void SetPortPlain(std::string portName, int value);
 
@@ -75,6 +81,8 @@ public:
     int GetRAMPlain(int addr);
 
     void DebugOutput();
+
+    //void DebugRegisterWrite();
 
     void EnableReset();
 

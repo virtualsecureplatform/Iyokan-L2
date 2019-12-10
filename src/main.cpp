@@ -12,10 +12,10 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 10;
-    int threadNum = 4;
+    int execCycle = 0x1000;
+    int threadNum = 1;
     std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "../../li.enc";
+    std::string cipherFile = "../../bf.enc";
     std::string resultFile = "../../result.enc";
     std::string secretKeyFile = "../../secret.key";
     bool testMode = true;
@@ -62,15 +62,15 @@ int main(int argc, char *argv[]) {
     NetList netList(logicFile, &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
     if (testMode) {
         netList = NetList(logicFile, &manager.ExecutedQueue, verbose);
+        netList.SetROMDecryptCipherAll(packet.rom, secretKey);
+        netList.SetRAMDecryptCipherAll(packet.ram, secretKey);
+    }else{
+        netList.SetROMCipherAll(packet.rom);
+        netList.SetRAMCipherAll(packet.ram);
+
     }
     manager.SetNetList(&netList);
     manager.Prepare();
-
-    if (testMode) {
-        netList.SetROMDecryptCipherAll(packet.rom, secretKey);
-    } else {
-        netList.SetROMCipherAll(packet.rom);
-    }
 
     std::chrono::system_clock::time_point start, end;
     start = std::chrono::system_clock::now();
@@ -86,6 +86,7 @@ int main(int argc, char *argv[]) {
         netList.DebugOutput();
         manager.Stats();
     }
+
     if (testMode) {
         std::vector<std::shared_ptr<LweSample>> flags = {netList.GetPortEncryptPlain("io_finishFlag", 1, secretKey)};
         std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
@@ -106,7 +107,7 @@ int main(int argc, char *argv[]) {
                 netList.GetPortEncryptPlain("io_regOut_x13", 16, secretKey),
                 netList.GetPortEncryptPlain("io_regOut_x14", 16, secretKey),
                 netList.GetPortEncryptPlain("io_regOut_x15", 16, secretKey)};
-        std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
+        std::vector<std::shared_ptr<LweSample>> ram = netList.GetRAMEncryptPlainAll(secretKey);
         std::ofstream ofs{resultFile, std::ios_base::binary};
         KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
     } else {

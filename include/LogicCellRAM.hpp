@@ -34,7 +34,6 @@ public:
     int GetPlain();
 
 private:
-    bool created = false;
 };
 
 #endif  //IYOKAN_L2_LOGICCELLRAM_HPP

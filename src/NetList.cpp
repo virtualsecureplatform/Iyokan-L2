@@ -384,6 +384,19 @@ void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> val
     }
 }
 
+void NetList::SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray){
+    for(int i = 0;i<valueArray.size();i++){
+       Ram[i/8] [i%8]->SetCipher(valueArray.at(i));
+    }
+}
+void NetList::SetRAMDecryptCipherAll(
+    std::vector<std::shared_ptr<LweSample>> valueArray,
+    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey){
+    for(int i = 0;i<valueArray.size();i++){
+        Ram[i/8] [i%8]->SetPlain(bootsSymDecrypt(valueArray.at(i).get(), secretKey.get()));
+    }
+}
+
 void NetList::SetRAMPlain(int addr, uint8_t value) {
     int length = Ram[addr].size();
     if (length == 0) {
@@ -436,6 +449,20 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipherAll() {
     return valueArray;
 }
 
+std::vector<std::shared_ptr<LweSample>> NetList::GetRAMEncryptPlainAll(
+    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey
+    ){
+    std::vector<std::shared_ptr<LweSample>> valueArray;
+    for (int i = 0; i < Ram.size()*8; i++) {
+        std::shared_ptr<LweSample> value{
+            new_gate_bootstrapping_ciphertext(secretKey.get()->params),
+            delete_gate_bootstrapping_ciphertext};
+        bootsSymEncrypt(value.get(), Ram[i/8][i%8]->GetPlain() & 0x1, secretKey.get());
+        valueArray.push_back(value);
+    }
+    return valueArray;
+}
+
 int NetList::GetRAMPlain(int addr) {
     int length = Ram[addr].size();
     if (length == 0) {
@@ -458,6 +485,36 @@ void NetList::DebugOutput() {
         }
     }
 }
+/*
+void NetList::DebugRegisterWrite(){
+    static int reg[16] = {0};
+
+    int x0 = GetPortPlain("io_regOut_x0");
+    if(reg[0] != x0){
+       printf("x0 <= %x\n", x0);
+       reg[0] = x0;
+    }
+
+    int x8 = GetPortPlain("io_regOut_x8");
+    if(reg[8] != x8){
+        printf("x8 <= %x\n", x8);
+        reg[8] = x8;
+    }
+
+    int x10 = GetPortPlain("io_regOut_x10");
+    if(reg[10] != x10){
+        printf("x10 <= %x\n", x10);
+        reg[10] = x10;
+    }
+
+    int x11 = GetPortPlain("io_regOut_x11");
+    if(reg[11] != x11){
+        printf("x11 <= %x\n", x11);
+        reg[11] = x11;
+    }
+
+}
+*/
 
 void NetList::EnableReset() {
     if(cipher){

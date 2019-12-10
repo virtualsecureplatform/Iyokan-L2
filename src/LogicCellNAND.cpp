@@ -23,13 +23,6 @@ void LogicCellNAND::Prepare() {
         throw std::runtime_error("Output is not assigned");
     }
 
-    if (cipher) {
-        value = new_gate_bootstrapping_ciphertext(key->params);
-        bootsCONSTANT(value, 0, key);
-    } else {
-        res = 0;
-    }
-
     InputCount = input.size();
     ReadyInputCount = 0;
 }

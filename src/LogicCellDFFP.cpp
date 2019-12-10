@@ -22,12 +22,6 @@ void LogicCellDFFP::Prepare() {
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
-    if (cipher) {
-        value = new_gate_bootstrapping_ciphertext(key->params);
-        bootsCONSTANT(value, 0, key);
-    } else {
-        res = 0;
-    }
 
     executable = true;
     InputCount = input.size();

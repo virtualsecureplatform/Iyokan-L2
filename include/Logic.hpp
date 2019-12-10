@@ -36,6 +36,9 @@ public:
 
         executable = false;
         executed = false;
+
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
     }
 
     Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue) {
@@ -47,6 +50,8 @@ public:
 
         executable = false;
         executed = false;
+
+        res = 0;
     }
 
     virtual void Prepare() = 0;

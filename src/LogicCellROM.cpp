@@ -23,15 +23,6 @@ void LogicCellROM::Prepare() {
         throw std::runtime_error("Output is not assigned");
     }
 
-    if (!created) {
-        if (cipher) {
-            value = new_gate_bootstrapping_ciphertext(key->params);
-            bootsCONSTANT(value, 0, key);
-        } else {
-            res = 0;
-        }
-    }
-
     executable = true;
     InputCount = input.size();
     ReadyInputCount = 0;
@@ -59,12 +50,10 @@ void LogicCellROM::AddOutput(Logic *logic) {
 
 void LogicCellROM::SetCipher(std::shared_ptr<LweSample> val) {
     bootsCOPY(value, val.get(), key);
-    created = true;
 }
 
 void LogicCellROM::SetPlain(int val) {
     res = val & 0x1;
-    created = true;
 }
 
 bool LogicCellROM::Tick(bool reset) {

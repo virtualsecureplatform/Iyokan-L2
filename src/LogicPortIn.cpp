@@ -19,14 +19,7 @@ void LogicPortIn::Prepare() {
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
-    if (!created) {
-        if (cipher) {
-            value = new_gate_bootstrapping_ciphertext(key->params);
-            bootsCONSTANT(value, 0, key);
-        } else {
-            res = 0;
-        }
-    }
+
     executable = true;
 }
 
@@ -41,12 +34,10 @@ bool LogicPortIn::NoticeInputReady() {
 
 void LogicPortIn::SetCipher(LweSample *val) {
     bootsCOPY(value, val, key);
-    created = true;
 }
 
 void LogicPortIn::SetPlain(int val) {
     res = val & 0x1;
-    created = true;
 }
 
 void LogicPortIn::AddInput(Logic *logic) {
