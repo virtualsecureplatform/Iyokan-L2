@@ -109,7 +109,6 @@ int main(int argc, char *argv[]) {
         std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
         std::ofstream ofs{resultFile, std::ios_base::binary};
         KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
-
     } else {
         std::vector<std::shared_ptr<LweSample>> flags = {netList.GetPortCipher("io_finishFlag")};
         std::vector<std::vector<std::shared_ptr<LweSample>>> regs =
@@ -130,7 +129,7 @@ int main(int argc, char *argv[]) {
                 netList.GetPortCipher("io_regOut_x13"),
                 netList.GetPortCipher("io_regOut_x14"),
                 netList.GetPortCipher("io_regOut_x15")};
-        std::vector<std::shared_ptr<LweSample>> ram = packet.ram;
+        std::vector<std::shared_ptr<LweSample>> ram = netList.GetRAMCipherAll();
         std::ofstream ofs{resultFile, std::ios_base::binary};
         KVSPResPacket{packet.cloudKey, flags, regs, ram}.writeTo(ofs);
     }

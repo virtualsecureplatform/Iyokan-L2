@@ -62,6 +62,8 @@ public:
 
     std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
 
+    std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
+
     void SetPortPlain(std::string portName, int value);
 
     void SetROMPlain(int addr, int value);
@@ -73,6 +75,10 @@ public:
     int GetRAMPlain(int addr);
 
     void DebugOutput();
+
+    void EnableReset();
+
+    void DisableReset();
 
     bool execute;
 

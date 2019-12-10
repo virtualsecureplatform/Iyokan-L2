@@ -86,11 +86,11 @@ bool ExecManager::DepencyUpdate(int nowCnt, int maxCnt) {
 }
 
 void ExecManager::Reset() {
-    netList->SetPortPlain("reset", 1);
+    netList->EnableReset();
     Tick(true);
     while (DepencyUpdate(0, 0))
         ;
-    netList->SetPortPlain("reset", 0);
+    netList->DisableReset();
 }
 
 void ExecManager::PrepareExecution() {

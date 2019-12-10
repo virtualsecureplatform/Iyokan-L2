@@ -294,6 +294,16 @@ int NetList::ConvertJson(std::string jsonFile) {
 }
 
 void NetList::SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray) {
+    int length = Inputs[portName].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown input port:" + portName);
+    }
+    if (valueArray.size() != length) {
+        throw std::runtime_error("Invalid value");
+    }
+    for (int i = 0; i < length; i++) {
+        Inputs[portName][i]->SetCipher(valueArray.at(i).get());
+    }
 }
 
 void NetList::SetPortPlain(std::string portName, int value) {
@@ -411,6 +421,19 @@ int NetList::GetPortPlain(std::string portName) {
 }
 
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
+    std::vector<std::shared_ptr<LweSample>> valueArray;
+    for (int i = 0; i < 8; i++) {
+        valueArray.push_back(std::shared_ptr<LweSample>(Ram[addr][i]->GetCipher()));
+    }
+    return valueArray;
+}
+
+std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipherAll() {
+    std::vector<std::shared_ptr<LweSample>> valueArray;
+    for (int i = 0; i < Ram.size()*8; i++) {
+        valueArray.push_back(std::shared_ptr<LweSample>(Ram[i/8][i%8]->GetCipher()));
+    }
+    return valueArray;
 }
 
 int NetList::GetRAMPlain(int addr) {
@@ -435,101 +458,34 @@ void NetList::DebugOutput() {
         }
     }
 }
+
+void NetList::EnableReset() {
+    if(cipher){
+        std::shared_ptr<LweSample> value{
+            new_gate_bootstrapping_ciphertext(key->params),
+            delete_gate_bootstrapping_ciphertext};
+        bootsCONSTANT(value.get(), 1, key);
+        std::vector<std::shared_ptr<LweSample>> valueArray;
+        valueArray.push_back(value);
+        SetPortCipher("reset", valueArray);
+    }else{
+        SetPortPlain("reset", 1);
+    }
+}
+
+void NetList::DisableReset() {
+    if(cipher){
+        std::shared_ptr<LweSample> value{
+            new_gate_bootstrapping_ciphertext(key->params),
+            delete_gate_bootstrapping_ciphertext};
+        bootsCONSTANT(value.get(), 0, key);
+        std::vector<std::shared_ptr<LweSample>> valueArray;
+        valueArray.push_back(value);
+    }else{
+        SetPortPlain("reset", 0);
+    }
+}
 /*
-void NetList::Set(std::string portName, int value) {
-    int length = Inputs[portName].size();
-    if (length == 0) {
-        throw std::runtime_error("Unknown input port:" + portName);
-    }
-    for (int i = 0; i < length; i++) {
-        Inputs[portName][i]->Set(value & 0x1, key);
-        value = value >> 1;
-    }
-}
-
-void NetList::SetROM(int addr, uint32_t value) {
-    int length = Rom[addr].size();
-    if (length == 0) {
-        throw std::runtime_error("Unknown Rom Address:" + addr);
-    }
-    for (int i = 0; i < length; i++) {
-        Rom[addr][i]->Set(value & 0x1, &key->cloud);
-        value = value >> 1;
-    }
-}
-
-void NetList::SetRAM(int addr, int value) {
-    int length = Ram[addr].size();
-    if (length == 0) {
-        throw std::runtime_error("Unknown Ram Address:" + addr);
-    }
-    for (int i = 0; i < length; i++) {
-        Ram[addr][i]->Set(value & 0x1, &key->cloud);
-        value = value >> 1;
-    }
-}
-
-int NetList::Get(std::string portName) {
-    int length = Outputs[portName].size();
-    if (length == 0) {
-        throw std::runtime_error("Unknown output port:" + portName);
-    }
-    int value = 0;
-    for (int i = length - 1; i > -1; i--) {
-        value = value << 1;
-#ifdef FHE
-        value += Outputs[portName][i]->Get(key);
-#else
-        value += Outputs[portName][i]->Get();
-#endif
-    }
-    return value;
-}
-
-int NetList::GetRAM(int addr) {
-    int length = Ram[addr].size();
-    if (length == 0) {
-        throw std::runtime_error("Unknown Ram Address:" + addr);
-    }
-    int value = 0;
-    for (int i = length - 1; i > -1; i--) {
-        value = value << 1;
-#ifdef FHE
-        value += Ram[addr][i]->Get(key);
-#else
-        value += Ram[addr][i]->Get();
-#endif
-    }
-    return value;
-}
-
-void NetList::DebugOutput() {
-    std::cout << "---Debug Output---" << std::endl;
-    for (auto item : Outputs) {
-        std::cout << item.first << " : " << Get(item.first) << std::endl;
-    }
-}
-
-void NetList::DumpRAM() {
-    for (auto item : Ram) {
-        if(item.first > 15 && item.first < 42){
-            std::printf("RAM[%d] 0x%02X\n", item.first, GetRAM(item.first));
-        }
-    }
-}
-
-void NetList::DumpRAMtoFile(std::string path, int cycle) {
-    std::string filePath = path + std::to_string(cycle) + ".dump";
-    FILE* pFile;
-    pFile = fopen(filePath.c_str(), "w");
-    for(auto item : Ram){
-        if(item.first > 15 && item.first < 42){
-            std::fprintf(pFile, "%d %02X\n", item.first, GetRAM(item.first));
-        }
-    }
-    fclose(pFile);
-}
-
 void NetList::BuggyKey(){
     key->lwe_key->key[0] = (~key->lwe_key->key[0])&0x1;
 }
