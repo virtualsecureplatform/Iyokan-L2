@@ -7,18 +7,19 @@
 #include "ExecManager.hpp"
 #include "KVSPPacket.hpp"
 
+const std::string usageMsg =  "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
 int main(int argc, char *argv[]) {
     int opt;
     opterr = 0;
     bool perfMode = false;
-    bool verbose = true;
-    int execCycle = 0x1000;
-    int threadNum = 1;
-    std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "../../bf.enc";
-    std::string resultFile = "../../result.enc";
-    std::string secretKeyFile = "../../secret.key";
-    bool testMode = true;
+    bool verbose = false;
+    int execCycle = 0;
+    int threadNum = 0;
+    std::string logicFile = "";
+    std::string cipherFile = "";
+    std::string resultFile = "";
+    std::string secretKeyFile = "";
+    bool testMode = false;
     while ((opt = getopt(argc, argv, "vpc:t:l:i:o:s:")) != -1) {
         switch (opt) {
             case 'v':
@@ -45,30 +46,77 @@ int main(int argc, char *argv[]) {
             case 's':
                 secretKeyFile = optarg;
                 testMode = true;
+                break;
             default:
-                std::cout << "Usage: [-p] [-v] [-c cycle] [-t thread_num] [-l logic_file_name] [-i cipher_file_name] [-o result_file_name]" << std::endl;
+                std::cout << usageMsg << std::endl;
                 exit(1);
                 break;
         }
     }
+    if(execCycle != 0){
+        std::cout << "ExecCycle:" << execCycle << std::endl;
+    }else{
+        std::cout << usageMsg << std::endl;
+        exit(1);
+    }
+
+    if(threadNum != 0){
+        std::cout << "ThreadNum:" << threadNum << std::endl;
+    }else{
+        std::cout << usageMsg << std::endl;
+        exit(1);
+    }
+
+    if(logicFile != ""){
+        std::cout << "LogicFile:" << logicFile << std::endl;
+    }else{
+        std::cout << usageMsg << std::endl;
+        exit(1);
+    }
+
+    if(cipherFile != ""){
+        std::cout << "CipherFile:" << cipherFile << std::endl;
+    }else{
+        std::cout << usageMsg << std::endl;
+        exit(1);
+    }
+
+    if(resultFile != ""){
+        std::cout << "ResultFile:" << resultFile << std::endl;
+    }else{
+        std::cout << usageMsg << std::endl;
+        exit(1);
+    }
+
+    if(secretKeyFile != ""){
+        std::cout << "SecretKeyFile:" << secretKeyFile << std::endl;
+    }
+
+    if(testMode){
+        std::cout << "Running on TestMode" << std::endl;
+    }
+
     std::ifstream ifs{cipherFile, std::ios_base::binary};
     auto packet = KVSPReqPacket::readFrom(ifs);
-    std::ifstream ifs_secret(secretKeyFile, std::ios_base::binary);
-    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey{
-        new_tfheGateBootstrappingSecretKeySet_fromStream(ifs_secret),
-        delete_gate_bootstrapping_secret_keyset};
 
     ExecManager manager(threadNum, execCycle, verbose);
+
     NetList netList(logicFile, &manager.ExecutedQueue, packet.cloudKey.get(), verbose);
+    std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey = nullptr;
     if (testMode) {
+        std::ifstream ifs_secret(secretKeyFile, std::ios_base::binary);
+        secretKey = std::shared_ptr<TFheGateBootstrappingSecretKeySet> {
+            new_tfheGateBootstrappingSecretKeySet_fromStream(ifs_secret),
+            delete_gate_bootstrapping_secret_keyset};
+
         netList = NetList(logicFile, &manager.ExecutedQueue, verbose);
         netList.SetROMDecryptCipherAll(packet.rom, secretKey);
         netList.SetRAMDecryptCipherAll(packet.ram, secretKey);
     }else{
         netList.SetROMCipherAll(packet.rom);
         netList.SetRAMCipherAll(packet.ram);
-
     }
+
     manager.SetNetList(&netList);
     manager.Prepare();
 
