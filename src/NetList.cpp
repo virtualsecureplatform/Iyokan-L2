@@ -538,6 +538,7 @@ void NetList::DisableReset() {
         bootsCONSTANT(value.get(), 0, key);
         std::vector<std::shared_ptr<LweSample>> valueArray;
         valueArray.push_back(value);
+        SetPortCipher("reset", valueArray);
     }else{
         SetPortPlain("reset", 0);
     }
