@@ -3,15 +3,7 @@
 LogicCellAND::LogicCellAND(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "AND";
-}
-
-LogicCellAND::LogicCellAND(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "AND";
 }
 
@@ -27,14 +19,14 @@ void LogicCellAND::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellAND::Execute() {
-    if (cipher) {
-        bootsAND(value, input.at(0)->value, input.at(1)->value, key);
-    } else {
-        res = input.at(0)->res & input.at(1)->res;
-    }
+void LogicCellAND::Execute(cufhe::Stream stream, bool reset){
+    cufhe::gAnd(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellAND::Execute(bool reset) {
+    res = input.at(0)->res & input.at(1)->res;
+    executed = true;
 }
 
 bool LogicCellAND::NoticeInputReady() {
@@ -56,7 +48,7 @@ void LogicCellAND::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellAND::Tick(bool reset) {
+bool LogicCellAND::Tick() {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

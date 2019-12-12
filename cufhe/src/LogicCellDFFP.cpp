@@ -3,15 +3,7 @@
 LogicCellDFFP::LogicCellDFFP(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "DFFP";
-}
-
-LogicCellDFFP::LogicCellDFFP(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "DFFP";
 }
 
@@ -23,18 +15,31 @@ void LogicCellDFFP::Prepare() {
         throw std::runtime_error("Output is not assigned");
     }
 
-    executable = true;
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellDFFP::Execute() {
+void LogicCellDFFP::Execute(cufhe::Stream stream, bool reset) {
+    if(!reset){
+        cufhe::gCopy(*value, *input.at(0)->value, stream);
+    }
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellDFFP::Execute(bool reset) {
+    if(!reset){
+        res = input.at(0)->res;
+    }
+    executed = true;
 }
 
 bool LogicCellDFFP::NoticeInputReady() {
     return false;
+    ReadyInputCount++;
+    if (ReadyInputCount > InputCount) {
+        throw std::runtime_error("[DFFP] ReadyInputCount is invalid");
+    }
+    return InputCount == ReadyInputCount;
 }
 
 void LogicCellDFFP::AddInput(Logic *logic) {
@@ -48,12 +53,7 @@ void LogicCellDFFP::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellDFFP::Tick(bool reset) {
-    if (cipher) {
-        bootsCOPY(value, input.at(0)->value, key);
-    } else {
-        res = input.at(0)->res;
-    }
+bool LogicCellDFFP::Tick() {
     executable = true;
     executed = false;
     ReadyInputCount = 0;

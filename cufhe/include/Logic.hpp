@@ -6,11 +6,17 @@
 #include <iostream>
 #include <exception>
 #include <stdexcept>
+#include <functional>
 
-#include <tfhe/tfhe.h>
-#include <tfhe/tfhe_io.h>
+#include "cufhe_gpu.cuh"
+#include "cufhe.h"
 
-#include "tbb/concurrent_queue.h"
+
+
+class Logic;
+class compare_f;
+
+using pri_queue = std::priority_queue<Logic*, std::vector<Logic*>, compare_f>;
 
 class Logic {
 public:
@@ -20,43 +26,35 @@ public:
 
     bool executed;
     bool executable;
+
     int res;
-    LweSample *value;
+    cufhe::Ctxt *value;
+
     bool cipher = false;
-    const TFheGateBootstrappingCloudKeySet *key;
     std::vector<Logic *> output{};
 
-    Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck) {
+    Logic(int _id, int pri, bool isCipher) {
         id = _id;
         priority = pri;
-        executedQueue = queue;
-
-        cipher = true;
-        key = ck;
 
         executable = false;
         executed = false;
 
-        value = new_gate_bootstrapping_ciphertext(key->params);
-        bootsCONSTANT(value, 0, key);
-    }
-
-    Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue) {
-        id = _id;
-        priority = pri;
-        executedQueue = queue;
-
-        cipher = false;
-
-        executable = false;
-        executed = false;
-
-        res = 0;
+        if(isCipher){
+            cipher = true;
+            value = new cufhe::Ctxt();
+            cufhe::gConstantZero(*value);
+        }else{
+            cipher = false;
+            res = 0;
+        }
     }
 
     virtual void Prepare() = 0;
 
-    virtual void Execute() = 0;
+    virtual void Execute(cufhe::Stream stream, bool reset) = 0;
+
+    virtual void Execute(bool reset) = 0;
 
     virtual bool NoticeInputReady() = 0;
 
@@ -64,13 +62,19 @@ public:
 
     virtual void AddOutput(Logic *logic) = 0;
 
-    virtual bool Tick(bool reset) = 0;
+    virtual bool Tick() = 0;
 
 protected:
-    tbb::concurrent_queue<Logic *> *executedQueue;
     int InputCount;
     int ReadyInputCount;
     std::vector<Logic *> input{};
+};
+
+class compare_f{
+public:
+    bool operator()(Logic *u, Logic*v){
+        return u->priority < v->priority;
+    }
 };
 
 #endif

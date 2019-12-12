@@ -3,15 +3,7 @@
 LogicCellRAM::LogicCellRAM(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "RAM";
-}
-
-LogicCellRAM::LogicCellRAM(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "RAM";
 }
 
@@ -28,13 +20,27 @@ void LogicCellRAM::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellRAM::Execute() {
+void LogicCellRAM::Execute(cufhe::Stream stream, bool reset) {
+    if(!reset){
+        cufhe::gCopy(*value, *input.at(0)->value, stream);
+    }
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellRAM::Execute(bool reset) {
+    if(!reset){
+        res = input.at(0)->res;
+    }
+    executed = true;
 }
 
 bool LogicCellRAM::NoticeInputReady() {
     return false;
+    ReadyInputCount++;
+    if (ReadyInputCount > InputCount) {
+        throw std::runtime_error("[DFFP] ReadyInputCount is invalid");
+    }
+    return InputCount == ReadyInputCount;
 }
 
 void LogicCellRAM::AddInput(Logic *logic) {
@@ -48,30 +54,34 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
+/*
 void LogicCellRAM::SetCipher(std::shared_ptr<LweSample> val) {
     bootsCOPY(value, val.get(), key);
 }
+*/
 
 void LogicCellRAM::SetPlain(int val) {
     res = val & 0x1;
 }
 
+/*
 LweSample *LogicCellRAM::GetCipher() {
     return value;
 }
+ */
 
 int LogicCellRAM::GetPlain() {
     return res;
 }
 
-bool LogicCellRAM::Tick(bool reset) {
-    if (!reset) {
-        if (cipher) {
-            bootsCOPY(value, input.at(0)->value, key);
-        } else {
-            res = input.at(0)->res;
+bool LogicCellRAM::Tick() {
+    /*
+    for (Logic *outlogic : output) {
+        if (outlogic->NoticeInputReady()) {
+            queue->push(outlogic);
         }
     }
+    */
     executable = true;
     executed = false;
     ReadyInputCount = 0;

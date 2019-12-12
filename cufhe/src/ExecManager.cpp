@@ -1,9 +1,11 @@
 #include "ExecManager.hpp"
 
-ExecManager::ExecManager(int num, int _step, bool v) {
+ExecManager::ExecManager(int num, int _step, bool v, bool isCipher) {
     step = _step;
     workerNum = num;
     verbose = v;
+    cipher = isCipher;
+    cores.push_back(new SMCore(0, &readyQueue, isCipher));
 }
 
 void ExecManager::SetNetList(NetList *_netList) {
@@ -11,23 +13,17 @@ void ExecManager::SetNetList(NetList *_netList) {
 }
 
 void ExecManager::Prepare() {
-    PrepareExecution();
-    ClearQueue();
-    for (int i = 0; i < workerNum; i++) {
-        threads.emplace_back(std::thread(Worker, this));
+    for (auto logic : netList->Logics) {
+        logic.second->Prepare();
     }
-    Reset();
+    executionCount = 0;
+    //Reset();
 }
 
 void ExecManager::Start() {
-    for (int i = 0; i < step; i++) {
-        Tick(false);
-        while (DepencyUpdate(i + 1, step)) {
-            usleep(100);
-        }
+    for(int i=0;i<step;i++){
+        ExecClock(i+1,step,false);
     }
-    Tick(false);
-    TerminateWorkers();
 }
 
 void ExecManager::Stats() {
@@ -52,68 +48,38 @@ int ExecManager::GetExecutedLogicNum() {
     return logicCount;
 }
 
-void ExecManager::ClearQueue() {
-    ReadyQueue.clear();
-    ExecutedQueue.clear();
+void ExecManager::Reset() {
+    netList->EnableReset();
+    ExecClock(0,0,true);
+    netList->DisableReset();
 }
 
-bool ExecManager::DepencyUpdate(int nowCnt, int maxCnt) {
-    Logic *logic;
-    for (int i = 0; i < workerNum; i++) {
-        while (ExecutedQueue.try_pop(logic)) {
-            executionCount++;
-            if (!logic->executed) {
-                throw std::runtime_error("this logic is not executed");
+void ExecManager::Tick() {
+    executionCount = 0;
+    for (auto logic : netList->Logics) {
+        if(logic.second->Tick()){
+            readyQueue.push(logic.second);
+        }
+    }
+    for(auto core:cores){
+        core->execLogic = nullptr;
+    }
+}
+
+void ExecManager::ExecClock(int nowCnt, int maxCnt, bool reset) {
+    Tick();
+    executionCount = 0;
+    while(executionCount < netList->Logics.size()) {
+        for (auto core : cores) {
+            if (core->DependencyUpdate(reset)) {
+                executionCount += 1;
             }
             if (executionCount % 1000 == 0 && verbose) {
                 printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
             }
-            ExecCounter[logic->Type]++;
-            if (executionCount == netList->Logics.size()) {
-                if (verbose) {
-                    printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
-                }
-                return false;
-            }
-            for (Logic *outlogic : logic->output) {
-                if (outlogic->NoticeInputReady()) {
-                    ReadyQueue.push(outlogic);
-                }
+            if (executionCount == netList->Logics.size() && verbose) {
+                printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
             }
         }
-    }
-    return true;
-}
-
-void ExecManager::Reset() {
-    netList->EnableReset();
-    Tick(true);
-    while (DepencyUpdate(0, 0));
-    netList->DisableReset();
-}
-
-void ExecManager::PrepareExecution() {
-    for (auto logic : netList->Logics) {
-        logic.second->Prepare();
-        if (logic.second->executable) {
-            ReadyQueue.push(logic.second);
-        }
-    }
-    executionCount = 0;
-}
-
-void ExecManager::Tick(bool reset) {
-    executionCount = 0;
-    for (auto logic : netList->Logics) {
-        if (logic.second->Tick(reset)) {
-            ReadyQueue.push(logic.second);
-        }
-    }
-}
-
-void ExecManager::TerminateWorkers() {
-    terminate = true;
-    for (int i = 0; i < threads.size(); i++) {
-        threads[i].detach();
     }
 }

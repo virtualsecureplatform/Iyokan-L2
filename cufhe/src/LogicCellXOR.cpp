@@ -3,15 +3,7 @@
 LogicCellXOR::LogicCellXOR(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "XOR";
-}
-
-LogicCellXOR::LogicCellXOR(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "XOR";
 }
 
@@ -27,14 +19,14 @@ void LogicCellXOR::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellXOR::Execute() {
-    if (cipher) {
-        bootsXOR(value, input.at(0)->value, input.at(1)->value, key);
-    } else {
-        res = (input.at(0)->res ^ input.at(1)->res) & 0x1;
-    }
+void LogicCellXOR::Execute(cufhe::Stream stream, bool reset) {
+    cufhe::gXor(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellXOR::Execute(bool reset) {
+    res = (input.at(0)->res ^ input.at(1)->res) & 0x1;
+    executed = true;
 }
 
 bool LogicCellXOR::NoticeInputReady() {
@@ -56,7 +48,7 @@ void LogicCellXOR::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellXOR::Tick(bool reset) {
+bool LogicCellXOR::Tick() {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

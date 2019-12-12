@@ -3,15 +3,7 @@
 LogicCellROM::LogicCellROM(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "ROM";
-}
-
-LogicCellROM::LogicCellROM(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "ROM";
 }
 
@@ -28,13 +20,16 @@ void LogicCellROM::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellROM::Execute() {
+void LogicCellROM::Execute(cufhe::Stream stream, bool reset) {
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellROM::Execute(bool reset) {
+    executed = true;
 }
 
 bool LogicCellROM::NoticeInputReady() {
-    return true;
+    return false;
 }
 
 void LogicCellROM::AddInput(Logic *logic) {
@@ -48,15 +43,17 @@ void LogicCellROM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
+/*
 void LogicCellROM::SetCipher(std::shared_ptr<LweSample> val) {
     bootsCOPY(value, val.get(), key);
 }
+*/
 
 void LogicCellROM::SetPlain(int val) {
     res = val & 0x1;
 }
 
-bool LogicCellROM::Tick(bool reset) {
+bool LogicCellROM::Tick() {
     executable = true;
     executed = false;
     ReadyInputCount = 0;

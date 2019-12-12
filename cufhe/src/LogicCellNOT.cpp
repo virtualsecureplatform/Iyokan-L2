@@ -3,15 +3,7 @@
 LogicCellNOT::LogicCellNOT(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "NOT";
-}
-
-LogicCellNOT::LogicCellNOT(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "NOT";
 }
 
@@ -27,14 +19,14 @@ void LogicCellNOT::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellNOT::Execute() {
-    if (cipher) {
-        bootsNOT(value, input.at(0)->value, key);
-    } else {
-        res = (~input.at(0)->res) & 0x1;
-    }
+void LogicCellNOT::Execute(cufhe::Stream stream, bool reset) {
+    cufhe::gNot(*value, *input.at(0)->value, stream);
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellNOT::Execute(bool reset) {
+    res = (~input.at(0)->res) & 0x1;
+    executed = true;
 }
 
 bool LogicCellNOT::NoticeInputReady() {
@@ -56,7 +48,7 @@ void LogicCellNOT::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellNOT::Tick(bool reset) {
+bool LogicCellNOT::Tick() {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

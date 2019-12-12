@@ -3,15 +3,7 @@
 LogicPortIn::LogicPortIn(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "INPUT";
-}
-
-LogicPortIn::LogicPortIn(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "INPUT";
 }
 
@@ -23,17 +15,21 @@ void LogicPortIn::Prepare() {
     executable = true;
 }
 
-void LogicPortIn::Execute() {
+void LogicPortIn::Execute(cufhe::Stream stream, bool reset) {
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicPortIn::Execute(bool reset) {
+    executed = true;
 }
 
 bool LogicPortIn::NoticeInputReady() {
-    return executable;
+    return false;
 }
 
-void LogicPortIn::SetCipher(LweSample *val) {
-    bootsCOPY(value, val, key);
+void LogicPortIn::SetCipher(cufhe::Ctxt *val) {
+    cufhe::SetToGPU(*val);
+    cufhe::gCopy(*value, *val);
 }
 
 void LogicPortIn::SetPlain(int val) {
@@ -47,7 +43,8 @@ void LogicPortIn::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicPortIn::Tick(bool reset) {
+bool LogicPortIn::Tick() {
+    executable = true;
     executed = false;
     ReadyInputCount = 0;
     return executable;

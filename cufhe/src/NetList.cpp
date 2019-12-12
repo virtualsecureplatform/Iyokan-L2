@@ -6,11 +6,6 @@
 #include <string>
 #include <iterator>
 #include <string.h>
-#include "tbb/concurrent_queue.h"
-#include "tbb/concurrent_priority_queue.h"
-
-#include <tfhe/tfhe.h>
-#include <tfhe/tfhe_io.h>
 
 #include "NetList.hpp"
 #include "Logic.hpp"
@@ -34,35 +29,11 @@
 
 NetList::NetList(
     std::string json,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *cloudKey,
-    bool v) {
+    bool v,
+    bool isCipher) {
     verbose = v;
-    key = cloudKey;
-    cipher = true;
-    executedQueue = queue;
+    cipher = isCipher;
     ConvertJson(json);
-}
-
-NetList::NetList(
-    std::string json,
-    tbb::concurrent_queue<Logic *> *queue,
-    bool v) {
-    verbose = v;
-    cipher = false;
-    executedQueue = queue;
-    ConvertJson(json);
-}
-
-void PrepareTFHE() {
-    //generate a keyset
-    const int minimum_lambda = 110;
-    TFheGateBootstrappingParameterSet *params = new_default_gate_bootstrapping_parameters(minimum_lambda);
-
-    //generate a random key
-    uint32_t seed[] = {314, 1592, 657};
-    tfhe_random_generator_setSeed(seed, 3);
-    TFheGateBootstrappingSecretKeySet *key = new_random_gate_bootstrapping_secret_keyset(params);
 }
 
 int NetList::ConvertJson(std::string jsonFile) {
@@ -89,17 +60,9 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast<int>(port.at("id").get<double>());
         int priority = static_cast<int>(port.at("priority").get<double>());
         if (type == "input") {
-            if (cipher) {
-                Logics[id] = new LogicPortIn(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicPortIn(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicPortIn(id, priority, cipher);
         } else if (type == "output") {
-            if (cipher) {
-                Logics[id] = new LogicPortOut(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicPortOut(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicPortOut(id, priority, cipher);
         }
         Logics[id]->priority = priority;
     }
@@ -109,83 +72,31 @@ int NetList::ConvertJson(std::string jsonFile) {
         int id = static_cast<int>(cell.at("id").get<double>());
         int priority = static_cast<int>(cell.at("priority").get<double>());
         if (type == "AND") {
-            if (cipher) {
-                Logics[id] = new LogicCellAND(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellAND(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellAND(id, priority, cipher);
         } else if (type == "NAND") {
-            if (cipher) {
-                Logics[id] = new LogicCellNAND(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellNAND(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellNAND(id, priority, cipher);
         } else if (type == "ANDNOT") {
-            if (cipher) {
-                Logics[id] = new LogicCellANDNOT(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellANDNOT(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellANDNOT(id, priority, cipher);
         } else if (type == "XOR") {
-            if (cipher) {
-                Logics[id] = new LogicCellXOR(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellXOR(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellXOR(id, priority, cipher);
         } else if (type == "XNOR") {
-            if (cipher) {
-                Logics[id] = new LogicCellXNOR(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellXNOR(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellXNOR(id, priority, cipher);
         } else if (type == "DFFP") {
-            if (cipher) {
-                Logics[id] = new LogicCellDFFP(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellDFFP(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellDFFP(id, priority, cipher);
         } else if (type == "NOT") {
-            if (cipher) {
-                Logics[id] = new LogicCellNOT(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellNOT(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellNOT(id, priority, cipher);
         } else if (type == "NOR") {
-            if (cipher) {
-                Logics[id] = new LogicCellNOR(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellNOR(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellNOR(id, priority, cipher);
         } else if (type == "OR") {
-            if (cipher) {
-                Logics[id] = new LogicCellOR(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellOR(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellOR(id, priority, cipher);
         } else if (type == "ORNOT") {
-            if (cipher) {
-                Logics[id] = new LogicCellORNOT(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellORNOT(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellORNOT(id, priority, cipher);
         } else if (type == "MUX") {
-            if (cipher) {
-                Logics[id] = new LogicCellMUX(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellMUX(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellMUX(id, priority, cipher);
         } else if (type == "ROM") {
-            if (cipher) {
-                Logics[id] = new LogicCellROM(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellROM(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellROM(id, priority, cipher);
         } else if (type == "RAM") {
-            if (cipher) {
-                Logics[id] = new LogicCellRAM(id, priority, executedQueue, key);
-            } else {
-                Logics[id] = new LogicCellRAM(id, priority, executedQueue);
-            }
+            Logics[id] = new LogicCellRAM(id, priority, cipher);
         } else {
             throw std::runtime_error("Not implemented:" + type);
         }
@@ -293,7 +204,7 @@ int NetList::ConvertJson(std::string jsonFile) {
     return 0;
 }
 
-void NetList::SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray) {
+void NetList::SetPortCipher(std::string portName, std::vector<cufhe::Ctxt *> valueArray) {
     int length = Inputs[portName].size();
     if (length == 0) {
         throw std::runtime_error("Unknown input port:" + portName);
@@ -302,7 +213,7 @@ void NetList::SetPortCipher(std::string portName, std::vector<std::shared_ptr<Lw
         throw std::runtime_error("Invalid value");
     }
     for (int i = 0; i < length; i++) {
-        Inputs[portName][i]->SetCipher(valueArray.at(i).get());
+        Inputs[portName][i]->SetCipher(valueArray.at(i));
     }
 }
 
@@ -317,6 +228,7 @@ void NetList::SetPortPlain(std::string portName, int value) {
     }
 }
 
+/*
 void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
     int addr = byte_addr / 4;
     int word_num = byte_addr % 4;
@@ -331,13 +243,17 @@ void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>
         Rom[addr][i + (word_num)*8]->SetCipher(valueArray.at(i));
     }
 }
+ */
 
+/*
 void NetList::SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray) {
     for (int i = 0; i < valueArray.size(); i++) {
         Rom[i / 32][i % 32]->SetCipher(valueArray.at(i));
     }
 }
+ */
 
+/*
 void NetList::SetROMDecryptCipherAll(
     std::vector<std::shared_ptr<LweSample>> valueArray,
     std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey) {
@@ -345,7 +261,9 @@ void NetList::SetROMDecryptCipherAll(
         Rom[i / 32][i % 32]->SetPlain(bootsSymDecrypt(valueArray.at(i).get(), secretKey.get()) & 0x1);
     }
 }
+ */
 
+/*
 std::vector<std::shared_ptr<LweSample>> NetList::GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey) {
     int portValue = GetPortPlain(portName);
     std::vector<std::shared_ptr<LweSample>> valueArray;
@@ -359,8 +277,9 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetPortEncryptPlain(std::string
     }
     return valueArray;
 }
+ */
 
-void NetList::SetROMPlain(int addr, int value) {
+void NetList::SetROMPlain(int addr, uint32_t value) {
     int length = Rom[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
@@ -371,6 +290,7 @@ void NetList::SetROMPlain(int addr, int value) {
     }
 }
 
+/*
 void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
     if (valueArray.size() != 8) {
         throw std::runtime_error("Invalid value");
@@ -383,12 +303,17 @@ void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> val
         Ram[addr][i]->SetCipher(valueArray.at(i));
     }
 }
+ */
 
+/*
 void NetList::SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray){
     for(int i = 0;i<valueArray.size();i++){
        Ram[i/8] [i%8]->SetCipher(valueArray.at(i));
     }
 }
+ */
+
+/*
 void NetList::SetRAMDecryptCipherAll(
     std::vector<std::shared_ptr<LweSample>> valueArray,
     std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey){
@@ -396,6 +321,7 @@ void NetList::SetRAMDecryptCipherAll(
         Ram[i/8] [i%8]->SetPlain(bootsSymDecrypt(valueArray.at(i).get(), secretKey.get()));
     }
 }
+ */
 
 void NetList::SetRAMPlain(int addr, uint8_t value) {
     int length = Ram[addr].size();
@@ -408,14 +334,14 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
     }
 }
 
-std::vector<std::shared_ptr<LweSample>> NetList::GetPortCipher(std::string portName) {
+std::vector<cufhe::Ctxt *> NetList::GetPortCipher(std::string portName) {
     int length = Outputs[portName].size();
     if (length == 0) {
         throw std::runtime_error("Unknown output port:" + portName);
     }
-    std::vector<std::shared_ptr<LweSample>> valueArray;
+    std::vector<cufhe::Ctxt *> valueArray;
     for (int i = 0; i < length; i++) {
-        valueArray.push_back(std::shared_ptr<LweSample>(Outputs[portName][i]->GetCipher()));
+        valueArray.push_back(Outputs[portName][i]->GetCipher());
     }
     return valueArray;
 }
@@ -433,6 +359,7 @@ int NetList::GetPortPlain(std::string portName) {
     return value;
 }
 
+/*
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
     std::vector<std::shared_ptr<LweSample>> valueArray;
     for (int i = 0; i < 8; i++) {
@@ -440,7 +367,9 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
     }
     return valueArray;
 }
+ */
 
+/*
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipherAll() {
     std::vector<std::shared_ptr<LweSample>> valueArray;
     for (int i = 0; i < Ram.size()*8; i++) {
@@ -448,7 +377,9 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipherAll() {
     }
     return valueArray;
 }
+ */
 
+/*
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMEncryptPlainAll(
     std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey
     ){
@@ -462,6 +393,7 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetRAMEncryptPlainAll(
     }
     return valueArray;
 }
+ */
 
 int NetList::GetRAMPlain(int addr) {
     int length = Ram[addr].size();
@@ -518,6 +450,7 @@ void NetList::DebugRegisterWrite(){
 
 void NetList::EnableReset() {
     if(cipher){
+        /*
         std::shared_ptr<LweSample> value{
             new_gate_bootstrapping_ciphertext(key->params),
             delete_gate_bootstrapping_ciphertext};
@@ -525,6 +458,7 @@ void NetList::EnableReset() {
         std::vector<std::shared_ptr<LweSample>> valueArray;
         valueArray.push_back(value);
         SetPortCipher("reset", valueArray);
+         */
     }else{
         SetPortPlain("reset", 1);
     }
@@ -532,6 +466,7 @@ void NetList::EnableReset() {
 
 void NetList::DisableReset() {
     if(cipher){
+        /*
         std::shared_ptr<LweSample> value{
             new_gate_bootstrapping_ciphertext(key->params),
             delete_gate_bootstrapping_ciphertext};
@@ -539,6 +474,7 @@ void NetList::DisableReset() {
         std::vector<std::shared_ptr<LweSample>> valueArray;
         valueArray.push_back(value);
         SetPortCipher("reset", valueArray);
+         */
     }else{
         SetPortPlain("reset", 0);
     }

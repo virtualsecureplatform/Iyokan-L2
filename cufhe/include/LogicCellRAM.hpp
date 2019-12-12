@@ -9,13 +9,13 @@
 
 class LogicCellRAM : public Logic {
 public:
-    LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
-
-    LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+    LogicCellRAM(int id, int pri, bool isCipher);
 
     void Prepare();
 
-    void Execute();
+    void Execute(cufhe::Stream stream, bool reset);
+
+    void Execute(bool reset);
 
     bool NoticeInputReady();
 
@@ -23,13 +23,13 @@ public:
 
     void AddOutput(Logic *logic);
 
-    bool Tick(bool reset);
+    bool Tick();
 
-    void SetCipher(std::shared_ptr<LweSample> val);
+    //void SetCipher(std::shared_ptr<LweSample> val);
 
     void SetPlain(int val);
 
-    LweSample *GetCipher();
+    //LweSample *GetCipher();
 
     int GetPlain();
 

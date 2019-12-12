@@ -6,20 +6,16 @@
 #define IYOKAN_L2_EXECMANAGER_HPP
 
 #include <vector>
-#include <thread>
 #include "Logic.hpp"
 #include "Utils.hpp"
-#include "tbb/concurrent_priority_queue.h"
-#include "tbb/concurrent_queue.h"
-#include "tfhe/tfhe.h"
-#include "tfhe/tfhe_io.h"
 #include "NetList.hpp"
+#include "SMCore.hpp"
 
 class ExecManager {
 public:
-    tbb::concurrent_queue<Logic *> ExecutedQueue;
+    std::priority_queue<Logic *, std::vector<Logic*>, compare_f> readyQueue;
 
-    ExecManager(int num, int _step, bool v);
+    ExecManager(int num, int _step, bool v, bool isCipher);
 
     void SetNetList(NetList *_netList);
 
@@ -36,36 +32,19 @@ public:
 private:
     int executionCount = 0;
     NetList *netList;
-    tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
+    bool cipher = false;
 
     int workerNum = 0;
     int step = 0;
     bool verbose = true;
+    std::vector<SMCore *> cores;
     std::map<std::string, int> ExecCounter;
-    std::vector<std::thread> threads;
-
-    void ClearQueue();
-
-    bool DepencyUpdate(int nowCnt, int maxCnt);
 
     void Reset();
 
-    void PrepareExecution();
+    void Tick();
 
-    void Tick(bool reset);
-
-    void TerminateWorkers();
-
-    static void Worker(ExecManager *worker) {
-        while (!worker->terminate) {
-            Logic *logic;
-            if (worker->ReadyQueue.try_pop(logic)) {
-                logic->Execute();
-            } else {
-                usleep(100);
-            }
-        }
-    }
+    void ExecClock(int nowCnt, int maxCnt, bool reset);
 };
 
 #endif  //IYOKAN_L2_EXECMANAGER_HPP

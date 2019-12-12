@@ -9,13 +9,13 @@
 
 class LogicPortIn : public Logic {
 public:
-    LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
-
-    LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
+    LogicPortIn(int id, int pri, bool isCipher);
 
     void Prepare();
 
-    void Execute();
+    void Execute(cufhe::Stream stream, bool reset);
+
+    void Execute(bool reset);
 
     bool NoticeInputReady();
 
@@ -23,9 +23,9 @@ public:
 
     void AddOutput(Logic *logic);
 
-    bool Tick(bool reset);
+    bool Tick();
 
-    void SetCipher(LweSample *val);
+    void SetCipher(cufhe::Ctxt *val);
 
     void SetPlain(int val);
 

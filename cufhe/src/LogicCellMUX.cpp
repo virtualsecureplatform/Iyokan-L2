@@ -3,15 +3,7 @@
 LogicCellMUX::LogicCellMUX(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "MUX";
-}
-
-LogicCellMUX::LogicCellMUX(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "MUX";
 }
 
@@ -27,20 +19,20 @@ void LogicCellMUX::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellMUX::Execute() {
-    if (cipher) {
-        bootsMUX(value, input.at(2)->value, input.at(1)->value, input.at(0)->value, key);
+void LogicCellMUX::Execute(cufhe::Stream stream, bool reset) {
+    cufhe::gMux(*value, *input.at(2)->value, *input.at(1)->value, *input.at(0)->value, stream);
+    executed = true;
+}
+
+void LogicCellMUX::Execute(bool reset) {
+    if (input.at(2)->res == 0) {
+        res = input.at(0)->res;
+    } else if (input.at(2)->res == 1) {
+        res = input.at(1)->res;
     } else {
-        if (input.at(2)->res == 0) {
-            res = input.at(0)->res;
-        } else if (input.at(2)->res == 1) {
-            res = input.at(1)->res;
-        } else {
-            throw std::runtime_error("invalid select signal");
-        }
+        throw std::runtime_error("invalid select signal");
     }
     executed = true;
-    executedQueue->push(this);
 }
 
 bool LogicCellMUX::NoticeInputReady() {
@@ -62,7 +54,7 @@ void LogicCellMUX::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellMUX::Tick(bool reset) {
+bool LogicCellMUX::Tick() {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

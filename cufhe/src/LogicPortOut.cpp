@@ -3,15 +3,7 @@
 LogicPortOut::LogicPortOut(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "OUTPUT";
-}
-
-LogicPortOut::LogicPortOut(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "OUTPUT";
 }
 
@@ -21,9 +13,12 @@ void LogicPortOut::Prepare() {
     }
 }
 
-void LogicPortOut::Execute() {
+void LogicPortOut::Execute(cufhe::Stream stream, bool reset) {
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicPortOut::Execute(bool reset) {
+    executed = true;
 }
 
 bool LogicPortOut::NoticeInputReady() {
@@ -31,8 +26,9 @@ bool LogicPortOut::NoticeInputReady() {
     return executable;
 }
 
-LweSample *LogicPortOut::GetCipher() {
+cufhe::Ctxt *LogicPortOut::GetCipher() {
     if (input.size() > 0) {
+        cufhe::GetFromGPU(*input.front()->value);
         return input.front()->value;
     } else {
         return nullptr;
@@ -59,7 +55,7 @@ void LogicPortOut::AddInput(Logic *logic) {
 void LogicPortOut::AddOutput(Logic *logic) {
 }
 
-bool LogicPortOut::Tick(bool reset) {
+bool LogicPortOut::Tick() {
     if (input.size() == 0) {
         executable = true;
     } else {

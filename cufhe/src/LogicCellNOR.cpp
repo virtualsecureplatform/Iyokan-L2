@@ -3,15 +3,7 @@
 LogicCellNOR::LogicCellNOR(
     int id,
     int pri,
-    tbb::concurrent_queue<Logic *> *queue,
-    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
-    Type = "NOR";
-}
-
-LogicCellNOR::LogicCellNOR(
-    int id,
-    int pri,
-    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    bool isCipher) : Logic(id, pri, isCipher) {
     Type = "NOR";
 }
 
@@ -27,14 +19,14 @@ void LogicCellNOR::Prepare() {
     ReadyInputCount = 0;
 }
 
-void LogicCellNOR::Execute() {
-    if (cipher) {
-        bootsNOR(value, input.at(0)->value, input.at(1)->value, key);
-    } else {
-        res = (~(input.at(0)->res | input.at(1)->res)) & 0x1;
-    }
+void LogicCellNOR::Execute(cufhe::Stream stream, bool reset) {
+    cufhe::gNor(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
-    executedQueue->push(this);
+}
+
+void LogicCellNOR::Execute(bool reset) {
+    res = (~(input.at(0)->res | input.at(1)->res)) & 0x1;
+    executed = true;
 }
 
 bool LogicCellNOR::NoticeInputReady() {
@@ -56,7 +48,7 @@ void LogicCellNOR::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellNOR::Tick(bool reset) {
+bool LogicCellNOR::Tick() {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

@@ -12,11 +12,6 @@
 #include <sstream>
 #include <string>
 #include <iterator>
-#include "tbb/concurrent_queue.h"
-#include "tbb/concurrent_priority_queue.h"
-
-#include <tfhe/tfhe.h>
-#include <tfhe/tfhe_io.h>
 
 #include "Logic.hpp"
 #include "LogicPortIn.hpp"
@@ -39,40 +34,37 @@
 
 class NetList {
 public:
-    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *cloudKey,
-            bool v);
-
-    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, bool v);
+    NetList(std::string json, bool v, bool isCipher);
 
     int ConvertJson(std::string jsonFile);
 
-    void SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray);
+    void SetPortCipher(std::string portName, std::vector<cufhe::Ctxt *> valueArray);
 
-    void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
+    //void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+    //void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+    //void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
+    //void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+    //void SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+    //void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    std::vector<std::shared_ptr<LweSample>> GetPortCipher(std::string portName);
+    std::vector<cufhe::Ctxt *> GetPortCipher(std::string portName);
 
-    std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+    //std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
+    //std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
 
-    std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
+    //std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
 
-    std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+    //std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
     void SetPortPlain(std::string portName, int value);
 
-    void SetROMPlain(int addr, int value);
+    void SetROMPlain(int addr, uint32_t value);
 
     void SetRAMPlain(int addr, uint8_t value);
 
@@ -95,8 +87,6 @@ public:
 private:
     bool cipher = false;
     bool verbose = false;
-    const TFheGateBootstrappingCloudKeySet *key;
-    tbb::concurrent_queue<Logic *> *executedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
