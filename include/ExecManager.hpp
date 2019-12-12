@@ -15,11 +15,13 @@
 #include "tfhe/tfhe_io.h"
 #include "NetList.hpp"
 
-#include "Config.hpp"
-
 class ExecManager {
 public:
-    ExecManager(NetList *_netList, int num, int _step, const TFheGateBootstrappingCloudKeySet *cloudKey, bool v);
+    tbb::concurrent_queue<Logic *> ExecutedQueue;
+
+    ExecManager(int num, int _step, bool v);
+
+    void SetNetList(NetList *_netList);
 
     void Prepare();
 
@@ -30,13 +32,11 @@ public:
     int GetExecutedLogicNum();
 
     bool terminate = false;
-private:
 
+private:
     int executionCount = 0;
     NetList *netList;
-    const TFheGateBootstrappingCloudKeySet *key;
     tbb::concurrent_priority_queue<Logic *, compare_f> ReadyQueue;
-    tbb::concurrent_queue<Logic *> ExecutedQueue;
 
     int workerNum = 0;
     int step = 0;
@@ -60,11 +60,7 @@ private:
         while (!worker->terminate) {
             Logic *logic;
             if (worker->ReadyQueue.try_pop(logic)) {
-#ifdef FHE
-                logic->Execute(worker->key, &worker->ExecutedQueue);
-#else
-                logic->Execute(&worker->ExecutedQueue);
-#endif
+                logic->Execute();
             } else {
                 usleep(100);
             }
@@ -72,4 +68,4 @@ private:
     }
 };
 
-#endif //IYOKAN_L2_EXECMANAGER_HPP
+#endif  //IYOKAN_L2_EXECMANAGER_HPP

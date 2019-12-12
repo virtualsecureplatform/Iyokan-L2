@@ -9,17 +9,13 @@
 
 class LogicCellNOT : public Logic {
 public:
-    LogicCellNOT(int id);
+    LogicCellNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    LogicCellNOT(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
 
-    void PrepareExecution();
+    void Prepare();
 
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
 
@@ -27,7 +23,7 @@ public:
 
     void AddOutput(Logic *logic);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
+    bool Tick(bool reset);
 };
 
-#endif //IYOKAN_L2_LOGICCELLNOT_HPP
+#endif  //IYOKAN_L2_LOGICCELLNOT_HPP

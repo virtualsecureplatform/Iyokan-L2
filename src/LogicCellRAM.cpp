@@ -1,45 +1,36 @@
 #include "LogicCellRAM.hpp"
 
-LogicCellRAM::LogicCellRAM(int id) : Logic(id) {
+LogicCellRAM::LogicCellRAM(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "RAM";
-    res = 0;
 }
 
-void LogicCellRAM::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    if (!created) {
-        value = new_gate_bootstrapping_ciphertext(bk->params);
-        bootsCONSTANT(value, res, bk);
-    }
+LogicCellRAM::LogicCellRAM(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    Type = "RAM";
 }
 
-void LogicCellRAM::PrepareExecution() {
+void LogicCellRAM::Prepare() {
     if (input.size() != 1) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
     executable = true;
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellRAM::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: DFFP");
-    }
+void LogicCellRAM::Execute() {
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellRAM::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellRAM::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellRAM::NoticeInputReady() {
@@ -57,29 +48,32 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-void LogicCellRAM::Set(int val, const TFheGateBootstrappingCloudKeySet *bk) {
+void LogicCellRAM::SetCipher(std::shared_ptr<LweSample> val) {
+    bootsCOPY(value, val.get(), key);
+}
+
+void LogicCellRAM::SetPlain(int val) {
     res = val & 0x1;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, val & 0x1, bk);
-    created = true;
 }
 
-int LogicCellRAM::Get(TFheGateBootstrappingSecretKeySet *key) {
-    return bootsSymDecrypt(value, key);
+LweSample *LogicCellRAM::GetCipher() {
+    return value;
 }
 
-int LogicCellRAM::Get() {
+int LogicCellRAM::GetPlain() {
     return res;
 }
 
-bool LogicCellRAM::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellRAM::Tick(bool reset) {
     if (!reset) {
-        res = input.at(0)->res;
-        bootsCOPY(value, input.at(0)->value, key);
+        if (cipher) {
+            bootsCOPY(value, input.at(0)->value, key);
+        } else {
+            res = input.at(0)->res;
+        }
     }
     executable = true;
     executed = false;
     ReadyInputCount = 0;
     return executable;
 }
-

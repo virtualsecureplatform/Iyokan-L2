@@ -9,17 +9,13 @@
 
 class LogicCellRAM : public Logic {
 public:
-    LogicCellRAM(int id);
+    LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    LogicCellRAM(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
 
-    void PrepareExecution();
+    void Prepare();
 
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
 
@@ -27,16 +23,17 @@ public:
 
     void AddOutput(Logic *logic);
 
-    void Set(int val, const TFheGateBootstrappingCloudKeySet *bk);
+    bool Tick(bool reset);
 
-    int Get(TFheGateBootstrappingSecretKeySet *key);
+    void SetCipher(std::shared_ptr<LweSample> val);
 
-    int Get();
+    void SetPlain(int val);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
+    LweSample *GetCipher();
+
+    int GetPlain();
 
 private:
-    bool created = false;
 };
 
-#endif //IYOKAN_L2_LOGICCELLRAM_HPP
+#endif  //IYOKAN_L2_LOGICCELLRAM_HPP

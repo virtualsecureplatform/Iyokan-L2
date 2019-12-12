@@ -17,27 +17,46 @@ public:
     int id;
     int priority;
     std::string Type;
+
     bool executed;
     bool executable;
     int res;
     LweSample *value;
+    bool cipher = false;
+    const TFheGateBootstrappingCloudKeySet *key;
     std::vector<Logic *> output{};
 
-    Logic(int _id) {
+    Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck) {
         id = _id;
+        priority = pri;
+        executedQueue = queue;
+
+        cipher = true;
+        key = ck;
+
         executable = false;
         executed = false;
+
+        value = new_gate_bootstrapping_ciphertext(key->params);
+        bootsCONSTANT(value, 0, key);
     }
 
-    virtual void PrepareExecution() = 0;
+    Logic(int _id, int pri, tbb::concurrent_queue<Logic *> *queue) {
+        id = _id;
+        priority = pri;
+        executedQueue = queue;
 
-    virtual void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) = 0;
+        cipher = false;
 
-    virtual void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) = 0;
+        executable = false;
+        executed = false;
 
-    virtual void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) = 0;
+        res = 0;
+    }
 
-    //virtual void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) = 0;
+    virtual void Prepare() = 0;
+
+    virtual void Execute() = 0;
 
     virtual bool NoticeInputReady() = 0;
 
@@ -45,9 +64,10 @@ public:
 
     virtual void AddOutput(Logic *logic) = 0;
 
-    virtual bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) = 0;
+    virtual bool Tick(bool reset) = 0;
 
 protected:
+    tbb::concurrent_queue<Logic *> *executedQueue;
     int InputCount;
     int ReadyInputCount;
     std::vector<Logic *> input{};

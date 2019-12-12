@@ -39,41 +39,68 @@
 
 class NetList {
 public:
-    NetList(const char *json, bool v);
+    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *cloudKey,
+            bool v);
 
-    void PrepareTFHE();
+    NetList(std::string json, tbb::concurrent_queue<Logic *> *queue, bool v);
 
-    int ConvertJson();
+    int ConvertJson(std::string jsonFile);
 
-    void Set(std::string portName, int value);
+    void SetPortCipher(std::string portName, std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetROM(int addr, uint32_t value);
+    void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    void SetRAM(int addr, int value);
+    void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
 
-    int Get(std::string portName);
+    void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    int GetRAM(int addr);
+    void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
+
+    void SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+
+    void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+
+    std::vector<std::shared_ptr<LweSample>> GetPortCipher(std::string portName);
+
+    std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+
+    std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
+
+    std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
+
+    std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
+
+    void SetPortPlain(std::string portName, int value);
+
+    void SetROMPlain(int addr, int value);
+
+    void SetRAMPlain(int addr, uint8_t value);
+
+    int GetPortPlain(std::string portName);
+
+    int GetRAMPlain(int addr);
 
     void DebugOutput();
 
-    void DumpRAM();
+    //void DebugRegisterWrite();
 
-    void DumpRAMtoFile(std::string path, int cycle);
+    void EnableReset();
 
-    void BuggyKey();
+    void DisableReset();
 
     bool execute;
-    TFheGateBootstrappingSecretKeySet *key;
+
     std::unordered_map<int, Logic *> Logics;
+
 private:
+    bool cipher = false;
     bool verbose = false;
-    TFheGateBootstrappingParameterSet *params;
+    const TFheGateBootstrappingCloudKeySet *key;
+    tbb::concurrent_queue<Logic *> *executedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
     std::map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
-    std::string JsonFile;
 };
 
-#endif //IYOKAN_L2_NETLIST_HPP
+#endif  //IYOKAN_L2_NETLIST_HPP

@@ -9,17 +9,13 @@
 
 class LogicCellROM : public Logic {
 public:
-    LogicCellROM(int id);
+    LogicCellROM(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    LogicCellROM(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
 
-    void PrepareExecution();
+    void Prepare();
 
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
 
@@ -27,12 +23,13 @@ public:
 
     void AddOutput(Logic *logic);
 
-    void Set(int val, const TFheGateBootstrappingCloudKeySet *bk);
+    bool Tick(bool reset);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
+    void SetCipher(std::shared_ptr<LweSample> val);
+
+    void SetPlain(int val);
 
 private:
-    bool created = false;
 };
 
-#endif //IYOKAN_L2_LOGICCELLROM_HPP
+#endif  //IYOKAN_L2_LOGICCELLROM_HPP

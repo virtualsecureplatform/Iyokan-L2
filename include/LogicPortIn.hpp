@@ -9,30 +9,27 @@
 
 class LogicPortIn : public Logic {
 public:
-    LogicPortIn(int id);
+    LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    LogicPortIn(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
 
-    void PrepareExecution();
+    void Prepare();
 
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
-
-    void Set(int val, const TFheGateBootstrappingSecretKeySet *key);
 
     void AddInput(Logic *logic);
 
     void AddOutput(Logic *logic);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
+    bool Tick(bool reset);
+
+    void SetCipher(LweSample *val);
+
+    void SetPlain(int val);
 
 private:
-    bool created = false;
 };
 
-#endif //IYOKAN_L2_LOGICPORTIN_HPP
+#endif  //IYOKAN_L2_LOGICPORTIN_HPP

@@ -1,46 +1,40 @@
 #include "LogicCellXNOR.hpp"
 
-LogicCellXNOR::LogicCellXNOR(int id) : Logic(id) {
+LogicCellXNOR::LogicCellXNOR(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "XNOR";
 }
 
-void LogicCellXNOR::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
+LogicCellXNOR::LogicCellXNOR(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    Type = "XNOR";
 }
 
-void LogicCellXNOR::PrepareExecution() {
+void LogicCellXNOR::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellXNOR::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsXNOR(value, input.at(0)->value, input.at(1)->value, &key->cloud);
-    res = (~(input.at(0)->res ^ input.at(1)->res)) & 0x1;
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: XNOR");
+void LogicCellXNOR::Execute() {
+    if (cipher) {
+        bootsXNOR(value, input.at(0)->value, input.at(1)->value, key);
+    } else {
+        res = (~(input.at(0)->res ^ input.at(1)->res)) & 0x1;
     }
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellXNOR::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsXNOR(value, input.at(0)->value, input.at(1)->value, key);
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellXNOR::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    res = (~(input.at(0)->res ^ input.at(1)->res)) & 0x1;
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellXNOR::NoticeInputReady() {
@@ -62,7 +56,7 @@ void LogicCellXNOR::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellXNOR::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellXNOR::Tick(bool reset) {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

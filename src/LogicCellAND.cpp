@@ -1,46 +1,40 @@
 #include "LogicCellAND.hpp"
 
-LogicCellAND::LogicCellAND(int id) : Logic(id) {
+LogicCellAND::LogicCellAND(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue,
+    const TFheGateBootstrappingCloudKeySet *ck) : Logic(id, pri, queue, ck) {
     Type = "AND";
 }
 
-void LogicCellAND::PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk) {
-    res = 0;
-    value = new_gate_bootstrapping_ciphertext(bk->params);
-    bootsCONSTANT(value, 0, bk);
+LogicCellAND::LogicCellAND(
+    int id,
+    int pri,
+    tbb::concurrent_queue<Logic *> *queue) : Logic(id, pri, queue) {
+    Type = "AND";
 }
 
-void LogicCellAND::PrepareExecution() {
+void LogicCellAND::Prepare() {
     if (input.size() != 2) {
         throw std::runtime_error("Input is not assigned");
     }
     if (output.size() == 0) {
         throw std::runtime_error("Output is not assigned");
     }
+
     InputCount = input.size();
     ReadyInputCount = 0;
 }
 
-void LogicCellAND::Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsAND(value, input.at(0)->value, input.at(1)->value, &key->cloud);
-    res = input.at(0)->res & input.at(1)->res;
-    if (res != bootsSymDecrypt(value, key)) {
-        throw new std::runtime_error("value not matched: AND");
+void LogicCellAND::Execute() {
+    if (cipher) {
+        bootsAND(value, input.at(0)->value, input.at(1)->value, key);
+    } else {
+        res = input.at(0)->res & input.at(1)->res;
     }
     executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellAND::Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    bootsAND(value, input.at(0)->value, input.at(1)->value, key);
-    executed = true;
-    ReadyQueue->push(this);
-}
-
-void LogicCellAND::Execute(tbb::concurrent_queue<Logic *> *ReadyQueue) {
-    res = input.at(0)->res & input.at(1)->res;
-    executed = true;
-    ReadyQueue->push(this);
+    executedQueue->push(this);
 }
 
 bool LogicCellAND::NoticeInputReady() {
@@ -62,7 +56,7 @@ void LogicCellAND::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-bool LogicCellAND::Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset) {
+bool LogicCellAND::Tick(bool reset) {
     executable = false;
     executed = false;
     ReadyInputCount = 0;

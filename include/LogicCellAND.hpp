@@ -5,18 +5,13 @@
 
 class LogicCellAND : public Logic {
 public:
+    LogicCellAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue, const TFheGateBootstrappingCloudKeySet *ck);
 
-    LogicCellAND(int id);
+    LogicCellAND(int id, int pri, tbb::concurrent_queue<Logic *> *queue);
 
-    void PrepareTFHE(const TFheGateBootstrappingCloudKeySet *bk);
+    void Prepare();
 
-    void PrepareExecution();
-
-    void Execute(TFheGateBootstrappingSecretKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(const TFheGateBootstrappingCloudKeySet *key, tbb::concurrent_queue<Logic *> *ReadyQueue);
-
-    void Execute(tbb::concurrent_queue<Logic *> *ReadyQueue);
+    void Execute();
 
     bool NoticeInputReady();
 
@@ -24,8 +19,7 @@ public:
 
     void AddOutput(Logic *logic);
 
-    bool Tick(const TFheGateBootstrappingCloudKeySet *key, bool reset);
-
+    bool Tick(bool reset);
 };
 
-#endif //IYOKAN_L2_LOGICCELLAND_HPP
+#endif  //IYOKAN_L2_LOGICCELLAND_HPP
