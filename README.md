@@ -32,3 +32,4 @@ src/main [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_fi
 
 # Changelog
 - v0.0.1 2019/12/04 - PoC Implementation
+- v0.1.0 2019/12/12 - v0.1.0 Release
