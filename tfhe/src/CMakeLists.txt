@@ -1,4 +1,5 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../picojson)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 link_directories(/usr/local/lib)
 
