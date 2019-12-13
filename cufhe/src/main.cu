@@ -110,6 +110,35 @@ int main(int argc, char *argv[]) {
     ExecManager manager(threadNum, execCycle, verbose, !testMode);
 
     NetList netList(logicFile, verbose, !testMode);
+
+    if(!testMode){
+        cufhe::Ptxt A_0;
+        cufhe::Ptxt B_0;
+        A_0.message_ = 1;
+        B_0.message_ = 0;
+
+        cufhe::Ctxt cA_0;
+        cufhe::Ctxt cB_0;
+
+        Encrypt(cA_0, A_0, *secretKey);
+        Encrypt(cB_0, B_0, *secretKey);
+
+        std::vector<cufhe::Ctxt *> c_inA;
+        c_inA.push_back(&cA_0);
+        c_inA.push_back(&cB_0);
+        c_inA.push_back(&cB_0);
+        c_inA.push_back(&cB_0);
+
+        std::vector<cufhe::Ctxt *> c_inB;
+        c_inB.push_back(&cB_0);
+        c_inB.push_back(&cA_0);
+        c_inB.push_back(&cB_0);
+        c_inB.push_back(&cB_0);
+
+        cufhe::Synchronize();
+        netList.SetPortCipher("io_in", c_inA);
+    }
+
     /*
     netList.SetPortPlain("io_inA", 1);
     netList.SetPortPlain("io_inB", 2);
@@ -134,6 +163,17 @@ int main(int argc, char *argv[]) {
     if (perfMode) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
     } else {
+        if(!testMode){
+            cufhe::Synchronize();
+            auto res = netList.GetPortCipher("io_out");
+            cufhe::Synchronize();
+            for(auto cbit : res){
+                cufhe::Ptxt val;
+                cufhe::Decrypt(val, *cbit, *secretKey);
+                std::cout << val.message_ << std::endl;
+            }
+            cufhe::CleanUp();
+        }
         printf("Execution time %lf[ms]\n", time);
         netList.DebugOutput();
         manager.Stats();

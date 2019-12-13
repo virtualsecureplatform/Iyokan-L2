@@ -28,8 +28,8 @@ bool LogicPortIn::NoticeInputReady() {
 }
 
 void LogicPortIn::SetCipher(cufhe::Ctxt *val) {
-    cufhe::SetToGPU(*val);
-    cufhe::gCopy(*value, *val);
+    cufhe::And(*value, *val, *val);
+    cufhe::Synchronize();
 }
 
 void LogicPortIn::SetPlain(int val) {
