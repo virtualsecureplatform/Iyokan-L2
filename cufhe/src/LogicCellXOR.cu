@@ -20,7 +20,7 @@ void LogicCellXOR::Prepare() {
 }
 
 void LogicCellXOR::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gXor(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::Xor(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

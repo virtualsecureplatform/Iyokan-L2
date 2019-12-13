@@ -20,7 +20,7 @@ void LogicCellOR::Prepare() {
 }
 
 void LogicCellOR::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gOr(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::Or(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

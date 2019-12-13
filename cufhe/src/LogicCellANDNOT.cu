@@ -20,7 +20,7 @@ void LogicCellANDNOT::Prepare() {
 }
 
 void LogicCellANDNOT::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gAndYN(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::AndYN(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

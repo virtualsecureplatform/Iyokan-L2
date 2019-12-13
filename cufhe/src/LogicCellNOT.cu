@@ -20,7 +20,7 @@ void LogicCellNOT::Prepare() {
 }
 
 void LogicCellNOT::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gNot(*value, *input.at(0)->value, stream);
+    cufhe::Not(*value, *input.at(0)->value, stream);
     executed = true;
 }
 

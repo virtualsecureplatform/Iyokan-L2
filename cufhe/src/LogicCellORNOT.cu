@@ -20,7 +20,7 @@ void LogicCellORNOT::Prepare() {
 }
 
 void LogicCellORNOT::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gOrYN(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::OrYN(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

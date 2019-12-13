@@ -20,7 +20,7 @@ void LogicCellNOR::Prepare() {
 }
 
 void LogicCellNOR::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gNor(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::Nor(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

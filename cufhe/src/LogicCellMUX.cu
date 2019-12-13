@@ -20,7 +20,7 @@ void LogicCellMUX::Prepare() {
 }
 
 void LogicCellMUX::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gMux(*value, *input.at(2)->value, *input.at(1)->value, *input.at(0)->value, stream);
+    cufhe::Mux(*value, *input.at(2)->value, *input.at(1)->value, *input.at(0)->value, stream);
     executed = true;
 }
 

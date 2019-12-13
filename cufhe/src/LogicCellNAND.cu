@@ -19,7 +19,7 @@ void LogicCellNAND::Prepare() {
     ReadyInputCount = 0;
 }
 void LogicCellNAND::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gNand(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::Nand(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

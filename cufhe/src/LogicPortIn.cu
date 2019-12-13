@@ -28,7 +28,7 @@ bool LogicPortIn::NoticeInputReady() {
 }
 
 void LogicPortIn::SetCipher(cufhe::Ctxt *val) {
-    cufhe::And(*value, *val, *val);
+    cufhe::Copy(*value, *val);
     cufhe::Synchronize();
 }
 

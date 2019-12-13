@@ -20,7 +20,7 @@ void LogicCellAND::Prepare() {
 }
 
 void LogicCellAND::Execute(cufhe::Stream stream, bool reset){
-    cufhe::gAnd(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::And(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

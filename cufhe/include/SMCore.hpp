@@ -16,14 +16,13 @@ public:
     SMCore(int stream_id, std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *queue, bool isCipher){
         cipher = isCipher;
         if(cipher){
-            stream = new cufhe::Stream(stream_id);
+            stream = new cufhe::Stream();
+            stream->Create();
         }
         readyQueue = queue;
     }
 
     bool DependencyUpdate(bool reset){
-        static int cnt = 0;
-
         if(execLogic == nullptr) {
             if(readyQueue->size() != 0) {
                 execLogic = readyQueue->top();

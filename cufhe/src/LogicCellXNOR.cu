@@ -20,7 +20,7 @@ void LogicCellXNOR::Prepare() {
 }
 
 void LogicCellXNOR::Execute(cufhe::Stream stream, bool reset) {
-    cufhe::gXnor(*value, *input.at(0)->value, *input.at(1)->value, stream);
+    cufhe::Xnor(*value, *input.at(0)->value, *input.at(1)->value, stream);
     executed = true;
 }
 

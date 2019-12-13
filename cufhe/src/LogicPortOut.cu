@@ -28,7 +28,6 @@ bool LogicPortOut::NoticeInputReady() {
 
 cufhe::Ctxt *LogicPortOut::GetCipher() {
     if (input.size() > 0) {
-        cufhe::GetFromGPU(*input.front()->value);
         return input.front()->value;
     } else {
         return nullptr;

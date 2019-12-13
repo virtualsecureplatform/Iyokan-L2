@@ -21,7 +21,7 @@ void LogicCellDFFP::Prepare() {
 
 void LogicCellDFFP::Execute(cufhe::Stream stream, bool reset) {
     if(!reset){
-        cufhe::gCopy(*value, *input.at(0)->value, stream);
+        cufhe::Copy(*value, *input.at(0)->value, stream);
     }
     executed = true;
 }
