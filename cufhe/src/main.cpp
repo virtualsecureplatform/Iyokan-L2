@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 1;
+    int execCycle = 6;
     int threadNum = 0;
     std::string logicFile = "../../vsp-core.json";
     std::string cipherFile = "";
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
         netList.SetPortCipher("io_inB", c_inB);
         netList.SetPortCipher("io_sel", c_sel);
          */
-        netList.SetROMEncryptPlain(0, 0x0E018835, secretKey);
+        netList.SetROMEncryptPlain(0, 0x0E2A8835, secretKey);
     }else{
         netList.SetPortPlain("io_inA", 1);
         netList.SetPortPlain("io_inB", 2);
