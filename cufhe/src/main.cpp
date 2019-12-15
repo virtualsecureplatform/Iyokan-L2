@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
     bool verbose = true;
     int execCycle = 1;
     int threadNum = 0;
-    std::string logicFile = "../../../test/test-addr-4bit.json";
+    std::string logicFile = "../../test/test-addr-4bit.json";
     std::string cipherFile = "";
     std::string resultFile = "";
     std::string secretKeyFile = "";
-    bool testMode = true;
+    bool testMode = false;
     while ((opt = getopt(argc, argv, "vpc:t:l:i:o:s:")) != -1) {
         switch (opt) {
             case 'v':
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
         secretKey = new cufhe::PriKey;
         cloudKey = new cufhe::PubKey;
         cufhe::KeyGen(*cloudKey, *secretKey);
-        cufhe::Initialize(cloudKey);
+        cufhe::Initialize(*cloudKey);
     }
 
     ExecManager manager(threadNum, execCycle, verbose, !testMode);
@@ -125,7 +125,7 @@ int main(int argc, char *argv[]) {
 
         std::vector<cufhe::Ctxt *> c_inA;
         c_inA.push_back(&cA_0);
-        c_inA.push_back(&cB_0);
+        c_inA.push_back(&cA_0);
         c_inA.push_back(&cB_0);
         c_inA.push_back(&cB_0);
 
@@ -136,12 +136,15 @@ int main(int argc, char *argv[]) {
         c_inB.push_back(&cB_0);
 
         cufhe::Synchronize();
-        netList.SetPortCipher("io_in", c_inA);
+        netList.SetPortCipher("io_inA", c_inA);
+        netList.SetPortCipher("io_inB", c_inB);
+    }else{
+        netList.SetPortPlain("io_inA", 1);
+        netList.SetPortPlain("io_inB", 2);
     }
 
+
     /*
-    netList.SetPortPlain("io_inA", 1);
-    netList.SetPortPlain("io_inB", 2);
      */
     /*
     netList.SetROMPlain(0, 0x15040035);
