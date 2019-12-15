@@ -12,9 +12,9 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 2;
+    int execCycle = 1;
     int threadNum = 0;
-    std::string logicFile = "../../test/test-register-4bit.json";
+    std::string logicFile = "../../test/test-mux-4bit.json";
     std::string cipherFile = "";
     std::string resultFile = "";
     std::string secretKeyFile = "";
@@ -135,12 +135,17 @@ int main(int argc, char *argv[]) {
         c_inB.push_back(&cB_0);
         c_inB.push_back(&cB_0);
 
+        std::vector<cufhe::Ctxt *> c_sel;
+        c_sel.push_back(&cA_0);
+
         cufhe::Synchronize();
-        netList.SetPortCipher("io_in", c_inA);
-        //netList.SetPortCipher("io_inB", c_inB);
+        netList.SetPortCipher("io_inA", c_inA);
+        netList.SetPortCipher("io_inB", c_inB);
+        netList.SetPortCipher("io_sel", c_sel);
     }else{
-        netList.SetPortPlain("io_in", 1);
-        //netList.SetPortPlain("io_inB", 2);
+        netList.SetPortPlain("io_inA", 1);
+        netList.SetPortPlain("io_inB", 2);
+        netList.SetPortPlain("io_sel", 0);
     }
 
 

@@ -19,7 +19,7 @@ void ExecManager::Prepare() {
         logic.second->Prepare();
     }
     executionCount = 0;
-    Reset();
+    //Reset();
 }
 
 void ExecManager::Start() {
