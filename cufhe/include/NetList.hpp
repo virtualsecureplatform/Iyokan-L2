@@ -72,6 +72,8 @@ public:
 
     int GetPortPlain(std::string portName);
 
+    int GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey);
+
     int GetRAMPlain(int addr);
 
     uint32_t GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey);

@@ -178,6 +178,8 @@ int main(int argc, char *argv[]) {
             cufhe::Synchronize();
             uint32_t res = netList.GetROMDecryptCipher(0, secretKey);
             std::printf("ROM[0x01]: 0x%X\n", res);
+            int x8 = netList.GetPortDecryptCipher("io_regOut_x8", secretKey);
+            std::printf("x8:%d\n", x8);
             /*
             auto res = netList.GetPortCipher("io_out");
             cufhe::Synchronize();

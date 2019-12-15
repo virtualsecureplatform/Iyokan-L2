@@ -390,6 +390,20 @@ int NetList::GetPortPlain(std::string portName) {
     return value;
 }
 
+int NetList::GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey){
+    int length = Outputs[portName].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown output port:" + portName);
+    }
+    int value = 0;
+    cufhe::Ptxt plainValue;
+    for (int i = length - 1; i > -1; i--) {
+        value = value << 1;
+        cufhe::Decrypt(plainValue, *Outputs[portName][i]->GetCipher(), *secretKey);
+        value += plainValue.message_;
+    }
+    return value;
+}
 /*
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
     std::vector<std::shared_ptr<LweSample>> valueArray;
