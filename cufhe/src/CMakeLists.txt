@@ -1,9 +1,11 @@
+cmake_minimum_required(VERSION 3.10)
 find_package(CUDA REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../picojson)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(/usr/local/include/cufhe)
 include_directories(/opt/cuda/include)
+include_directories(/usr/local/cuda/include)
 link_directories(/usr/local/lib)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR} source)
