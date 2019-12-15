@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     bool verbose = true;
     int execCycle = 1;
     int threadNum = 0;
-    std::string logicFile = "../../test/test-mux-4bit.json";
+    std::string logicFile = "../../vsp-core.json";
     std::string cipherFile = "";
     std::string resultFile = "";
     std::string secretKeyFile = "";

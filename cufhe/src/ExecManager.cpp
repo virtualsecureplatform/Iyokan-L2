@@ -5,7 +5,7 @@ ExecManager::ExecManager(int num, int _step, bool v, bool isCipher) {
     workerNum = num;
     verbose = v;
     cipher = isCipher;
-    for(int i=0;i<10;i++){
+    for(int i=0;i<80;i++){
         cores.push_back(new SMCore(i, &readyQueue, isCipher));
     }
 }
@@ -75,7 +75,7 @@ void ExecManager::ExecClock(int nowCnt, int maxCnt, bool reset) {
         for (auto core : cores) {
             if (core->DependencyUpdate(ExecCounter, reset)) {
                 executionCount += 1;
-                std::printf("Core:%d EXEC\n", core->stream_id);
+                //std::printf("Core:%d EXEC\n", core->stream_id);
                 if (executionCount % 1000 == 0 && verbose) {
                     printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
                 }
