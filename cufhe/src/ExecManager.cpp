@@ -6,7 +6,7 @@ ExecManager::ExecManager(int num, int _step, bool v, bool isCipher) {
     verbose = v;
     cipher = isCipher;
     for(int i=0;i<10;i++){
-        cores.push_back(new SMCore(0, &readyQueue, isCipher));
+        cores.push_back(new SMCore(i, &readyQueue, isCipher));
     }
 }
 
