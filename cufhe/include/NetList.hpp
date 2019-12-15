@@ -66,11 +66,15 @@ public:
 
     void SetROMPlain(int addr, uint32_t value);
 
+    void SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey);
+
     void SetRAMPlain(int addr, uint8_t value);
 
     int GetPortPlain(std::string portName);
 
     int GetRAMPlain(int addr);
+
+    uint32_t GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey);
 
     void DebugOutput();
 

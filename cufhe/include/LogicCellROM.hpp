@@ -25,7 +25,9 @@ public:
 
     bool Tick();
 
-    //void SetCipher(std::shared_ptr<LweSample> val);
+    void SetCipher(cufhe::Ctxt *val);
+
+    cufhe::Ctxt *GetCipher();
 
     void SetPlain(int val);
 

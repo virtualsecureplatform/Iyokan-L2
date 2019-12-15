@@ -139,9 +139,12 @@ int main(int argc, char *argv[]) {
         c_sel.push_back(&cA_0);
 
         cufhe::Synchronize();
+        /*
         netList.SetPortCipher("io_inA", c_inA);
         netList.SetPortCipher("io_inB", c_inB);
         netList.SetPortCipher("io_sel", c_sel);
+         */
+        netList.SetROMEncryptPlain(0, 0x0E018835, secretKey);
     }else{
         netList.SetPortPlain("io_inA", 1);
         netList.SetPortPlain("io_inB", 2);
@@ -173,6 +176,9 @@ int main(int argc, char *argv[]) {
     } else {
         if(!testMode){
             cufhe::Synchronize();
+            uint32_t res = netList.GetROMDecryptCipher(0, secretKey);
+            std::printf("ROM[0x01]: 0x%X\n", res);
+            /*
             auto res = netList.GetPortCipher("io_out");
             cufhe::Synchronize();
             for(auto cbit : res){
@@ -181,6 +187,7 @@ int main(int argc, char *argv[]) {
                 std::cout << val.message_ << std::endl;
             }
             cufhe::CleanUp();
+             */
         }
         printf("Execution time %lf[ms]\n", time);
         netList.DebugOutput();

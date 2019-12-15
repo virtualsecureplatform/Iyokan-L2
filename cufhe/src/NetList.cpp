@@ -290,6 +290,37 @@ void NetList::SetROMPlain(int addr, uint32_t value) {
     }
 }
 
+void NetList::SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey){
+    int length = Rom[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Rom Address:" + addr);
+    }
+    cufhe::Ptxt plainValue;
+    for(int i=0;i<length;i++){
+        cufhe::Ctxt cipherValue;
+        plainValue = value & 0x1;
+        cufhe::Encrypt(cipherValue, plainValue, *secretKey);
+        value = value >> 1;
+        cufhe::Synchronize();
+        Rom[addr][i]->SetCipher(&cipherValue);
+    }
+}
+
+uint32_t NetList::GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey) {
+    int length = Rom[addr].size();
+    if (length == 0) {
+        throw std::runtime_error("Unknown Rom Address:" + addr);
+    }
+    uint32_t value = 0;
+    cufhe::Ptxt plainValue;
+    for (int i = length - 1; i > -1; i--) {
+        value = value << 1;
+        cufhe::Decrypt(plainValue, *Rom[addr][i]->GetCipher(), *secretKey);
+        value += plainValue.message_;
+    }
+    return value;
+}
+
 /*
 void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
     if (valueArray.size() != 8) {
