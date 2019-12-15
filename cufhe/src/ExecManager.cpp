@@ -73,14 +73,15 @@ void ExecManager::ExecClock(int nowCnt, int maxCnt, bool reset) {
     executionCount = 0;
     while(executionCount < netList->Logics.size()) {
         for (auto core : cores) {
-            if (core->DependencyUpdate(reset)) {
+            if (core->DependencyUpdate(ExecCounter, reset)) {
                 executionCount += 1;
-            }
-            if (executionCount % 1000 == 0 && verbose) {
-                printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
-            }
-            if (executionCount == netList->Logics.size() && verbose) {
-                printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
+                std::printf("Core:%d EXEC\n", core->stream_id);
+                if (executionCount % 1000 == 0 && verbose) {
+                    printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
+                }
+                if (executionCount == netList->Logics.size() && verbose) {
+                    printf("Executed:%d/%lu %d/%d\n", executionCount, netList->Logics.size(), nowCnt, maxCnt);
+                }
             }
         }
     }

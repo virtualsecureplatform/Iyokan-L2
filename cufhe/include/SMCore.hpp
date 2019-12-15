@@ -12,9 +12,12 @@
 class SMCore {
 public:
     Logic* execLogic = nullptr;
+    int stream_id;
 
-    SMCore(int stream_id, std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *queue, bool isCipher){
+    SMCore(int _stream_id, std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *queue, bool isCipher){
         cipher = isCipher;
+        stream_id = _stream_id;
+
         if(cipher){
             stream = new cufhe::Stream();
             stream->Create();
@@ -22,7 +25,7 @@ public:
         readyQueue = queue;
     }
 
-    bool DependencyUpdate(bool reset){
+    bool DependencyUpdate(std::map<std::string, int> &execCounter, bool reset){
         if(execLogic == nullptr) {
             if(readyQueue->size() != 0) {
                 execLogic = readyQueue->top();
@@ -40,6 +43,7 @@ public:
         }
 
         if(isFinished()){
+            execCounter[execLogic->Type]++;
             for (Logic *outlogic : execLogic->output) {
                 if (outlogic->NoticeInputReady()) {
                     readyQueue->push(outlogic);
