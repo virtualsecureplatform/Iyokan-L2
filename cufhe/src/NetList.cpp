@@ -450,15 +450,12 @@ void NetList::DebugRegisterWrite(){
 
 void NetList::EnableReset() {
     if(cipher){
-        /*
-        std::shared_ptr<LweSample> value{
-            new_gate_bootstrapping_ciphertext(key->params),
-            delete_gate_bootstrapping_ciphertext};
-        bootsCONSTANT(value.get(), 1, key);
-        std::vector<std::shared_ptr<LweSample>> valueArray;
-        valueArray.push_back(value);
+        cufhe::Ctxt value;
+        std::vector<cufhe::Ctxt *> valueArray;
+        cufhe::ConstantOne(value);
+        cufhe::Synchronize();
+        valueArray.push_back(&value);
         SetPortCipher("reset", valueArray);
-         */
     }else{
         SetPortPlain("reset", 1);
     }
@@ -466,15 +463,12 @@ void NetList::EnableReset() {
 
 void NetList::DisableReset() {
     if(cipher){
-        /*
-        std::shared_ptr<LweSample> value{
-            new_gate_bootstrapping_ciphertext(key->params),
-            delete_gate_bootstrapping_ciphertext};
-        bootsCONSTANT(value.get(), 0, key);
-        std::vector<std::shared_ptr<LweSample>> valueArray;
-        valueArray.push_back(value);
+        cufhe::Ctxt value;
+        std::vector<cufhe::Ctxt *> valueArray;
+        cufhe::ConstantZero(value);
+        cufhe::Synchronize();
+        valueArray.push_back(&value);
         SetPortCipher("reset", valueArray);
-         */
     }else{
         SetPortPlain("reset", 0);
     }
