@@ -9,5 +9,6 @@ CMakeFiles
 CMakeCache.txt
 cmake_install.cmake
 Makefile
+*.qdrep
 !vsp-core.json
 !test

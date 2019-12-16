@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 6;
+    int execCycle = 8;
     int threadNum = 0;
     std::string logicFile = "../../vsp-core.json";
     std::string cipherFile = "";
