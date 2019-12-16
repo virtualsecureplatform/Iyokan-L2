@@ -360,7 +360,7 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetPortEncryptPlain(std::string
     return valueArray;
 }
 
-void NetList::SetROMPlain(int addr, int value) {
+void NetList::SetROMPlain(int addr, uint32_t value) {
     int length = Rom[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
@@ -368,6 +368,13 @@ void NetList::SetROMPlain(int addr, int value) {
     for (int i = 0; i < length; i++) {
         Rom[addr][i]->SetPlain(value & 0x1);
         value = value >> 1;
+    }
+}
+
+void NetList::SetROMPlainAll(std::vector<uint8_t> & valueArray) {
+    for (int i = 0; i < valueArray.size()/4; i++) {
+        uint32_t value = (valueArray.at(i*4+3)<<24) + (valueArray.at(i*4+2)<<16) + (valueArray.at(i*4+1)<<8) + valueArray.at(i*4);
+        SetROMPlain(i, value);
     }
 }
 
@@ -405,6 +412,12 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
     for (int i = 0; i < length; i++) {
         Ram[addr][i]->SetPlain(value & 0x1);
         value = value >> 1;
+    }
+}
+
+void NetList::SetRAMPlainAll(std::vector<uint8_t>& valueArray) {
+    for(int i = 0;i<valueArray.size();i++){
+        SetRAMPlain(i, valueArray.at(i));
     }
 }
 
@@ -474,6 +487,14 @@ int NetList::GetRAMPlain(int addr) {
         value += Ram[addr][i]->GetPlain();
     }
     return value;
+}
+
+std::vector<uint8_t> NetList::GetRAMPlainAll() {
+    std::vector<uint8_t> valueArray;
+    for (int i = 0; i < Ram.size(); i++) {
+        valueArray.push_back(GetRAMPlain(i));
+    }
+    return valueArray;
 }
 
 void NetList::DebugOutput() {

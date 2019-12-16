@@ -72,13 +72,19 @@ public:
 
     void SetPortPlain(std::string portName, int value);
 
-    void SetROMPlain(int addr, int value);
+    void SetROMPlain(int addr, uint32_t value);
+
+    void SetROMPlainAll(std::vector<uint8_t>& valueArray);
 
     void SetRAMPlain(int addr, uint8_t value);
+
+    void SetRAMPlainAll(std::vector<uint8_t>& valueArray);
 
     int GetPortPlain(std::string portName);
 
     int GetRAMPlain(int addr);
+
+    std::vector<uint8_t> GetRAMPlainAll();
 
     void DebugOutput();
 
@@ -95,12 +101,12 @@ public:
 private:
     bool cipher = false;
     bool verbose = false;
-    const TFheGateBootstrappingCloudKeySet *key;
     tbb::concurrent_queue<Logic *> *executedQueue;
     std::map<std::string, std::unordered_map<int, LogicPortIn *>> Inputs;
     std::map<std::string, std::unordered_map<int, LogicPortOut *>> Outputs;
     std::unordered_map<int, std::unordered_map<int, LogicCellROM *>> Rom;
     std::map<int, std::unordered_map<int, LogicCellRAM *>> Ram;
+    const TFheGateBootstrappingCloudKeySet *key;
 };
 
 #endif  //IYOKAN_L2_NETLIST_HPP

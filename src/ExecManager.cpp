@@ -30,6 +30,20 @@ void ExecManager::Start() {
     TerminateWorkers();
 }
 
+int ExecManager::ExecUntilFinish(){
+    int cnt = 0;
+    while(netList->GetPortPlain("io_finishFlag") == 0) {
+        Tick(false);
+        while (DepencyUpdate(cnt+1, 0)) {
+            usleep(100);
+        }
+        cnt++;
+    }
+    Tick(false);
+    TerminateWorkers();
+    return cnt;
+}
+
 void ExecManager::Stats() {
     std::cout << "---Execution Stats---" << std::endl;
     int logicCount = 0;
