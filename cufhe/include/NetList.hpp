@@ -56,9 +56,9 @@ public:
 
     //std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    //std::vector<std::shared_ptr<LweSample>> GetRAMCipher(int addr);
+    std::vector<std::shared_ptr<cufhe::Ctxt>> GetRAMCipher(int addr);
 
-    //std::vector<std::shared_ptr<LweSample>> GetRAMCipherAll();
+    std::vector<std::shared_ptr<cufhe::Ctxt>> GetRAMCipherAll();
 
     //std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 

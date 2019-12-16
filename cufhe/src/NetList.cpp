@@ -412,25 +412,22 @@ int NetList::GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey
     }
     return value;
 }
-/*
-std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipher(int addr) {
-    std::vector<std::shared_ptr<LweSample>> valueArray;
-    for (int i = 0; i < 8; i++) {
-        valueArray.push_back(std::shared_ptr<LweSample>(Ram[addr][i]->GetCipher()));
-    }
-    return valueArray;
-}
- */
 
-/*
-std::vector<std::shared_ptr<LweSample>> NetList::GetRAMCipherAll() {
-    std::vector<std::shared_ptr<LweSample>> valueArray;
-    for (int i = 0; i < Ram.size()*8; i++) {
-        valueArray.push_back(std::shared_ptr<LweSample>(Ram[i/8][i%8]->GetCipher()));
+std::vector<std::shared_ptr<cufhe::Ctxt>> NetList::GetRAMCipher(int addr) {
+    std::vector<std::shared_ptr<cufhe::Ctxt>> valueArray;
+    for (int i = 0; i < 8; i++) {
+        valueArray.push_back(std::shared_ptr<cufhe::Ctxt>(Ram[addr][i]->GetCipher()));
     }
     return valueArray;
 }
- */
+
+std::vector<std::shared_ptr<cufhe::Ctxt>> NetList::GetRAMCipherAll() {
+    std::vector<std::shared_ptr<cufhe::Ctxt>> valueArray;
+    for (int i = 0; i < Ram.size()*8; i++) {
+        valueArray.push_back(std::shared_ptr<cufhe::Ctxt>(Ram[i/8][i%8]->GetCipher()));
+    }
+    return valueArray;
+}
 
 /*
 std::vector<std::shared_ptr<LweSample>> NetList::GetRAMEncryptPlainAll(
