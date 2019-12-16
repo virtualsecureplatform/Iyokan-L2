@@ -7,7 +7,15 @@
 #include "ExecManager.hpp"
 #include "KVSPPacket.hpp"
 
-const std::string usageMsg =  "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
+const std::string usageMsg =  
+"Usage:\n\
+PlainMode\n\
+    ./iyokanl2 -l <logic_file_name> -p <plain_file_name> -o <result_file_name>\n\
+TestMode\n\
+    ./iyokanl2 -l <logic_file_name> -c <cycle_num> -t <thread_num> -i <cipher_file_name> -o <result_file_name> -s <secret_key_file_name>\n\
+CipherMode\n\
+    ./iyokanl2 -l <logic_file_name> -c <cycle_num> -t <thread_num> -i <cipher_file_name> -o <result_file_name>\n";
+
 int main(int argc, char *argv[]) {
     int opt;
     opterr = 0;

@@ -18,14 +18,12 @@ make
 
 # Run
 ```
-src/iyokanl2 [-p <plain_file_name> ] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]
--p : plainMode(exec Plain and calculate exec cycle)
--v : verbose(output exec logs)
--c : cycleNum(specify exec cycle num)
--t : threadNum(specify exec threadNum)
--l : logicFileName(specify exec logicFileName(VSP Core circuit file))
--o : resultFileName(specify exec resultFileName)
--s : secretKeyFile(specify secretKeyFile. if use this option, Iyokan-L2 runs on testMode (testMode decrypts cipherFile, exec on plain and output encrypted result file))
+PlainMode
+    ./iyokanl2 -l <logic_file_name> -p <plain_file_name> -o <result_file_name>
+TestMode
+    ./iyokanl2 -l <logic_file_name> -c <cycle_num> -t <thread_num> -i <cipher_file_name> -o <result_file_name> -s <secret_key_file_name>
+CipherMode
+    ./iyokanl2 -l <logic_file_name> -c <cycle_num> -t <thread_num> -i <cipher_file_name> -o <result_file_name>
 ```
 
 `vsp-core.json` is official VSP Core circuit file. Please use this file as logicFile.
