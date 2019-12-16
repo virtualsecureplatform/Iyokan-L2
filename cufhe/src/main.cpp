@@ -143,8 +143,12 @@ int main(int argc, char *argv[]) {
         netList.SetPortCipher("io_inA", c_inA);
         netList.SetPortCipher("io_inB", c_inB);
         netList.SetPortCipher("io_sel", c_sel);
-         */
         netList.SetROMEncryptPlain(0, 0x0E2A8835, secretKey);
+         */
+        netList.SetROMEncryptPlain(0, 0x15040035, secretKey);
+        netList.SetROMEncryptPlain(1, 0x000E0208, secretKey);
+        netList.SetRAMEncryptPlain(6, 0x2A, secretKey);
+        netList.SetRAMEncryptPlain(7, 0x2B, secretKey);
     }else{
         netList.SetPortPlain("io_inA", 1);
         netList.SetPortPlain("io_inB", 2);

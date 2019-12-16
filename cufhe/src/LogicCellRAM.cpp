@@ -54,21 +54,18 @@ void LogicCellRAM::AddOutput(Logic *logic) {
     output.push_back(logic);
 }
 
-/*
-void LogicCellRAM::SetCipher(std::shared_ptr<LweSample> val) {
-    bootsCOPY(value, val.get(), key);
+void LogicCellRAM::SetCipher(cufhe::Ctxt *val) {
+    cufhe::Copy(*value, *val);
+    cufhe::Synchronize();
 }
-*/
 
 void LogicCellRAM::SetPlain(int val) {
     res = val & 0x1;
 }
 
-/*
-LweSample *LogicCellRAM::GetCipher() {
+cufhe::Ctxt *LogicCellRAM::GetCipher() {
     return value;
 }
- */
 
 int LogicCellRAM::GetPlain() {
     return res;

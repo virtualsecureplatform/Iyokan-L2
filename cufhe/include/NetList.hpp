@@ -70,13 +70,17 @@ public:
 
     void SetRAMPlain(int addr, uint8_t value);
 
+    void SetRAMEncryptPlain(int addr, uint8_t value, cufhe::PriKey *secretKey);
+
     int GetPortPlain(std::string portName);
 
     int GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey);
 
+    uint32_t GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey);
+
     int GetRAMPlain(int addr);
 
-    uint32_t GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey);
+    uint8_t GetRAMDecryptCipher(int addr, cufhe::PriKey *secretKey);
 
     void DebugOutput();
 
