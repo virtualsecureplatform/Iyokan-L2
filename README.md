@@ -47,7 +47,7 @@ src/iyokanl2 -c 10 -t 10 -l vsp-core.json -i hoge.cipher -o hoge.result
 
 # Changelog
 
-## v0.1.1 (2019/12/XX)
+## v0.1.1 (2019/12/16)
 Add Feature
 - PlainMode(Calculate exec cycle)
 
