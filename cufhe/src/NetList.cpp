@@ -333,8 +333,7 @@ uint32_t NetList::GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey) {
     return value;
 }
 
-/*
-void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
+void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray) {
     if (valueArray.size() != 8) {
         throw std::runtime_error("Invalid value");
     }
@@ -343,18 +342,15 @@ void NetList::SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> val
         throw std::runtime_error("Unknown Ram Address:" + addr);
     }
     for (int i = 0; i < length; i++) {
-        Ram[addr][i]->SetCipher(valueArray.at(i));
+        Ram[addr][i]->SetCipher(valueArray.at(i).get());
     }
 }
- */
 
-/*
-void NetList::SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray){
+void NetList::SetRAMCipherAll(std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray){
     for(int i = 0;i<valueArray.size();i++){
-       Ram[i/8] [i%8]->SetCipher(valueArray.at(i));
+       Ram[i/8] [i%8]->SetCipher(valueArray.at(i).get());
     }
 }
- */
 
 /*
 void NetList::SetRAMDecryptCipherAll(

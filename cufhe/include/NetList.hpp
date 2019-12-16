@@ -46,9 +46,9 @@ public:
 
     //void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    //void SetRAMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
+    void SetRAMCipher(int addr, std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray);
 
-    //void SetRAMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+    void SetRAMCipherAll(std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray);
 
     //void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
