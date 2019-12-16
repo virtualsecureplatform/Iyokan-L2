@@ -148,3 +148,65 @@ void KVSPResPacket::writeTo(std::ostream &os) {
     write64le(os, ramSize);
     os.seekp(bodyEnd);
 }
+
+KVSPPlainReqPacket KVSPPlainReqPacket::readFrom(std::istream &is) {
+    if (!is) throw std::runtime_error("Invalid input stream");
+
+    // Check if the signature ('KVSP') is correct.
+    char signature[4];
+    is.read(signature, sizeof(signature));
+    if (signature[0] != 'K' || signature[1] != 'V' || signature[2] != 'S' || signature[3] != 'P')
+        throw std::runtime_error("Invalid signature");
+
+    // Check if the version is correct ('0').
+    if (read32le(is) != 0)
+        throw std::runtime_error("Invalid version");
+
+    // Get sizes of components.
+    uint64_t romSize = read64le(is);
+    uint64_t ramSize = read64le(is);
+    uint64_t headerSize = is.tellg();
+
+    // Read ROM binary. Assume char is 8-bit wide.
+    std::vector<uint8_t> rom(romSize);
+    is.read(reinterpret_cast<char *>(rom.data()), romSize);
+
+    // Read RAM binary. Assume char is 8-bit wide.
+    std::vector<uint8_t> ram(ramSize);
+    is.read(reinterpret_cast<char *>(ram.data()), ramSize);
+
+    if (is.tellg() != headerSize + romSize + ramSize)
+        throw std::runtime_error("Invalid encrypted RAM data");
+
+    return KVSPPlainReqPacket{rom, ram};
+}
+
+void KVSPPlainResPacket::writeTo(std::ostream &os) {
+    if (!os) throw std::runtime_error("Invalid output stream");
+
+    // Write the signature ('KVSP').
+    char signature[4] = {'K', 'V', 'S', 'P'};
+    os.write(signature, sizeof(signature));
+
+    // Write the version ('0').
+    uint32_t version = 0;
+    write32le(os, 0);
+
+    // Write the number of flags and regs.
+    write16le(os, flags.size());
+    write16le(os, regs.size());
+
+    // Write the size of each component.
+    write64le(os, flags.size() * 1);
+    write64le(os, regs.size() * 2);
+    write64le(os, ram.size() * 1);
+
+    // Write flags.
+    for (auto &&flag : flags) os.put(flag);
+
+    // Write regs.
+    for (auto &&reg : regs) write16le(os, reg);
+
+    // Write RAM binary.
+    for (auto &&b : ram) os.put(b);
+}

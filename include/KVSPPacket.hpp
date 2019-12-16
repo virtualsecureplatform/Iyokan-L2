@@ -25,4 +25,18 @@ struct KVSPResPacket {
     void writeTo(std::ostream &os);
 };
 
+struct KVSPPlainReqPacket {
+    std::vector<uint8_t> rom, ram;
+
+    static KVSPPlainReqPacket readFrom(std::istream &is);
+};
+
+struct KVSPPlainResPacket {
+    std::vector<uint8_t> flags;
+    std::vector<uint16_t> regs;
+    std::vector<uint8_t> ram;
+
+    void writeTo(std::ostream &os);
+};
+
 #endif
