@@ -373,14 +373,14 @@ void NetList::SetRAMPlain(int addr, uint8_t value) {
     }
 }
 
-std::vector<cufhe::Ctxt *> NetList::GetPortCipher(std::string portName) {
+std::vector<std::shared_ptr<cufhe::Ctxt>> NetList::GetPortCipher(std::string portName) {
     int length = Outputs[portName].size();
     if (length == 0) {
         throw std::runtime_error("Unknown output port:" + portName);
     }
-    std::vector<cufhe::Ctxt *> valueArray;
+    std::vector<std::shared_ptr<cufhe::Ctxt>> valueArray;
     for (int i = 0; i < length; i++) {
-        valueArray.push_back(Outputs[portName][i]->GetCipher());
+        valueArray.push_back(std::shared_ptr<cufhe::Ctxt>(Outputs[portName][i]->GetCipher()));
     }
     return valueArray;
 }

@@ -52,7 +52,7 @@ public:
 
     //void SetRAMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    std::vector<cufhe::Ctxt *> GetPortCipher(std::string portName);
+    std::vector<std::shared_ptr<cufhe::Ctxt>> GetPortCipher(std::string portName);
 
     //std::vector<std::shared_ptr<LweSample>> GetPortEncryptPlain(std::string portName, int width, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
