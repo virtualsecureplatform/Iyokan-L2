@@ -18,8 +18,8 @@ make
 
 # Run
 ```
-src/main [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]
--p : perfMode(output threadNum, execCycle, execTime, execLogicNum at single column)
+src/iyokanl2 [-p <plain_file_name> ] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]
+-p : plainMode(exec Plain and calculate exec cycle)
 -v : verbose(output exec logs)
 -c : cycleNum(specify exec cycle num)
 -t : threadNum(specify exec threadNum)
@@ -30,6 +30,30 @@ src/main [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_fi
 
 `vsp-core.json` is official VSP Core circuit file. Please use this file as logicFile.
 
+Run on PlainMode
+```
+src/iyokanl2 -p hoge.plain -o hoge.result
+```
+
+Run on TestMode
+```
+src/iyokanl2 -c 10 -t 10 -l vsp-core.json -i hoge.cipher -o hoge.result -s secret.key
+```
+
+Run on CipherMode
+```
+src/iyokanl2 -c 10 -t 10 -l vsp-core.json -i hoge.cipher -o hoge.result
+```
+
 # Changelog
-- v0.0.1 2019/12/04 - PoC Implementation
-- v0.1.0 2019/12/12 - v0.1.0 Release
+
+## v0.1.1 (2019/12/XX)
+Add Feature
+- PlainMode(Calculate exec cycle)
+
+## v0.1.0 (2019/12/12)
+First Alpha Release
+- Implemented CipherMode, TestMode
+
+## v0.0.1 (2019/12/04)
+PoC Implementation
