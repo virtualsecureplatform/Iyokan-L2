@@ -7,6 +7,7 @@
 #include <exception>
 #include <stdexcept>
 #include <functional>
+#include <memory>
 
 #include "cufhe_gpu.cuh"
 #include "cufhe.h"

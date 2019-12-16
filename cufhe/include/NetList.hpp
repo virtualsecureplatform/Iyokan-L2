@@ -40,9 +40,9 @@ public:
 
     void SetPortCipher(std::string portName, std::vector<cufhe::Ctxt *> valueArray);
 
-    //void SetROMCipher(int addr, std::vector<std::shared_ptr<LweSample>> valueArray);
+    void SetROMCipher(int addr, std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray);
 
-    //void SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray);
+    void SetROMCipherAll(std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray);
 
     //void SetROMDecryptCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray, std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 

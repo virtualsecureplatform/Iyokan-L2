@@ -228,8 +228,7 @@ void NetList::SetPortPlain(std::string portName, int value) {
     }
 }
 
-/*
-void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>> valueArray) {
+void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<cufhe::Ctxt>> &valueArray) {
     int addr = byte_addr / 4;
     int word_num = byte_addr % 4;
     int length = Rom[addr].size();
@@ -240,18 +239,15 @@ void NetList::SetROMCipher(int byte_addr, std::vector<std::shared_ptr<LweSample>
         throw std::runtime_error("Unknown Rom Address:" + addr);
     }
     for (int i = 0; i < length; i++) {
-        Rom[addr][i + (word_num)*8]->SetCipher(valueArray.at(i));
+        Rom[addr][i + (word_num)*8]->SetCipher(valueArray.at(i).get());
     }
 }
- */
 
-/*
-void NetList::SetROMCipherAll(std::vector<std::shared_ptr<LweSample>> valueArray) {
+void NetList::SetROMCipherAll(std::vector<std::shared_ptr<cufhe::Ctxt>>& valueArray) {
     for (int i = 0; i < valueArray.size(); i++) {
-        Rom[i / 32][i % 32]->SetCipher(valueArray.at(i));
+        Rom[i / 32][i % 32]->SetCipher(valueArray.at(i).get());
     }
 }
- */
 
 /*
 void NetList::SetROMDecryptCipherAll(
