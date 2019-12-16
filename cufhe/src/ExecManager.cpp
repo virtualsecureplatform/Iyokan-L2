@@ -5,7 +5,7 @@ ExecManager::ExecManager(int num, int _step, bool v, bool isCipher) {
     workerNum = num;
     verbose = v;
     cipher = isCipher;
-    for(int i=0;i<240;i++){
+    for (int i = 0; i < 240; i++) {
         cores.push_back(new SMCore(i, &readyQueue, isCipher));
     }
 }
@@ -23,8 +23,8 @@ void ExecManager::Prepare() {
 }
 
 void ExecManager::Start() {
-    for(int i=0;i<step;i++){
-        ExecClock(i+1,step,false);
+    for (int i = 0; i < step; i++) {
+        ExecClock(i + 1, step, false);
     }
 }
 
@@ -52,18 +52,18 @@ int ExecManager::GetExecutedLogicNum() {
 
 void ExecManager::Reset() {
     netList->EnableReset();
-    ExecClock(0,0,true);
+    ExecClock(0, 0, true);
     netList->DisableReset();
 }
 
 void ExecManager::Tick() {
     executionCount = 0;
     for (auto logic : netList->Logics) {
-        if(logic.second->Tick()){
+        if (logic.second->Tick()) {
             readyQueue.push(logic.second);
         }
     }
-    for(auto core:cores){
+    for (auto core : cores) {
         core->execLogic = nullptr;
     }
 }
@@ -71,7 +71,7 @@ void ExecManager::Tick() {
 void ExecManager::ExecClock(int nowCnt, int maxCnt, bool reset) {
     Tick();
     executionCount = 0;
-    while(executionCount < netList->Logics.size()) {
+    while (executionCount < netList->Logics.size()) {
         for (auto core : cores) {
             if (core->DependencyUpdate(ExecCounter, reset)) {
                 executionCount += 1;

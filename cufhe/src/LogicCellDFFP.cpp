@@ -20,14 +20,14 @@ void LogicCellDFFP::Prepare() {
 }
 
 void LogicCellDFFP::Execute(cufhe::Stream stream, bool reset) {
-    if(!reset){
+    if (!reset) {
         cufhe::Copy(*value, *input.at(0)->value, stream);
     }
     executed = true;
 }
 
 void LogicCellDFFP::Execute(bool reset) {
-    if(!reset){
+    if (!reset) {
         res = input.at(0)->res;
     }
     executed = true;

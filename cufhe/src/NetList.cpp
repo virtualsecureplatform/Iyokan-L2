@@ -290,13 +290,13 @@ void NetList::SetROMPlain(int addr, uint32_t value) {
     }
 }
 
-void NetList::SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey){
+void NetList::SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey) {
     int length = Rom[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
     }
     cufhe::Ptxt plainValue;
-    for(int i=0;i<length;i++){
+    for (int i = 0; i < length; i++) {
         cufhe::Ctxt cipherValue;
         plainValue = value & 0x1;
         cufhe::Encrypt(cipherValue, plainValue, *secretKey);
@@ -306,7 +306,7 @@ void NetList::SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secret
     }
 }
 
-void NetList::SetRAMEncryptPlain(int addr, uint8_t value, cufhe::PriKey * secretKey) {
+void NetList::SetRAMEncryptPlain(int addr, uint8_t value, cufhe::PriKey *secretKey) {
     int length = Ram[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Ram Address:" + addr);
@@ -320,7 +320,6 @@ void NetList::SetRAMEncryptPlain(int addr, uint8_t value, cufhe::PriKey * secret
         cufhe::Synchronize();
         Ram[addr][i]->SetCipher(&cipherValue);
     }
-
 }
 
 uint32_t NetList::GetROMDecryptCipher(int addr, cufhe::PriKey *secretKey) {
@@ -407,7 +406,7 @@ int NetList::GetPortPlain(std::string portName) {
     return value;
 }
 
-int NetList::GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey){
+int NetList::GetPortDecryptCipher(std::string portName, cufhe::PriKey *secretKey) {
     int length = Outputs[portName].size();
     if (length == 0) {
         throw std::runtime_error("Unknown output port:" + portName);
@@ -511,27 +510,27 @@ void NetList::DebugRegisterWrite(){
 */
 
 void NetList::EnableReset() {
-    if(cipher){
+    if (cipher) {
         cufhe::Ctxt value;
         std::vector<cufhe::Ctxt *> valueArray;
         cufhe::ConstantOne(value);
         cufhe::Synchronize();
         valueArray.push_back(&value);
         SetPortCipher("reset", valueArray);
-    }else{
+    } else {
         SetPortPlain("reset", 1);
     }
 }
 
 void NetList::DisableReset() {
-    if(cipher){
+    if (cipher) {
         cufhe::Ctxt value;
         std::vector<cufhe::Ctxt *> valueArray;
         cufhe::ConstantZero(value);
         cufhe::Synchronize();
         valueArray.push_back(&value);
         SetPortCipher("reset", valueArray);
-    }else{
+    } else {
         SetPortPlain("reset", 0);
     }
 }

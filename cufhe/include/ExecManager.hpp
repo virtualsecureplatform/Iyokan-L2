@@ -13,7 +13,7 @@
 
 class ExecManager {
 public:
-    std::priority_queue<Logic *, std::vector<Logic*>, compare_f> readyQueue;
+    std::priority_queue<Logic *, std::vector<Logic *>, compare_f> readyQueue;
 
     ExecManager(int num, int _step, bool v, bool isCipher);
 

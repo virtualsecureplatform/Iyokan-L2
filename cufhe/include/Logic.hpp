@@ -11,12 +11,10 @@
 #include "cufhe_gpu.cuh"
 #include "cufhe.h"
 
-
-
 class Logic;
 class compare_f;
 
-using pri_queue = std::priority_queue<Logic*, std::vector<Logic*>, compare_f>;
+using pri_queue = std::priority_queue<Logic *, std::vector<Logic *>, compare_f>;
 
 class Logic {
 public:
@@ -40,11 +38,11 @@ public:
         executable = false;
         executed = false;
 
-        if(isCipher){
+        if (isCipher) {
             cipher = true;
             value = new cufhe::Ctxt();
             cufhe::Synchronize();
-        }else{
+        } else {
             cipher = false;
             res = 0;
         }
@@ -70,9 +68,9 @@ protected:
     std::vector<Logic *> input{};
 };
 
-class compare_f{
+class compare_f {
 public:
-    bool operator()(Logic *u, Logic*v){
+    bool operator()(Logic *u, Logic *v) {
         return u->priority < v->priority;
     }
 };

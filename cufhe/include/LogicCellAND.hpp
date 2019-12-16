@@ -3,7 +3,6 @@
 
 #include "Logic.hpp"
 
-
 class LogicCellAND : public Logic {
 public:
     LogicCellAND(int id, int pri, bool isCipher);

@@ -6,7 +6,7 @@
 #include "ExecManager.hpp"
 #include "cufhe_gpu.cuh"
 
-const std::string usageMsg =  "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
+const std::string usageMsg = "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
 int main(int argc, char *argv[]) {
     int opt;
     opterr = 0;
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
      */
     cufhe::PriKey *secretKey;
     cufhe::PubKey *cloudKey;
-    if(!testMode){
+    if (!testMode) {
         cudaSetDevice(0);
         cufhe::SetSeed();
         secretKey = new cufhe::PriKey;
@@ -111,59 +111,17 @@ int main(int argc, char *argv[]) {
 
     NetList netList(logicFile, verbose, !testMode);
 
-    if(!testMode){
-        cufhe::Ptxt A_0;
-        cufhe::Ptxt B_0;
-        A_0.message_ = 1;
-        B_0.message_ = 0;
-
-        cufhe::Ctxt cA_0;
-        cufhe::Ctxt cB_0;
-
-        Encrypt(cA_0, A_0, *secretKey);
-        Encrypt(cB_0, B_0, *secretKey);
-
-        std::vector<cufhe::Ctxt *> c_inA;
-        c_inA.push_back(&cA_0);
-        c_inA.push_back(&cB_0);
-        c_inA.push_back(&cB_0);
-        c_inA.push_back(&cB_0);
-
-        std::vector<cufhe::Ctxt *> c_inB;
-        c_inB.push_back(&cB_0);
-        c_inB.push_back(&cA_0);
-        c_inB.push_back(&cB_0);
-        c_inB.push_back(&cB_0);
-
-        std::vector<cufhe::Ctxt *> c_sel;
-        c_sel.push_back(&cA_0);
-
-        cufhe::Synchronize();
-        /*
-        netList.SetPortCipher("io_inA", c_inA);
-        netList.SetPortCipher("io_inB", c_inB);
-        netList.SetPortCipher("io_sel", c_sel);
-        netList.SetROMEncryptPlain(0, 0x0E2A8835, secretKey);
-         */
+    if (!testMode) {
         netList.SetROMEncryptPlain(0, 0x15040035, secretKey);
         netList.SetROMEncryptPlain(1, 0x000E0208, secretKey);
         netList.SetRAMEncryptPlain(6, 0x2A, secretKey);
         netList.SetRAMEncryptPlain(7, 0x2B, secretKey);
-    }else{
-        netList.SetPortPlain("io_inA", 1);
-        netList.SetPortPlain("io_inB", 2);
-        netList.SetPortPlain("io_sel", 0);
+    } else {
+        netList.SetROMPlain(0, 0x15040035);
+        netList.SetROMPlain(1, 0x000E0208);
+        netList.SetRAMPlain(6, 0x2A);
+        netList.SetRAMPlain(7, 0x2B);
     }
-
-
-    /*
-     */
-    /*
-    netList.SetROMPlain(0, 0x15040035);
-    netList.SetROMPlain(1, 0x000E0208);
-    netList.SetRAMPlain(6, 0x2A);
-    netList.SetRAMPlain(7, 0x2B);
-     */
 
     manager.SetNetList(&netList);
     manager.Prepare();
@@ -178,22 +136,12 @@ int main(int argc, char *argv[]) {
     if (perfMode) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
     } else {
-        if(!testMode){
+        if (!testMode) {
             cufhe::Synchronize();
             uint32_t res = netList.GetROMDecryptCipher(0, secretKey);
             std::printf("ROM[0x01]: 0x%X\n", res);
             int x8 = netList.GetPortDecryptCipher("io_regOut_x8", secretKey);
             std::printf("x8:%d\n", x8);
-            /*
-            auto res = netList.GetPortCipher("io_out");
-            cufhe::Synchronize();
-            for(auto cbit : res){
-                cufhe::Ptxt val;
-                cufhe::Decrypt(val, *cbit, *secretKey);
-                std::cout << val.message_ << std::endl;
-            }
-            cufhe::CleanUp();
-             */
         }
         printf("Execution time %lf[ms]\n", time);
         netList.DebugOutput();
