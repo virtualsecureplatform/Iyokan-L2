@@ -32,7 +32,7 @@ src/iyokanl2 [-p <plain_file_name> ] [-v] -c <cycle> -t <thread_num> -l <logic_f
 
 Run on PlainMode
 ```
-src/iyokanl2 -p hoge.plain -o hoge.result
+src/iyokanl2 -l vsp-core.json -p hoge.plain -o hoge.result
 ```
 
 Run on TestMode
