@@ -12,13 +12,13 @@ const std::string usageMsg = "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <lo
 int main(int argc, char *argv[]) {
     int opt;
     opterr = 0;
-    bool perfMode = false;
     bool verbose = true;
     int execCycle = 6;
     int threadNum = 0;
-    std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "../../lb_test.enc";
-    std::string resultFile = "../../result.enc";
+    std::string logicFile = "";
+    std::string cipherFile = "";
+    std::string resultFile = "";
+    std::string plainFile = "";
     bool plainMode = false;
     while ((opt = getopt(argc, argv, "vpc:t:l:i:o:")) != -1) {
         switch (opt) {
@@ -26,7 +26,9 @@ int main(int argc, char *argv[]) {
                 verbose = true;
                 break;
             case 'p':
-                perfMode = true;
+                plainMode = true;
+                plainFile = optarg;
+                threadNum = 1;
                 break;
             case 'c':
                 execCycle = atoi(optarg);
@@ -49,82 +51,69 @@ int main(int argc, char *argv[]) {
                 break;
         }
     }
-    /*
-    if(execCycle != 0){
-        std::cout << "ExecCycle:" << execCycle << std::endl;
-    }else{
-        std::cout << usageMsg << std::endl;
-        exit(1);
-    }
 
-    if(threadNum != 0){
-        std::cout << "ThreadNum:" << threadNum << std::endl;
-    }else{
-        std::cout << usageMsg << std::endl;
-        exit(1);
-    }
-
-    if(logicFile != ""){
-        std::cout << "LogicFile:" << logicFile << std::endl;
-    }else{
-        std::cout << usageMsg << std::endl;
-        exit(1);
-    }
-
-    if(cipherFile != ""){
-        std::cout << "CipherFile:" << cipherFile << std::endl;
-    }else{
-        std::cout << usageMsg << std::endl;
-        exit(1);
-    }
-
-    if(resultFile != ""){
+    if (resultFile != "") {
         std::cout << "ResultFile:" << resultFile << std::endl;
-    }else{
+    } else {
         std::cout << usageMsg << std::endl;
         exit(1);
     }
 
-    if(secretKeyFile != ""){
-        std::cout << "SecretKeyFile:" << secretKeyFile << std::endl;
+    if (logicFile != "") {
+        std::cout << "LogicFile:" << logicFile << std::endl;
+    } else {
+        std::cout << usageMsg << std::endl;
+        exit(1);
     }
 
-    if(testMode){
-        std::cout << "Running on TestMode" << std::endl;
+    if(!plainMode) {
+        if (execCycle != 0) {
+            std::cout << "ExecCycle:" << execCycle << std::endl;
+        } else {
+            std::cout << usageMsg << std::endl;
+            exit(1);
+        }
+
+        if (threadNum != 0) {
+            std::cout << "ThreadNum:" << threadNum << std::endl;
+        } else {
+            std::cout << usageMsg << std::endl;
+            exit(1);
+        }
+
+        if (cipherFile != "") {
+            std::cout << "CipherFile:" << cipherFile << std::endl;
+        } else {
+            std::cout << usageMsg << std::endl;
+            exit(1);
+        }
     }
-     */
+
     std::ifstream ifs{cipherFile, std::ios_base::binary};
-    auto packet = KVSPReqPacket::readFrom(ifs);
     std::shared_ptr<cufhe::PubKey> cloudKey;
 
-    if (!plainMode) {
-        cudaSetDevice(0);
-        cufhe::SetSeed();
-        cloudKey = tfhe2cufhe(*packet.cloudKey.get());
-        cufhe::Initialize(*cloudKey.get());
-    }
-
+    std::shared_ptr<TFheGateBootstrappingCloudKeySet> tfheCloudKey = nullptr;
     ExecManager manager(threadNum, execCycle, verbose, !plainMode);
 
-    NetList netList(logicFile, verbose, !plainMode);
-
+    NetList netList(logicFile, verbose, true);
     if (!plainMode) {
+        auto packet = KVSPReqPacket::readFrom(ifs);
+        tfheCloudKey = packet.cloudKey;
+
+        cudaSetDevice(0);
+        cufhe::SetSeed();
+        cloudKey = tfhe2cufhe(*tfheCloudKey.get());
+        cufhe::Initialize(*cloudKey.get());
+
         auto cufheRom = tfhe2cufhe(*packet.cloudKey.get(), packet.rom);
         auto cufheRam = tfhe2cufhe(*packet.cloudKey.get(), packet.ram);
+        netList = NetList(logicFile, verbose, !plainMode);
         netList.SetROMCipherAll(cufheRom);
         netList.SetRAMCipherAll(cufheRam);
-        /*
-        netList.SetROMEncryptPlain(0, 0x15040035, secretKey);
-        netList.SetROMEncryptPlain(1, 0x000E0208, secretKey);
-        netList.SetRAMEncryptPlain(6, 0x2A, secretKey);
-        netList.SetRAMEncryptPlain(7, 0x2B, secretKey);
-         */
-    } else {
-        netList.SetROMPlain(0, 0x15040035);
-        netList.SetROMPlain(1, 0x000E0208);
-        netList.SetRAMPlain(6, 0x2A);
-        netList.SetRAMPlain(7, 0x2B);
+    }else{
+
     }
+
 
     manager.SetNetList(&netList);
     manager.Prepare();
@@ -136,18 +125,30 @@ int main(int argc, char *argv[]) {
 
     double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
                                       1000.0);
-    if (perfMode) {
-        printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
+    if (plainMode) {
+        std::vector<uint8_t> flags = {(uint8_t)netList.GetPortPlain("io_finishFlag")};
+        std::vector<uint16_t> regs =
+            {
+                (uint16_t)netList.GetPortPlain("io_regOut_x0"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x1"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x2"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x3"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x4"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x5"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x6"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x7"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x8"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x9"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x10"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x11"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x12"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x13"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x14"),
+                (uint16_t)netList.GetPortPlain("io_regOut_x15")};
+        //std::vector<uint8_t> ram = netList.GetRAMPlainAll();
+        std::ofstream ofs{resultFile, std::ios_base::binary};
+        //KVSPPlainResPacket{flags, regs, ram}.writeTo(ofs);
     } else {
-        /*
-        if (!testMode) {
-            cufhe::Synchronize();
-            uint32_t res = netList.GetROMDecryptCipher(0, secretKey);
-            std::printf("ROM[0x01]: 0x%X\n", res);
-            int x8 = netList.GetPortDecryptCipher("io_regOut_x8", secretKey);
-            std::printf("x8:%d\n", x8);
-        }
-         */
         std::vector<std::shared_ptr<cufhe::Ctxt>> flags = {netList.GetPortCipher("io_finishFlag")};
         std::vector<std::vector<std::shared_ptr<cufhe::Ctxt>>> regs =
             {
@@ -169,17 +170,17 @@ int main(int argc, char *argv[]) {
                 netList.GetPortCipher("io_regOut_x15")};
         std::vector<std::shared_ptr<cufhe::Ctxt>> ram = netList.GetRAMCipherAll();
 
-        auto tfheFlags = cufhe2tfhe(*packet.cloudKey.get(), flags);
-        auto tfheRam = cufhe2tfhe(*packet.cloudKey.get(), ram);
+        auto tfheFlags = cufhe2tfhe(*tfheCloudKey.get(), flags);
+        auto tfheRam = cufhe2tfhe(*tfheCloudKey.get(), ram);
         std::vector<std::vector<std::shared_ptr<LweSample>>> tfheRegs;
         for(auto reg : regs){
-            auto tfheReg = cufhe2tfhe(*packet.cloudKey.get(), reg);
+            auto tfheReg = cufhe2tfhe(*tfheCloudKey.get(), reg);
             tfheRegs.push_back(tfheReg);
         }
         std::ofstream ofs{resultFile, std::ios_base::binary};
-        KVSPResPacket{packet.cloudKey, tfheFlags, tfheRegs, tfheRam}.writeTo(ofs);
-        printf("Execution time %lf[ms]\n", time);
-        netList.DebugOutput();
-        manager.Stats();
+        KVSPResPacket{tfheCloudKey, tfheFlags, tfheRegs, tfheRam}.writeTo(ofs);
     }
+    printf("Execution time %lf[ms]\n", time);
+    netList.DebugOutput();
+    manager.Stats();
 }
