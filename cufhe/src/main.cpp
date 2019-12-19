@@ -14,13 +14,12 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool verbose = true;
     int execCycle = 6;
-    int threadNum = 0;
     std::string logicFile = "";
     std::string cipherFile = "";
     std::string resultFile = "";
     std::string plainFile = "";
     bool plainMode = false;
-    while ((opt = getopt(argc, argv, "vpc:t:l:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "vpc:l:i:o:")) != -1) {
         switch (opt) {
             case 'v':
                 verbose = true;
@@ -28,13 +27,9 @@ int main(int argc, char *argv[]) {
             case 'p':
                 plainMode = true;
                 plainFile = optarg;
-                threadNum = 1;
                 break;
             case 'c':
                 execCycle = atoi(optarg);
-                break;
-            case 't':
-                threadNum = atoi(optarg);
                 break;
             case 'l':
                 logicFile = optarg;
@@ -74,13 +69,6 @@ int main(int argc, char *argv[]) {
             exit(1);
         }
 
-        if (threadNum != 0) {
-            std::cout << "ThreadNum:" << threadNum << std::endl;
-        } else {
-            std::cout << usageMsg << std::endl;
-            exit(1);
-        }
-
         if (cipherFile != "") {
             std::cout << "CipherFile:" << cipherFile << std::endl;
         } else {
@@ -93,7 +81,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<cufhe::PubKey> cloudKey;
 
     std::shared_ptr<TFheGateBootstrappingCloudKeySet> tfheCloudKey = nullptr;
-    ExecManager manager(threadNum, execCycle, verbose, !plainMode);
+    ExecManager manager(1, execCycle, verbose, !plainMode);
 
     NetList netList(logicFile, verbose, true);
     if (!plainMode) {
