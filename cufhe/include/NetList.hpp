@@ -68,9 +68,13 @@ public:
 
     void SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey);
 
+    void SetROMPlainAll(std::vector<uint8_t>& valueArray);
+
     void SetRAMPlain(int addr, uint8_t value);
 
     void SetRAMEncryptPlain(int addr, uint8_t value, cufhe::PriKey *secretKey);
+
+    void SetRAMPlainAll(std::vector<uint8_t>& valueArray);
 
     int GetPortPlain(std::string portName);
 
@@ -81,6 +85,8 @@ public:
     int GetRAMPlain(int addr);
 
     uint8_t GetRAMDecryptCipher(int addr, cufhe::PriKey *secretKey);
+
+    std::vector<uint8_t> GetRAMPlainAll();
 
     void DebugOutput();
 

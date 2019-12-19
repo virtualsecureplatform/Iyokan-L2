@@ -8,7 +8,13 @@
 #include "KVSPPacket.hpp"
 #include "Utils.hpp"
 
-const std::string usageMsg = "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
+const std::string usageMsg =
+    "Usage:\n\
+PlainMode\n\
+    ./iyokanl2 -l <logic_file_name> -p <plain_file_name> -o <result_file_name>\n\
+CipherMode\n\
+    ./iyokanl2 -l <logic_file_name> -c <cycle_num> -t <thread_num> -i <cipher_file_name> -o <result_file_name>\n";
+
 int main(int argc, char *argv[]) {
     int opt;
     opterr = 0;
@@ -77,14 +83,15 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    std::ifstream ifs{cipherFile, std::ios_base::binary};
     std::shared_ptr<cufhe::PubKey> cloudKey;
 
     std::shared_ptr<TFheGateBootstrappingCloudKeySet> tfheCloudKey = nullptr;
     ExecManager manager(1, execCycle, verbose, !plainMode);
 
     NetList netList(logicFile, verbose, true);
+
     if (!plainMode) {
+        std::ifstream ifs{cipherFile, std::ios_base::binary};
         auto packet = KVSPReqPacket::readFrom(ifs);
         tfheCloudKey = packet.cloudKey;
 
@@ -99,20 +106,32 @@ int main(int argc, char *argv[]) {
         netList.SetROMCipherAll(cufheRom);
         netList.SetRAMCipherAll(cufheRam);
     }else{
-
+        std::ifstream ifs{cipherFile, std::ios_base::binary};
+        auto packet = KVSPPlainReqPacket::readFrom(ifs);
+        netList.SetROMPlainAll(packet.rom);
+        netList.SetRAMPlainAll(packet.ram);
     }
 
 
     manager.SetNetList(&netList);
     manager.Prepare();
 
-    std::chrono::system_clock::time_point start, end;
-    start = std::chrono::system_clock::now();
-    manager.Start();
-    end = std::chrono::system_clock::now();
+    if(plainMode) {
+        int execCnt = manager.ExecUntilFinish();
+        printf("Exec count:%d\n", execCnt);
+    }else {
+        std::chrono::system_clock::time_point start, end;
+        start = std::chrono::system_clock::now();
+        manager.Start();
+        end = std::chrono::system_clock::now();
 
-    double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
-                                      1000.0);
+        double time = static_cast<double>(std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() /
+                                          1000.0);
+        printf("Execution time %lf[ms]\n", time);
+    }
+    netList.DebugOutput();
+    manager.Stats();
+
     if (plainMode) {
         std::vector<uint8_t> flags = {(uint8_t)netList.GetPortPlain("io_finishFlag")};
         std::vector<uint16_t> regs =
@@ -133,9 +152,9 @@ int main(int argc, char *argv[]) {
                 (uint16_t)netList.GetPortPlain("io_regOut_x13"),
                 (uint16_t)netList.GetPortPlain("io_regOut_x14"),
                 (uint16_t)netList.GetPortPlain("io_regOut_x15")};
-        //std::vector<uint8_t> ram = netList.GetRAMPlainAll();
+        std::vector<uint8_t> ram = netList.GetRAMPlainAll();
         std::ofstream ofs{resultFile, std::ios_base::binary};
-        //KVSPPlainResPacket{flags, regs, ram}.writeTo(ofs);
+        KVSPPlainResPacket{flags, regs, ram}.writeTo(ofs);
     } else {
         std::vector<std::shared_ptr<cufhe::Ctxt>> flags = {netList.GetPortCipher("io_finishFlag")};
         std::vector<std::vector<std::shared_ptr<cufhe::Ctxt>>> regs =
@@ -168,7 +187,4 @@ int main(int argc, char *argv[]) {
         std::ofstream ofs{resultFile, std::ios_base::binary};
         KVSPResPacket{tfheCloudKey, tfheFlags, tfheRegs, tfheRam}.writeTo(ofs);
     }
-    printf("Execution time %lf[ms]\n", time);
-    netList.DebugOutput();
-    manager.Stats();
 }

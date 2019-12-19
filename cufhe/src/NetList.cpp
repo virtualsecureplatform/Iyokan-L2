@@ -458,6 +458,28 @@ int NetList::GetRAMPlain(int addr) {
     return value;
 }
 
+void NetList::SetROMPlainAll(std::vector<uint8_t> & valueArray) {
+    for (int i = 0; i < valueArray.size()/4; i++) {
+        uint32_t value = (valueArray.at(i*4+3)<<24) + (valueArray.at(i*4+2)<<16) + (valueArray.at(i*4+1)<<8) + valueArray.at(i*4);
+        SetROMPlain(i, value);
+    }
+}
+
+void NetList::SetRAMPlainAll(std::vector<uint8_t>& valueArray) {
+    for(int i = 0;i<valueArray.size();i++){
+        SetRAMPlain(i, valueArray.at(i));
+    }
+}
+
+std::vector<uint8_t> NetList::GetRAMPlainAll() {
+    std::vector<uint8_t> valueArray;
+    for (int i = 0; i < Ram.size(); i++) {
+        valueArray.push_back(GetRAMPlain(i));
+    }
+    return valueArray;
+}
+
+
 void NetList::DebugOutput() {
     std::cout << "---Debug Output---" << std::endl;
     if (cipher) {

@@ -23,6 +23,8 @@ public:
 
     void Start();
 
+    int ExecUntilFinish();
+
     void Stats();
 
     int GetExecutedLogicNum();

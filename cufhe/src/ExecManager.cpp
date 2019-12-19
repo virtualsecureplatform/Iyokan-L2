@@ -28,6 +28,15 @@ void ExecManager::Start() {
     }
 }
 
+int ExecManager::ExecUntilFinish(){
+    int cnt = 0;
+    while(netList->GetPortPlain("io_finishFlag") == 0) {
+        ExecClock(cnt, 0, false);
+        cnt++;
+    }
+    return cnt;
+}
+
 void ExecManager::Stats() {
     std::cout << "---Execution Stats---" << std::endl;
     int logicCount = 0;
