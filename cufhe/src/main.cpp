@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
     opterr = 0;
     bool perfMode = false;
     bool verbose = true;
-    int execCycle = 8;
+    int execCycle = 6;
     int threadNum = 0;
     std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "../../test.enc";
-    std::string resultFile = "";
+    std::string cipherFile = "../../li42.enc";
+    std::string resultFile = "../../result.enc";
     bool plainMode = false;
     while ((opt = getopt(argc, argv, "vpc:t:l:i:o:")) != -1) {
         switch (opt) {
@@ -95,13 +95,13 @@ int main(int argc, char *argv[]) {
      */
     std::ifstream ifs{cipherFile, std::ios_base::binary};
     auto packet = KVSPReqPacket::readFrom(ifs);
-    cufhe::PubKey *cloudKey;
+    std::shared_ptr<cufhe::PubKey> cloudKey;
 
     if (!plainMode) {
         cudaSetDevice(0);
         cufhe::SetSeed();
-        cloudKey = tfhe2cufhe(*packet.cloudKey.get()).get();
-        cufhe::Initialize(*cloudKey);
+        cloudKey = tfhe2cufhe(*packet.cloudKey.get());
+        cufhe::Initialize(*cloudKey.get());
     }
 
     ExecManager manager(threadNum, execCycle, verbose, !plainMode);
