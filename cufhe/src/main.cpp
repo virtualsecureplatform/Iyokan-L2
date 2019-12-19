@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include "ExecManager.hpp"
 #include "cufhe_gpu.cuh"
+#include "KVSPPacket.hpp"
+#include "Utils.hpp"
 
 const std::string usageMsg = "Usage: [-p] [-v] -c <cycle> -t <thread_num> -l <logic_file_name> -i <cipher_file_name> -o <result_file_name> [-s <secretKeyFile>]";
 int main(int argc, char *argv[]) {
@@ -15,11 +17,10 @@ int main(int argc, char *argv[]) {
     int execCycle = 8;
     int threadNum = 0;
     std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "";
+    std::string cipherFile = "../../test.enc";
     std::string resultFile = "";
-    std::string secretKeyFile = "";
-    bool testMode = false;
-    while ((opt = getopt(argc, argv, "vpc:t:l:i:o:s:")) != -1) {
+    bool plainMode = false;
+    while ((opt = getopt(argc, argv, "vpc:t:l:i:o:")) != -1) {
         switch (opt) {
             case 'v':
                 verbose = true;
@@ -41,10 +42,6 @@ int main(int argc, char *argv[]) {
                 break;
             case 'o':
                 resultFile = optarg;
-                break;
-            case 's':
-                secretKeyFile = optarg;
-                testMode = true;
                 break;
             default:
                 std::cout << usageMsg << std::endl;
@@ -96,26 +93,30 @@ int main(int argc, char *argv[]) {
         std::cout << "Running on TestMode" << std::endl;
     }
      */
-    cufhe::PriKey *secretKey;
+    std::ifstream ifs{cipherFile, std::ios_base::binary};
+    auto packet = KVSPReqPacket::readFrom(ifs);
     cufhe::PubKey *cloudKey;
-    if (!testMode) {
+
+    if (!plainMode) {
         cudaSetDevice(0);
         cufhe::SetSeed();
-        secretKey = new cufhe::PriKey;
-        cloudKey = new cufhe::PubKey;
-        cufhe::KeyGen(*cloudKey, *secretKey);
+        cloudKey = tfhe2cufhe(*packet.cloudKey.get()).get();
         cufhe::Initialize(*cloudKey);
     }
 
-    ExecManager manager(threadNum, execCycle, verbose, !testMode);
+    ExecManager manager(threadNum, execCycle, verbose, !plainMode);
 
-    NetList netList(logicFile, verbose, !testMode);
+    NetList netList(logicFile, verbose, !plainMode);
 
-    if (!testMode) {
+    if (!plainMode) {
+        auto cufheRom = tfhe2cufhe(*packet.cloudKey.get(), packet.rom);
+        netList.SetROMCipherAll(cufheRom);
+        /*
         netList.SetROMEncryptPlain(0, 0x15040035, secretKey);
         netList.SetROMEncryptPlain(1, 0x000E0208, secretKey);
         netList.SetRAMEncryptPlain(6, 0x2A, secretKey);
         netList.SetRAMEncryptPlain(7, 0x2B, secretKey);
+         */
     } else {
         netList.SetROMPlain(0, 0x15040035);
         netList.SetROMPlain(1, 0x000E0208);
@@ -136,6 +137,7 @@ int main(int argc, char *argv[]) {
     if (perfMode) {
         printf("%d, %d, %lf, %d\n", threadNum, execCycle, time, manager.GetExecutedLogicNum());
     } else {
+        /*
         if (!testMode) {
             cufhe::Synchronize();
             uint32_t res = netList.GetROMDecryptCipher(0, secretKey);
@@ -143,6 +145,37 @@ int main(int argc, char *argv[]) {
             int x8 = netList.GetPortDecryptCipher("io_regOut_x8", secretKey);
             std::printf("x8:%d\n", x8);
         }
+         */
+        std::vector<std::shared_ptr<cufhe::Ctxt>> flags = {netList.GetPortCipher("io_finishFlag")};
+        std::vector<std::vector<std::shared_ptr<cufhe::Ctxt>>> regs =
+            {
+                netList.GetPortCipher("io_regOut_x0"),
+                netList.GetPortCipher("io_regOut_x1"),
+                netList.GetPortCipher("io_regOut_x2"),
+                netList.GetPortCipher("io_regOut_x3"),
+                netList.GetPortCipher("io_regOut_x4"),
+                netList.GetPortCipher("io_regOut_x5"),
+                netList.GetPortCipher("io_regOut_x6"),
+                netList.GetPortCipher("io_regOut_x7"),
+                netList.GetPortCipher("io_regOut_x8"),
+                netList.GetPortCipher("io_regOut_x9"),
+                netList.GetPortCipher("io_regOut_x10"),
+                netList.GetPortCipher("io_regOut_x11"),
+                netList.GetPortCipher("io_regOut_x12"),
+                netList.GetPortCipher("io_regOut_x13"),
+                netList.GetPortCipher("io_regOut_x14"),
+                netList.GetPortCipher("io_regOut_x15")};
+        std::vector<std::shared_ptr<cufhe::Ctxt>> ram = netList.GetRAMCipherAll();
+
+        auto tfheFlags = cufhe2tfhe(*packet.cloudKey.get(), flags);
+        auto tfheRam = cufhe2tfhe(*packet.cloudKey.get(), ram);
+        std::vector<std::vector<std::shared_ptr<LweSample>>> tfheRegs;
+        for(auto reg : regs){
+            auto tfheReg = cufhe2tfhe(*packet.cloudKey.get(), reg);
+            tfheRegs.push_back(tfheReg);
+        }
+        std::ofstream ofs{resultFile, std::ios_base::binary};
+        KVSPResPacket{packet.cloudKey, tfheFlags, tfheRegs, tfheRam}.writeTo(ofs);
         printf("Execution time %lf[ms]\n", time);
         netList.DebugOutput();
         manager.Stats();

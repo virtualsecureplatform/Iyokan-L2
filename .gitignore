@@ -12,3 +12,4 @@ Makefile
 *.qdrep
 !vsp-core.json
 !test
+*.cbp
