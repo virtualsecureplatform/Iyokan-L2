@@ -42,6 +42,7 @@ public:
         if (isCipher) {
             cipher = true;
             value = new cufhe::Ctxt();
+            cufhe::ConstantZero(*value);
             cufhe::Synchronize();
         } else {
             cipher = false;
