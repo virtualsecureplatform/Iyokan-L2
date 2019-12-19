@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     int execCycle = 6;
     int threadNum = 0;
     std::string logicFile = "../../vsp-core.json";
-    std::string cipherFile = "../../li42.enc";
+    std::string cipherFile = "../../lb_test.enc";
     std::string resultFile = "../../result.enc";
     bool plainMode = false;
     while ((opt = getopt(argc, argv, "vpc:t:l:i:o:")) != -1) {
@@ -110,7 +110,9 @@ int main(int argc, char *argv[]) {
 
     if (!plainMode) {
         auto cufheRom = tfhe2cufhe(*packet.cloudKey.get(), packet.rom);
+        auto cufheRam = tfhe2cufhe(*packet.cloudKey.get(), packet.ram);
         netList.SetROMCipherAll(cufheRom);
+        netList.SetRAMCipherAll(cufheRam);
         /*
         netList.SetROMEncryptPlain(0, 0x15040035, secretKey);
         netList.SetROMEncryptPlain(1, 0x000E0208, secretKey);
