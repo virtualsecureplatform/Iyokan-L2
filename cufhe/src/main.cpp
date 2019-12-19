@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     std::string resultFile = "";
     std::string plainFile = "";
     bool plainMode = false;
-    while ((opt = getopt(argc, argv, "vpc:l:i:o:")) != -1) {
+    while ((opt = getopt(argc, argv, "vp:c:l:i:o:")) != -1) {
         switch (opt) {
             case 'v':
                 verbose = true;
@@ -81,6 +81,13 @@ int main(int argc, char *argv[]) {
             std::cout << usageMsg << std::endl;
             exit(1);
         }
+    }else{
+        if(plainFile != ""){
+            std::cout << "PlainFile:" << plainFile << std::endl;
+        }else{
+            std::cout << usageMsg << std::endl;
+            exit(1);
+        }
     }
 
     std::shared_ptr<cufhe::PubKey> cloudKey;
@@ -88,7 +95,7 @@ int main(int argc, char *argv[]) {
     std::shared_ptr<TFheGateBootstrappingCloudKeySet> tfheCloudKey = nullptr;
     ExecManager manager(1, execCycle, verbose, !plainMode);
 
-    NetList netList(logicFile, verbose, true);
+    NetList netList(logicFile, verbose, false);
 
     if (!plainMode) {
         std::ifstream ifs{cipherFile, std::ios_base::binary};
@@ -102,7 +109,7 @@ int main(int argc, char *argv[]) {
 
         auto cufheRom = tfhe2cufhe(*packet.cloudKey.get(), packet.rom);
         auto cufheRam = tfhe2cufhe(*packet.cloudKey.get(), packet.ram);
-        netList = NetList(logicFile, verbose, !plainMode);
+        netList = NetList(logicFile, verbose, true);
         netList.SetROMCipherAll(cufheRom);
         netList.SetRAMCipherAll(cufheRam);
     }else{
