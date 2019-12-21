@@ -14,9 +14,11 @@ public:
     Logic *execLogic = nullptr;
     int stream_id;
 
-    SMCore(int _stream_id, std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *queue, bool isCipher) {
+    SMCore(int _stream_id, std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *queue, bool isCipher, int dev_id) {
         cipher = isCipher;
         stream_id = _stream_id;
+        device_id = dev_id;
+        cudaSetDevice(device_id);
 
         if (cipher) {
             stream = new cufhe::Stream();
@@ -26,6 +28,8 @@ public:
     }
 
     bool DependencyUpdate(std::map<std::string, int> &execCounter, bool reset) {
+        cudaSetDevice(device_id);
+
         if (execLogic == nullptr) {
             if (readyQueue->size() != 0) {
                 execLogic = readyQueue->top();
@@ -69,6 +73,7 @@ private:
     cufhe::Stream *stream = nullptr;
     std::priority_queue<Logic *, std::vector<Logic *>, compare_f> *readyQueue;
     bool cipher = false;
+    int device_id;
 
     bool isFinished() {
         if (cipher) {
