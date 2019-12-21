@@ -46,6 +46,10 @@ src/iyokanl2 -c 10 -t 10 -l vsp-core.json -i hoge.cipher -o hoge.result
 
 # Changelog
 
+## v0.2.0 (2019/12/21)
+Add Feature
+- cuFHE Backend(Run on GPU)
+
 ## v0.1.1 (2019/12/16)
 Add Feature
 - PlainMode(Calculate exec cycle)
