@@ -9,5 +9,5 @@ include_directories(/usr/local/cuda/include)
 link_directories(/usr/local/lib)
 
 AUX_SOURCE_DIRECTORY(${CMAKE_CURRENT_SOURCE_DIR} source)
-add_executable(main ${source})
-target_link_libraries(main cufhe_gpu ${CUDA_LIBRARIES} tfhe-spqlios-avx)
+add_executable(iyokanl2-cufhe ${source})
+target_link_libraries(iyokanl2-cufhe cufhe_gpu ${CUDA_LIBRARIES} tfhe-spqlios-avx)
