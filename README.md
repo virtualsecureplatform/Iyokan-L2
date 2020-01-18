@@ -1,5 +1,5 @@
 # Iyokan-L2
-![iyokan-logo-eng](https://user-images.githubusercontent.com/33079554/70916713-7bd8a900-205f-11ea-8513-eb983338b283.jpg)
+![Iyokanロゴ-no-ring](https://user-images.githubusercontent.com/33079554/72664800-924e9780-3a45-11ea-9877-859a794c91c8.jpg)
 
 # Build
 ## Dependency
