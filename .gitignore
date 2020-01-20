@@ -11,5 +11,6 @@ cmake_install.cmake
 Makefile
 *.qdrep
 !vsp-core.json
+!vsp-core-emerald.json
 !test
 *.cbp
