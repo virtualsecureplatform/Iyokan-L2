@@ -113,10 +113,21 @@ int main(int argc, char *argv[]) {
         netList.SetROMCipherAll(cufheRom);
         netList.SetRAMCipherAll(cufheRam);
     }else{
-        std::ifstream ifs{cipherFile, std::ios_base::binary};
+        std::ifstream ifs{plainFile, std::ios_base::binary};
         auto packet = KVSPPlainReqPacket::readFrom(ifs);
         netList.SetROMPlainAll(packet.rom);
         netList.SetRAMPlainAll(packet.ram);
+        /*
+        netList.SetROMPlain(0, 0x00000E061EFE0175L);
+        netList.SetROMPlain(1, 0x041C131C201CA1C2L);
+        netList.SetROMPlain(2, 0xC007833F283483C0L);
+        netList.SetROMPlain(3, 0xFD5EFF38C3020E38L);
+        netList.SetROMPlain(4, 0x80FC7EFE38C384C0L);
+        netList.SetROMPlain(5, 0x0220141314041448L);
+        netList.SetROMPlain(6, 0x34001CE1C2000661L);
+        netList.SetROMPlain(7, 0x0621020014F9FE58L);
+        netList.SetROMPlain(8, 0x7620676E616C6300L);
+         */
     }
 
 

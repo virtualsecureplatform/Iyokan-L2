@@ -62,9 +62,9 @@ public:
 
     //std::vector<std::shared_ptr<LweSample>> GetRAMEncryptPlainAll(std::shared_ptr<TFheGateBootstrappingSecretKeySet> secretKey);
 
-    void SetPortPlain(std::string portName, int value);
+    void SetPortPlain(std::string portName, uint64_t value);
 
-    void SetROMPlain(int addr, uint32_t value);
+    void SetROMPlain(int addr, uint64_t value);
 
     void SetROMEncryptPlain(int addr, uint32_t value, cufhe::PriKey *secretKey);
 

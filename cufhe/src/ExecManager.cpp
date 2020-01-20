@@ -30,7 +30,7 @@ void ExecManager::Start() {
 
 int ExecManager::ExecUntilFinish(){
     int cnt = 0;
-    while(netList->GetPortPlain("io_finishFlag") == 0) {
+    while ((netList->GetPortPlain("io_finishFlag") == 0)) {
         ExecClock(cnt, 0, false);
         cnt++;
     }

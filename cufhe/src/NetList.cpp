@@ -217,7 +217,7 @@ void NetList::SetPortCipher(std::string portName, std::vector<cufhe::Ctxt *> val
     }
 }
 
-void NetList::SetPortPlain(std::string portName, int value) {
+void NetList::SetPortPlain(std::string portName, uint64_t value) {
     int length = Inputs[portName].size();
     if (length == 0) {
         throw std::runtime_error("Unknown input port:" + portName);
@@ -275,7 +275,7 @@ std::vector<std::shared_ptr<LweSample>> NetList::GetPortEncryptPlain(std::string
 }
  */
 
-void NetList::SetROMPlain(int addr, uint32_t value) {
+void NetList::SetROMPlain(int addr, uint64_t value) {
     int length = Rom[addr].size();
     if (length == 0) {
         throw std::runtime_error("Unknown Rom Address:" + addr);
@@ -459,8 +459,16 @@ int NetList::GetRAMPlain(int addr) {
 }
 
 void NetList::SetROMPlainAll(std::vector<uint8_t> & valueArray) {
-    for (int i = 0; i < valueArray.size()/4; i++) {
-        uint32_t value = (valueArray.at(i*4+3)<<24) + (valueArray.at(i*4+2)<<16) + (valueArray.at(i*4+1)<<8) + valueArray.at(i*4);
+    for (int i = 0; i < valueArray.size()/8; i++) {
+        uint64_t value =
+            (((uint64_t)valueArray.at(i*8+7))<<56)|
+            (((uint64_t)valueArray.at(i*8+6))<<48)|
+            (((uint64_t)valueArray.at(i*8+5))<<40)|
+            (((uint64_t)valueArray.at(i*8+4)<<32))|
+            (((uint64_t)valueArray.at(i*8+3)<<24))|
+            (((uint64_t)valueArray.at(i*8+2)<<16))|
+            (((uint64_t)valueArray.at(i*8+1)<<8))|
+            ((uint64_t)valueArray.at(i*8));
         SetROMPlain(i, value);
     }
 }
